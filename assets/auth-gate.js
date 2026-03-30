@@ -2,9 +2,10 @@
   var HASH = '23d05ddb639aeb9640fa35f571411be5214f5ee10865b604700265558706a02c';
   var KEY = 'rci_auth';
 
-  if (sessionStorage.getItem(KEY) === 'ok') return;
-
-  document.body.style.display = 'none';
+  if (sessionStorage.getItem(KEY) === 'ok') {
+    document.documentElement.classList.remove('auth-pending');
+    return;
+  }
 
   var overlay = document.createElement('div');
   overlay.id = 'auth-gate';
@@ -33,17 +34,23 @@
 
   function attempt() {
     var pw = document.getElementById('auth-pw').value;
-    sha256(pw).then(function(h) {
-      if (h === HASH) {
-        sessionStorage.setItem(KEY, 'ok');
-        overlay.remove();
-        document.body.style.display = '';
-      } else {
+    try {
+      sha256(pw).then(function(h) {
+        if (h === HASH) {
+          sessionStorage.setItem(KEY, 'ok');
+          overlay.remove();
+          document.documentElement.classList.remove('auth-pending');
+        } else {
+          document.getElementById('auth-err').style.display = 'block';
+          document.getElementById('auth-pw').value = '';
+          document.getElementById('auth-pw').focus();
+        }
+      }).catch(function() {
         document.getElementById('auth-err').style.display = 'block';
-        document.getElementById('auth-pw').value = '';
-        document.getElementById('auth-pw').focus();
-      }
-    });
+      });
+    } catch (e) {
+      document.getElementById('auth-err').style.display = 'block';
+    }
   }
 
   document.getElementById('auth-btn').addEventListener('click', attempt);
