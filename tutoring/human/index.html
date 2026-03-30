@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>RCI Tutoring | Tutor RN Humano</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #2a3441;
+      --accent: #4f8ef7;
+      --gold: #d4a843;
+      --gold-dim: rgba(212,168,67,0.15);
+      --gold-border: rgba(212,168,67,0.3);
+      --text: #e6edf3;
+      --text-dim: #8b949e;
+      --text-dimmer: #484f58;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .logo-area img {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      object-fit: contain;
+      background: #fff;
+      padding: 3px;
+    }
+
+    .logo-text { line-height: 1.2; }
+    .logo-title { font-weight: 800; font-size: 15px; }
+    .logo-sub { font-size: 11px; color: var(--text-dim); letter-spacing: 0.5px; }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lang-toggle {
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .lang-btn {
+      padding: 5px 12px;
+      cursor: pointer;
+      color: var(--text-dim);
+      border: none;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .lang-btn.active {
+      background: var(--gold);
+      color: #0d1117;
+    }
+
+    .back-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--text); }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    .coming-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 24px;
+    }
+
+    .coming-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .coming-sub {
+      font-size: 15px;
+      color: var(--text-dim);
+      max-width: 420px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .features-preview {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 480px;
+      width: 100%;
+      margin-bottom: 40px;
+    }
+
+    .feature-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: left;
+    }
+
+    .feature-item .f-icon { font-size: 20px; margin-bottom: 8px; }
+    .feature-item .f-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .feature-item .f-desc { font-size: 11px; color: var(--text-dim); line-height: 1.4; }
+
+    .cta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .cta-btn:hover { opacity: 0.85; }
+
+    .cta-primary {
+      background: linear-gradient(135deg, var(--accent), #38bdf8);
+      color: #fff;
+    }
+
+    .cta-secondary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .lang { display: none; }
+    .lang.active { display: block; }
+    span.lang { display: none; }
+    span.lang.active { display: inline; }
+    div.lang { display: none; }
+    div.lang.active { display: grid; }
+
+    @media (max-width: 500px) {
+      .features-preview { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <a class="logo-area" href="../../">
+    <img src="../../assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" />
+    <div class="logo-text">
+      <div class="logo-title">RCI Tutoring</div>
+      <div class="logo-sub">Human RN Tutor</div>
+    </div>
+  </a>
+  <div class="header-right">
+    <a class="back-link" href="../">
+      <span class="lang active" data-lang="es">&larr; Modalidades</span>
+      <span class="lang" data-lang="en">&larr; Study Modes</span>
+    </a>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="coming-icon">&#x1F469;&#x200D;&#x2695;&#xFE0F;</div>
+
+  <div class="coming-title">
+    <span class="lang active" data-lang="es">Pr&oacute;ximamente &mdash; Fase 2</span>
+    <span class="lang" data-lang="en">Coming Soon &mdash; Phase 2</span>
+  </div>
+
+  <div class="coming-sub">
+    <span class="lang active" data-lang="es">Estamos preparando sesiones en vivo 1:1 con enfermeros registrados especializados en hemodi&aacute;lisis. Reserva tu espacio pronto.</span>
+    <span class="lang" data-lang="en">We're preparing live 1:1 sessions with registered nurses specialized in hemodialysis. Book your spot soon.</span>
+  </div>
+
+  <!-- ES Features -->
+  <div class="features-preview lang active" data-lang="es">
+    <div class="feature-item">
+      <div class="f-icon">&#x1F4F9;</div>
+      <div class="f-title">Video en vivo</div>
+      <div class="f-desc">Sesi&oacute;n cara a cara con un RN experimentado</div>
+    </div>
+    <div class="feature-item">
+      <div class="f-icon">&#x1F4CB;</div>
+      <div class="f-title">Tutor&iacute;a personalizada</div>
+      <div class="f-desc">Plan de estudio adaptado a tu nivel</div>
+    </div>
+    <div class="feature-item">
+      <div class="f-icon">&#x1F5A5;&#xFE0F;</div>
+      <div class="f-title">Compartir pantalla</div>
+      <div class="f-desc">Revisi&oacute;n de casos cl&iacute;nicos en tiempo real</div>
+    </div>
+    <div class="feature-item">
+      <div class="f-icon">&#x1F4C5;</div>
+      <div class="f-title">Agenda flexible</div>
+      <div class="f-desc">Reserva seg&uacute;n tu disponibilidad</div>
+    </div>
+  </div>
+
+  <!-- EN Features -->
+  <div class="features-preview lang" data-lang="en">
+    <div class="feature-item">
+      <div class="f-icon">&#x1F4F9;</div>
+      <div class="f-title">Live Video</div>
+      <div class="f-desc">Face-to-face session with an experienced RN</div>
+    </div>
+    <div class="feature-item">
+      <div class="f-icon">&#x1F4CB;</div>
+      <div class="f-title">Personalized Tutoring</div>
+      <div class="f-desc">Study plan adapted to your level</div>
+    </div>
+    <div class="feature-item">
+      <div class="f-icon">&#x1F5A5;&#xFE0F;</div>
+      <div class="f-title">Screen Sharing</div>
+      <div class="f-desc">Real-time clinical case review</div>
+    </div>
+    <div class="feature-item">
+      <div class="f-icon">&#x1F4C5;</div>
+      <div class="f-title">Flexible Scheduling</div>
+      <div class="f-desc">Book based on your availability</div>
+    </div>
+  </div>
+
+  <div class="cta-row">
+    <a class="cta-btn cta-primary" href="../ai/">
+      <span class="lang active" data-lang="es">Probar Tutor IA gratis &rarr;</span>
+      <span class="lang" data-lang="en">Try AI Tutor for free &rarr;</span>
+    </a>
+    <a class="cta-btn cta-secondary" href="mailto:info@rcitutoring.com">
+      <span class="lang active" data-lang="es">Contactar para reservar</span>
+      <span class="lang" data-lang="en">Contact to reserve</span>
+    </a>
+  </div>
+</div>
+
+<script>
+  let lang = localStorage.getItem('rci_lang') || 'es';
+
+  function setLang(l) {
+    lang = l;
+    localStorage.setItem('rci_lang', l);
+    document.querySelectorAll('.lang').forEach(function(el) {
+      el.classList.toggle('active', el.dataset.lang === l);
+    });
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.textContent.trim() === l.toUpperCase());
+    });
+    document.documentElement.lang = l;
+  }
+
+  setLang(lang);
+</script>
+</body>
+</html>
