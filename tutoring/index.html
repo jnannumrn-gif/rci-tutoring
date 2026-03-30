@@ -20,6 +20,9 @@
       --text-dim: #8b949e;
       --text-dimmer: #484f58;
       --success: #3fb950;
+      --teal: #0d9488;
+      --teal-dim: rgba(13,148,136,0.15);
+      --teal-border: rgba(13,148,136,0.3);
       --radius: 16px;
     }
 
@@ -133,9 +136,9 @@
 
     .cards {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 24px;
-      max-width: 820px;
+      max-width: 1100px;
       width: 100%;
     }
 
@@ -175,6 +178,15 @@
       box-shadow: 0 16px 48px rgba(212,168,67,0.12);
     }
 
+    .card-prep {
+      border: 1px solid var(--teal-border);
+      box-shadow: 0 8px 32px rgba(13,148,136,0.06);
+    }
+
+    .card-prep:hover {
+      box-shadow: 0 16px 48px rgba(13,148,136,0.12);
+    }
+
     .card-badge {
       position: absolute;
       top: 16px;
@@ -199,6 +211,12 @@
       border: 1px solid var(--gold-border);
     }
 
+    .badge-app {
+      background: var(--teal-dim);
+      color: var(--teal);
+      border: 1px solid var(--teal-border);
+    }
+
     .card-icon {
       width: 56px;
       height: 56px;
@@ -218,6 +236,11 @@
       border: 1px solid var(--gold-border);
     }
 
+    .card-prep .card-icon {
+      background: linear-gradient(135deg, var(--teal-dim), rgba(13,148,136,0.08));
+      border: 1px solid var(--teal-border);
+    }
+
     .card-icon svg {
       width: 28px;
       height: 28px;
@@ -225,6 +248,7 @@
 
     .card-ai .card-icon svg { stroke: var(--accent); fill: none; }
     .card-human .card-icon svg { stroke: var(--gold); fill: none; }
+    .card-prep .card-icon svg { stroke: var(--teal); fill: none; }
 
     .card-title {
       font-size: 1.3rem;
@@ -273,6 +297,11 @@
       color: var(--gold);
     }
 
+    .card-prep .check {
+      background: var(--teal-dim);
+      color: var(--teal);
+    }
+
     .check svg { width: 10px; height: 10px; }
 
     .card-cta {
@@ -297,6 +326,11 @@
       color: #0d1117;
     }
 
+    .card-prep .card-cta {
+      background: linear-gradient(135deg, var(--teal), #0f766e);
+      color: #fff;
+    }
+
     .card-cta:hover { opacity: 0.9; }
 
     .disclaimer {
@@ -307,7 +341,7 @@
       max-width: 500px;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 900px) {
       .cards {
         grid-template-columns: 1fr;
         max-width: 400px;
@@ -352,8 +386,8 @@
     <span class="lang" data-lang="en">Choose your study mode</span>
   </div>
   <div class="page-sub">
-    <span class="lang active" data-lang="es">Dos caminos, un mismo objetivo: dominar la hemodi&aacute;lisis con confianza cl&iacute;nica.</span>
-    <span class="lang" data-lang="en">Two paths, one goal: master hemodialysis with clinical confidence.</span>
+    <span class="lang active" data-lang="es">Tres caminos, un mismo objetivo: dominar la hemodi&aacute;lisis con confianza cl&iacute;nica.</span>
+    <span class="lang" data-lang="en">Three paths, one goal: master hemodialysis with clinical confidence.</span>
   </div>
 
   <div class="cards">
@@ -486,6 +520,73 @@
       <div class="card-cta">
         <span class="lang active" data-lang="es">Agendar sesi&oacute;n &rarr;</span>
         <span class="lang" data-lang="en">Book session &rarr;</span>
+      </div>
+    </a>
+
+    <!-- CCHT PREP CARD -->
+    <a class="card card-prep" href="https://rci-prep.pages.dev" target="_blank" rel="noopener">
+      <div class="card-badge badge-app">
+        <span class="lang active" data-lang="es">APP</span>
+        <span class="lang" data-lang="en">APP</span>
+      </div>
+
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          <path d="M9 10l2 2 4-4"/>
+        </svg>
+      </div>
+
+      <div>
+        <div class="card-title">
+          <span class="lang active" data-lang="es">CCHT Prep</span>
+          <span class="lang" data-lang="en">CCHT Prep</span>
+        </div>
+        <div class="card-subtitle">
+          <span class="lang active" data-lang="es">App instalable &middot; Biling&uuml;e</span>
+          <span class="lang" data-lang="en">Installable app &middot; Bilingual</span>
+        </div>
+      </div>
+
+      <ul class="card-features">
+        <li class="lang active" data-lang="es">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Preguntas de pr&aacute;ctica por dominio
+        </li>
+        <li class="lang active" data-lang="es">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Ex&aacute;menes simulados cronometrados
+        </li>
+        <li class="lang active" data-lang="es">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Tarjetas de estudio (flashcards)
+        </li>
+        <li class="lang active" data-lang="es">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Instalable sin App Store
+        </li>
+        <li class="lang" data-lang="en">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Practice questions by domain
+        </li>
+        <li class="lang" data-lang="en">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Timed simulated exams
+        </li>
+        <li class="lang" data-lang="en">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Study flashcards
+        </li>
+        <li class="lang" data-lang="en">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Installable without App Store
+        </li>
+      </ul>
+
+      <div class="card-cta">
+        <span class="lang active" data-lang="es">Abrir app &rarr;</span>
+        <span class="lang" data-lang="en">Open app &rarr;</span>
       </div>
     </a>
   </div>
