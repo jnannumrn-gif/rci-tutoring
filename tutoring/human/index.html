@@ -108,101 +108,147 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 48px 24px;
-      text-align: center;
+      padding: 32px 24px 48px;
     }
 
-    .coming-icon {
-      width: 80px;
-      height: 80px;
-      border-radius: 20px;
+    .section-header {
+      text-align: center;
+      margin-bottom: 24px;
+      max-width: 560px;
+    }
+
+    .section-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
       background: var(--gold-dim);
       border: 1px solid var(--gold-border);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 36px;
-      margin-bottom: 24px;
+      font-size: 28px;
+      margin: 0 auto 16px;
     }
 
-    .coming-title {
-      font-size: clamp(1.5rem, 3vw, 2rem);
+    .section-title {
+      font-size: clamp(1.3rem, 2.5vw, 1.7rem);
       font-weight: 800;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       letter-spacing: -0.02em;
     }
 
-    .coming-sub {
-      font-size: 15px;
+    .section-sub {
+      font-size: 14px;
       color: var(--text-dim);
-      max-width: 420px;
       line-height: 1.6;
-      margin-bottom: 32px;
+      margin-bottom: 16px;
     }
 
-    .features-preview {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      max-width: 480px;
-      width: 100%;
-      margin-bottom: 40px;
-    }
-
-    .feature-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      text-align: left;
-    }
-
-    .feature-item .f-icon { font-size: 20px; margin-bottom: 8px; }
-    .feature-item .f-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-    .feature-item .f-desc { font-size: 11px; color: var(--text-dim); line-height: 1.4; }
-
-    .cta-row {
+    .features-row {
       display: flex;
-      gap: 12px;
+      gap: 16px;
       flex-wrap: wrap;
       justify-content: center;
+      margin-bottom: 28px;
     }
 
-    .cta-btn {
+    .feature-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .feature-chip .chip-icon { font-size: 14px; }
+
+    .cal-container {
+      width: 100%;
+      max-width: 700px;
+      min-height: 500px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .cal-loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+
+    .cal-loading .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .alt-cta {
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .alt-cta-text {
+      font-size: 13px;
+      color: var(--text-dimmer);
+      margin-bottom: 8px;
+    }
+
+    .alt-cta-link {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 12px 24px;
+      padding: 10px 20px;
       border-radius: 12px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       text-decoration: none;
-      transition: opacity 0.2s;
-    }
-
-    .cta-btn:hover { opacity: 0.85; }
-
-    .cta-primary {
-      background: linear-gradient(135deg, var(--accent), #38bdf8);
-      color: #fff;
-    }
-
-    .cta-secondary {
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text);
+      transition: border-color 0.2s;
     }
+
+    .alt-cta-link:hover { border-color: var(--accent); }
+
+    .ai-cta {
+      background: linear-gradient(135deg, var(--accent), #38bdf8);
+      border: none;
+      color: #fff;
+    }
+
+    .ai-cta:hover { opacity: 0.9; border-color: transparent; }
 
     .lang { display: none; }
     .lang.active { display: block; }
     span.lang { display: none; }
     span.lang.active { display: inline; }
     div.lang { display: none; }
-    div.lang.active { display: grid; }
+    div.lang.active { display: flex; }
 
-    @media (max-width: 500px) {
-      .features-preview { grid-template-columns: 1fr; }
+    @media (max-width: 600px) {
+      .main { padding: 20px 16px 32px; }
+      .cal-container { border-radius: 12px; min-height: 450px; }
+      .features-row { gap: 8px; }
+      .feature-chip { font-size: 11px; padding: 5px 10px; }
     }
   </style>
 </head>
@@ -229,80 +275,105 @@
 </div>
 
 <div class="main">
-  <div class="coming-icon">&#x1F469;&#x200D;&#x2695;&#xFE0F;</div>
+  <div class="section-header">
+    <div class="section-icon">&#x1F469;&#x200D;&#x2695;&#xFE0F;</div>
 
-  <div class="coming-title">
-    <span class="lang active" data-lang="es">Pr&oacute;ximamente &mdash; Fase 2</span>
-    <span class="lang" data-lang="en">Coming Soon &mdash; Phase 2</span>
-  </div>
+    <div class="section-title">
+      <span class="lang active" data-lang="es">Agenda tu sesi&oacute;n con un RN</span>
+      <span class="lang" data-lang="en">Book your session with an RN</span>
+    </div>
 
-  <div class="coming-sub">
-    <span class="lang active" data-lang="es">Estamos preparando sesiones en vivo 1:1 con enfermeros registrados especializados en hemodi&aacute;lisis. Reserva tu espacio pronto.</span>
-    <span class="lang" data-lang="en">We're preparing live 1:1 sessions with registered nurses specialized in hemodialysis. Book your spot soon.</span>
-  </div>
-
-  <!-- ES Features -->
-  <div class="features-preview lang active" data-lang="es">
-    <div class="feature-item">
-      <div class="f-icon">&#x1F4F9;</div>
-      <div class="f-title">Video en vivo</div>
-      <div class="f-desc">Sesi&oacute;n cara a cara con un RN experimentado</div>
-    </div>
-    <div class="feature-item">
-      <div class="f-icon">&#x1F4CB;</div>
-      <div class="f-title">Tutor&iacute;a personalizada</div>
-      <div class="f-desc">Plan de estudio adaptado a tu nivel</div>
-    </div>
-    <div class="feature-item">
-      <div class="f-icon">&#x1F5A5;&#xFE0F;</div>
-      <div class="f-title">Compartir pantalla</div>
-      <div class="f-desc">Revisi&oacute;n de casos cl&iacute;nicos en tiempo real</div>
-    </div>
-    <div class="feature-item">
-      <div class="f-icon">&#x1F4C5;</div>
-      <div class="f-title">Agenda flexible</div>
-      <div class="f-desc">Reserva seg&uacute;n tu disponibilidad</div>
+    <div class="section-sub">
+      <span class="lang active" data-lang="es">Selecciona un horario disponible para tu tutor&iacute;a 1:1 en hemodi&aacute;lisis con un enfermero registrado. La sesi&oacute;n incluye video en vivo y compartir pantalla.</span>
+      <span class="lang" data-lang="en">Select an available time slot for your 1:1 hemodialysis tutoring session with a registered nurse. The session includes live video and screen sharing.</span>
     </div>
   </div>
 
-  <!-- EN Features -->
-  <div class="features-preview lang" data-lang="en">
-    <div class="feature-item">
-      <div class="f-icon">&#x1F4F9;</div>
-      <div class="f-title">Live Video</div>
-      <div class="f-desc">Face-to-face session with an experienced RN</div>
-    </div>
-    <div class="feature-item">
-      <div class="f-icon">&#x1F4CB;</div>
-      <div class="f-title">Personalized Tutoring</div>
-      <div class="f-desc">Study plan adapted to your level</div>
-    </div>
-    <div class="feature-item">
-      <div class="f-icon">&#x1F5A5;&#xFE0F;</div>
-      <div class="f-title">Screen Sharing</div>
-      <div class="f-desc">Real-time clinical case review</div>
-    </div>
-    <div class="feature-item">
-      <div class="f-icon">&#x1F4C5;</div>
-      <div class="f-title">Flexible Scheduling</div>
-      <div class="f-desc">Book based on your availability</div>
-    </div>
+  <!-- Feature chips - ES -->
+  <div class="features-row lang active" data-lang="es">
+    <div class="feature-chip"><span class="chip-icon">&#x1F4F9;</span> Video en vivo</div>
+    <div class="feature-chip"><span class="chip-icon">&#x1F5A5;&#xFE0F;</span> Compartir pantalla</div>
+    <div class="feature-chip"><span class="chip-icon">&#x23F0;</span> 30 minutos</div>
+    <div class="feature-chip"><span class="chip-icon">&#x1F4CB;</span> Personalizada</div>
+  </div>
+  <!-- Feature chips - EN -->
+  <div class="features-row lang" data-lang="en">
+    <div class="feature-chip"><span class="chip-icon">&#x1F4F9;</span> Live video</div>
+    <div class="feature-chip"><span class="chip-icon">&#x1F5A5;&#xFE0F;</span> Screen sharing</div>
+    <div class="feature-chip"><span class="chip-icon">&#x23F0;</span> 30 minutes</div>
+    <div class="feature-chip"><span class="chip-icon">&#x1F4CB;</span> Personalized</div>
   </div>
 
-  <div class="cta-row">
-    <a class="cta-btn cta-primary" href="../ai/">
-      <span class="lang active" data-lang="es">Probar Tutor IA gratis &rarr;</span>
-      <span class="lang" data-lang="en">Try AI Tutor for free &rarr;</span>
-    </a>
-    <a class="cta-btn cta-secondary" href="mailto:info@rcitutoring.com">
-      <span class="lang active" data-lang="es">Contactar para reservar</span>
-      <span class="lang" data-lang="en">Contact to reserve</span>
-    </a>
+  <!-- Cal.com inline embed container -->
+  <div class="cal-container">
+    <div class="cal-loading" id="cal-loading">
+      <div class="spinner"></div>
+      <span class="lang active" data-lang="es">Cargando calendario...</span>
+      <span class="lang" data-lang="en">Loading calendar...</span>
+    </div>
+    <div id="my-cal-inline" style="width:100%;height:100%;overflow:auto"></div>
+  </div>
+
+  <!-- Alternative CTAs -->
+  <div class="alt-cta">
+    <div class="alt-cta-text">
+      <span class="lang active" data-lang="es">&iquest;Prefieres otra opci&oacute;n?</span>
+      <span class="lang" data-lang="en">Prefer another option?</span>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <a class="alt-cta-link ai-cta" href="../ai/">
+        <span class="lang active" data-lang="es">&#x1F916; Probar Tutor IA gratis</span>
+        <span class="lang" data-lang="en">&#x1F916; Try AI Tutor for free</span>
+      </a>
+      <a class="alt-cta-link" href="mailto:info@rcitutoring.com">
+        <span class="lang active" data-lang="es">&#x2709;&#xFE0F; Contactar por email</span>
+        <span class="lang" data-lang="en">&#x2709;&#xFE0F; Contact via email</span>
+      </a>
+    </div>
   </div>
 </div>
 
+<!-- Cal.com Embed Script -->
+<script type="text/javascript">
+(function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+
+Cal("init", {origin:"https://app.cal.com"});
+
+Cal("inline", {
+  elementOrSelector: "#my-cal-inline",
+  calLink: "jesus-pablo-namnum-3hr6vl/sesion-de-tutoria-en-hemodialisis",
+  layout: "month_view"
+});
+
+Cal("ui", {
+  theme: "dark",
+  styles: {
+    branding: { brandColor: "#d4a843" }
+  },
+  hideEventTypeDetails: false,
+  layout: "month_view"
+});
+
+// Hide loading spinner when Cal embed loads
+var calCheckInterval = setInterval(function() {
+  var iframe = document.querySelector('#my-cal-inline iframe');
+  if (iframe) {
+    var loadingEl = document.getElementById('cal-loading');
+    if (loadingEl) loadingEl.style.display = 'none';
+    clearInterval(calCheckInterval);
+  }
+}, 500);
+
+// Fallback: hide loading after 10 seconds regardless
+setTimeout(function() {
+  var loadingEl = document.getElementById('cal-loading');
+  if (loadingEl) loadingEl.style.display = 'none';
+  clearInterval(calCheckInterval);
+}, 10000);
+</script>
+
 <script>
-  let lang = localStorage.getItem('rci_lang') || 'es';
+  var lang = localStorage.getItem('rci_lang') || 'es';
 
   function setLang(l) {
     lang = l;
