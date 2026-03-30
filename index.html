@@ -852,7 +852,7 @@
         var data = new FormData(form);
         fetch(form.action, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
           .then(function() { form.style.display = 'none'; document.getElementById('formSuccess').style.display = 'block'; })
-          .catch(function() { form.style.display = 'none'; document.getElementById('formSuccess').style.display = 'block'; });
+          .catch(function() { alert('Error: message could not be sent. Please try again.'); });
       });
     }
   </script>
