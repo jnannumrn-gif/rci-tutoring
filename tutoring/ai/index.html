@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow" />
 <title>RCI Tutoring — AI Tutor</title>
+<script>if(sessionStorage.getItem('rci_auth')!=='ok')document.documentElement.classList.add('auth-pending');</script>
+<style>.auth-pending body{display:none!important}</style>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -706,5 +708,6 @@
   setLang(lang);
   restoreMessages();
 </script>
+<script src="../../assets/auth-gate.js"></script>
 </body>
 </html>
