@@ -64,6 +64,7 @@
 
   function closeBanner(choice) {
     localStorage.setItem(COOKIE_KEY, choice);
+    observer.disconnect();
     var banner = document.getElementById('cookie-banner');
     if (banner) {
       banner.style.animation = 'cookieSlideDown 0.3s ease-in forwards';
