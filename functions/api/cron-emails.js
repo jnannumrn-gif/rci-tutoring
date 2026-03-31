@@ -276,7 +276,7 @@ export async function processEmailSequences(env) {
         }
 
         // Only record as sent if not an actual send error (allows retry on failure)
-        if (!result.error) {
+        if (!result.error && !result.skipped) {
           await env.DB.prepare(
             'INSERT INTO email_sequences (user_id, step, sent_at) VALUES (?, ?, ?)'
           ).bind(user.id, stepConfig.step, now.toISOString()).run();

@@ -51,7 +51,7 @@ export async function onRequestPost(context) {
       'Content-Type': 'application/json',
       ...corsHeaders()
     });
-    headers.append('Set-Cookie', `rci_token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 86400}`);
+    headers.append('Set-Cookie', `rci_token=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${7 * 86400}`);
 
     return new Response(JSON.stringify({
       success: true,
