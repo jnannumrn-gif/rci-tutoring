@@ -6,6 +6,15 @@
 
   var lang = document.documentElement.lang || 'es';
 
+  // Compute absolute path to cookies.html from current page location
+  var scriptEls = document.querySelectorAll('script[src*="cookie-banner.js"]');
+  var basePath = '';
+  if (scriptEls.length) {
+    var src = scriptEls[0].getAttribute('src');
+    basePath = src.replace(/assets\/cookie-banner\.js$/, '');
+  }
+  var cookiesUrl = basePath + 'cookies.html';
+
   var bannerHTML =
     '<div id="cookie-banner" style="' +
       'position:fixed;bottom:0;left:0;right:0;z-index:9999;' +
@@ -20,13 +29,13 @@
             '<strong style="color:#fff">&#127850; Uso de Cookies</strong><br>' +
             'Este sitio utiliza cookies y tecnolog\u00edas de almacenamiento local para mejorar tu experiencia. ' +
             'Puedes aceptar o rechazar las cookies no esenciales. ' +
-            '<a href="cookies.html" style="color:#60a5fa;text-decoration:underline">M\u00e1s informaci\u00f3n</a>' +
+            '<a href="' + cookiesUrl + '" style="color:#60a5fa;text-decoration:underline">M\u00e1s informaci\u00f3n</a>' +
           '</p>' +
           '<p class="cb-en" style="color:#e2e8f0;font-size:0.92rem;line-height:1.6;margin:0;' + (lang !== 'en' ? 'display:none' : '') + '">' +
             '<strong style="color:#fff">&#127850; Cookie Usage</strong><br>' +
             'This site uses cookies and local storage technologies to improve your experience. ' +
             'You can accept or reject non-essential cookies. ' +
-            '<a href="cookies.html" style="color:#60a5fa;text-decoration:underline">Learn more</a>' +
+            '<a href="' + cookiesUrl + '" style="color:#60a5fa;text-decoration:underline">Learn more</a>' +
           '</p>' +
         '</div>' +
         '<div style="display:flex;gap:10px;flex-shrink:0">' +
