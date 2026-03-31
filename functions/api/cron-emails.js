@@ -275,10 +275,12 @@ export async function processEmailSequences(env) {
           results.sent++;
         }
 
-        // Record the email as sent (even if skipped, to track sequence progress)
-        await env.DB.prepare(
-          'INSERT INTO email_sequences (user_id, step, sent_at) VALUES (?, ?, ?)'
-        ).bind(user.id, stepConfig.step, now.toISOString()).run();
+        // Only record as sent if not an actual send error (allows retry on failure)
+        if (!result.error) {
+          await env.DB.prepare(
+            'INSERT INTO email_sequences (user_id, step, sent_at) VALUES (?, ?, ?)'
+          ).bind(user.id, stepConfig.step, now.toISOString()).run();
+        }
       }
     }
   }
@@ -286,9 +288,16 @@ export async function processEmailSequences(env) {
   return results;
 }
 
-// API endpoint for manual trigger (admin/testing)
+// API endpoint for manual trigger (admin/testing) — requires CRON_SECRET
 export async function onRequestPost(context) {
   const { env } = context;
+
+  // Verify cron secret to prevent unauthorized access
+  const authHeader = context.request.headers.get('Authorization') || '';
+  const cronSecret = env.CRON_SECRET;
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    return jsonResponse({ error: 'Unauthorized' }, 401);
+  }
 
   try {
     const results = await processEmailSequences(env);

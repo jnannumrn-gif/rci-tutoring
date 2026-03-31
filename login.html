@@ -213,8 +213,10 @@
         alertBox.classList.add('visible');
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<span class="lang active" data-lang="' + currentLang + '">' +
-          (currentLang === 'en' ? 'Sign in' : 'Iniciar sesi\u00f3n') + '</span>';
+        submitBtn.innerHTML = '<span class="lang" data-lang="es">Iniciar sesi\u00f3n</span>' +
+          '<span class="lang" data-lang="en">Sign in</span>';
+        langBlocks = document.querySelectorAll('.lang');
+        setLanguage(currentLang);
       }
     });
 
