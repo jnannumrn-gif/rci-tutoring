@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>RCI Tutoring | Aviso Legal</title>
+  <script>if(sessionStorage.getItem('rci_auth')!=='ok')document.documentElement.classList.add('auth-pending');</script>
+  <style>.auth-pending body{display:none!important}</style>
+  <meta name="description" content="Aviso legal y descargo de responsabilidad de RCI Tutoring." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8faff;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --dim: #94a3b8;
+      --line: #e2e8f0;
+      --brand: #1e40af;
+      --brand-light: #3b82f6;
+      --gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
+      --gradient-subtle: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(6,182,212,0.08));
+      --shadow-sm: 0 1px 3px rgba(15,23,42,0.06);
+      --shadow: 0 4px 24px rgba(15,23,42,0.08);
+      --shadow-lg: 0 20px 60px rgba(15,23,42,0.12);
+      --radius: 16px;
+      --radius-lg: 24px;
+      --max: 1200px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
+
+    /* NAV */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(226,232,240,0.8);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand img { width: 44px; height: 44px; border-radius: 12px; object-fit: contain; background: #fff; box-shadow: var(--shadow-sm); padding: 3px; }
+    .brand-title { font-weight: 900; font-size: 1.1rem; letter-spacing: -0.02em; }
+    .brand-sub { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .nav-link { padding: 8px 16px; font-size: 0.9rem; font-weight: 600; color: var(--muted); border-radius: 10px; transition: all 0.2s; }
+    .nav-link:hover { color: var(--text); background: rgba(15,23,42,0.04); }
+    .lang-pill { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-left: 8px; }
+    .lang-pill button {
+      padding: 7px 14px; border: none; background: transparent;
+      font-size: 0.8rem; font-weight: 700; color: var(--dim);
+      cursor: pointer; transition: all 0.2s; font-family: inherit;
+    }
+    .lang-pill button.active { background: var(--brand); color: #fff; }
+
+    /* LEGAL CONTENT */
+    .legal-hero {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+    .legal-hero h1 {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .legal-hero h1 .gradient-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .legal-hero p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 60ch;
+      margin: 0 auto;
+    }
+
+    .legal-content {
+      padding: 0 0 80px;
+    }
+    .legal-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 48px;
+      box-shadow: var(--shadow);
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .legal-card h2 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--line);
+    }
+    .legal-card h2 .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--gradient-subtle);
+      border: 1px solid rgba(99,102,241,0.12);
+      margin-right: 12px;
+      vertical-align: middle;
+      font-size: 1rem;
+    }
+    .legal-section {
+      margin-bottom: 24px;
+      padding: 20px 24px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+    .legal-section:hover {
+      border-color: var(--brand-light);
+      box-shadow: var(--shadow-sm);
+    }
+    .legal-section:last-child {
+      margin-bottom: 0;
+    }
+    .legal-section p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+    .legal-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--brand);
+      background: rgba(30,64,175,0.06);
+      border: 1px solid rgba(30,64,175,0.12);
+      transition: all 0.2s;
+    }
+    .legal-back:hover {
+      background: rgba(30,64,175,0.1);
+      border-color: rgba(30,64,175,0.25);
+      transform: translateX(-2px);
+    }
+
+    /* FOOTER */
+    .footer { padding: 48px 0; border-top: 1px solid var(--line); }
+    .footer-inner { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 48px; }
+    .footer .brand { margin-bottom: 16px; }
+    .footer-note { font-size: 0.88rem; color: var(--muted); line-height: 1.7; max-width: 50ch; }
+    .footer-legal { font-size: 0.82rem; color: var(--dim); margin-top: 12px; line-height: 1.6; }
+    .footer-links h4 {
+      font-size: 0.85rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--dim); margin-bottom: 16px;
+    }
+    .footer-links a { display: block; font-size: 0.9rem; color: var(--muted); padding: 6px 0; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--brand); }
+
+    /* LANG */
+    .lang { display: none; }
+    .lang.active { display: block; }
+    span.lang { display: none; }
+    span.lang.active { display: inline; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 680px) {
+      .wrap { width: calc(100% - 32px); }
+      .legal-card { padding: 32px 24px; }
+      .legal-section { padding: 16px 18px; }
+      .nav-link { display: none; }
+    }
+    @media (max-width: 480px) {
+      .nav { height: 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <img src="assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" />
+        <div>
+          <div class="brand-title">RCI Tutoring</div>
+          <div class="brand-sub">Hemodialysis Education</div>
+        </div>
+      </a>
+      <div class="nav-right">
+        <a class="nav-link" href="index.html">
+          <span class="lang active" data-lang="es">&larr; Inicio</span>
+          <span class="lang" data-lang="en">&larr; Home</span>
+        </a>
+        <div class="lang-pill">
+          <button class="active" data-lang-btn="es">ES</button>
+          <button data-lang-btn="en">EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="legal-hero">
+    <div class="wrap">
+      <div class="lang active" data-lang="es">
+        <h1><span class="gradient-text">Aviso Legal</span></h1>
+        <p>Descargo de responsabilidad de RCI Tutoring. Por favor, lea este documento detenidamente antes de utilizar nuestra plataforma.</p>
+      </div>
+      <div class="lang" data-lang="en">
+        <h1><span class="gradient-text">Legal Disclaimer</span></h1>
+        <p>RCI Tutoring legal disclaimer. Please read this document carefully before using our platform.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEGAL CONTENT -->
+  <section class="legal-content">
+    <div class="wrap">
+      <div class="legal-card">
+
+        <!-- SPANISH VERSION -->
+        <div class="lang active" data-lang="es">
+          <h2><span class="icon">&#9878;</span> RCI Tutoring &mdash; Aviso Legal y Descargo de Responsabilidad</h2>
+
+          <div class="legal-section">
+            <p>RCI Tutoring es una plataforma de entrenamiento educativo y tutor&#237;a en el &#225;rea de hemodi&#225;lisis. Todo el contenido proporcionado, incluyendo pero no limitado a textos, materiales, respuestas generadas por inteligencia artificial, sesiones de tutor&#237;a y recursos digitales, tiene fines exclusivamente educativos e informativos.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>RCI Tutoring no es una instituci&#243;n educativa acreditada, no otorga t&#237;tulos acad&#233;micos, licencias profesionales ni certificaciones oficiales de ning&#250;n tipo. La participaci&#243;n en esta plataforma no garantiza la obtenci&#243;n de empleo, certificaciones, credenciales profesionales ni resultados espec&#237;ficos.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>RCI Tutoring no est&#225; afiliado, asociado, autorizado ni respaldado por ninguna organizaci&#243;n certificadora, incluyendo pero no limitado a BONENT (Board of Nephrology Examiners Nursing and Technology) u otras entidades regulatorias o educativas.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>La preparaci&#243;n ofrecida por RCI Tutoring puede estar orientada a est&#225;ndares internacionales de pr&#225;ctica cl&#237;nica, pero no sustituye programas formales de educaci&#243;n, entrenamiento cl&#237;nico supervisado, ni requisitos legales establecidos por autoridades sanitarias o regulatorias en ning&#250;n pa&#237;s.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>El uso de esta plataforma no constituye asesoramiento m&#233;dico, diagn&#243;stico, tratamiento ni recomendaci&#243;n cl&#237;nica individual. Los usuarios no deben utilizar la informaci&#243;n proporcionada como sustituto del juicio cl&#237;nico profesional, ni para la toma de decisiones m&#233;dicas relacionadas con pacientes.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>RCI Tutoring no se hace responsable por el uso indebido de la informaci&#243;n proporcionada, ni por decisiones tomadas basadas en el contenido de la plataforma. El usuario asume toda la responsabilidad sobre la aplicaci&#243;n de los conocimientos adquiridos.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>Al utilizar esta plataforma, el usuario acepta que los servicios ofrecidos corresponden a tutor&#237;a educativa independiente y que cualquier proceso de certificaci&#243;n profesional depende exclusivamente de los organismos correspondientes y sus requisitos vigentes.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>Este sitio puede incluir enlaces a recursos externos. RCI Tutoring no controla ni garantiza la exactitud, disponibilidad o contenido de dichos recursos.</p>
+          </div>
+
+          <div class="legal-section">
+            <p><strong>El uso de esta plataforma implica la aceptaci&#243;n total de este aviso legal.</strong></p>
+          </div>
+
+          <a class="legal-back" href="index.html">&larr; Volver al inicio</a>
+        </div>
+
+        <!-- ENGLISH VERSION -->
+        <div class="lang" data-lang="en">
+          <h2><span class="icon">&#9878;</span> RCI Tutoring &mdash; Legal Notice and Disclaimer</h2>
+
+          <div class="legal-section">
+            <p>RCI Tutoring is an educational training and tutoring platform in the area of hemodialysis. All content provided, including but not limited to texts, materials, AI-generated responses, tutoring sessions, and digital resources, is for educational and informational purposes only.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>RCI Tutoring is not an accredited educational institution and does not grant academic degrees, professional licenses, or official certifications of any kind. Participation in this platform does not guarantee employment, certifications, professional credentials, or specific outcomes.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>RCI Tutoring is not affiliated with, associated with, authorized by, or endorsed by any certifying organization, including but not limited to BONENT (Board of Nephrology Examiners Nursing and Technology) or other regulatory or educational entities.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>The preparation offered by RCI Tutoring may be oriented toward international clinical practice standards, but it does not replace formal education programs, supervised clinical training, or legal requirements established by health or regulatory authorities in any country.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>The use of this platform does not constitute medical advice, diagnosis, treatment, or individual clinical recommendation. Users should not use the information provided as a substitute for professional clinical judgment, nor for making medical decisions related to patients.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>RCI Tutoring is not responsible for the misuse of information provided, nor for decisions made based on the platform's content. The user assumes full responsibility for the application of knowledge acquired.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>By using this platform, the user agrees that the services offered correspond to independent educational tutoring and that any professional certification process depends exclusively on the corresponding organizations and their current requirements.</p>
+          </div>
+
+          <div class="legal-section">
+            <p>This site may include links to external resources. RCI Tutoring does not control or guarantee the accuracy, availability, or content of such resources.</p>
+          </div>
+
+          <div class="legal-section">
+            <p><strong>The use of this platform implies full acceptance of this legal notice.</strong></p>
+          </div>
+
+          <a class="legal-back" href="index.html">&larr; Back to home</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-inner">
+        <div>
+          <div class="brand">
+            <img src="assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" />
+            <div>
+              <div class="brand-title">RCI Tutoring</div>
+              <div class="brand-sub">Hemodialysis Education</div>
+            </div>
+          </div>
+          <div class="lang active" data-lang="es">
+            <p class="footer-note">RCI Tutoring es una marca educativa orientada a tutor&#237;a y refuerzo acad&#233;mico en hemodi&#225;lisis. Dise&#241;ada con lenguaje prudente y profesional.</p>
+            <p class="footer-legal">Este sitio se presenta con fines educativos e informativos. No sustituye pol&#237;ticas institucionales, orientaci&#243;n cl&#237;nica local ni juicio profesional individual.</p>
+          </div>
+          <div class="lang" data-lang="en">
+            <p class="footer-note">RCI Tutoring is an educational brand focused on tutoring and academic reinforcement in hemodialysis. Designed with prudent, professional language.</p>
+            <p class="footer-legal">This site is presented for educational and informational purposes. It does not replace institutional policies, local clinical guidance, or individual professional judgment.</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4><span class="lang active" data-lang="es">Legal</span><span class="lang" data-lang="en">Legal</span></h4>
+          <a href="legal.html"><span class="lang active" data-lang="es">Aviso Legal</span><span class="lang" data-lang="en">Legal Disclaimer</span></a>
+          <a href="privacy.html"><span class="lang active" data-lang="es">Pol&#237;tica de Privacidad</span><span class="lang" data-lang="en">Privacy Policy</span></a>
+          <a href="cookies.html"><span class="lang active" data-lang="es">Pol&#237;tica de Cookies</span><span class="lang" data-lang="en">Cookies Policy</span></a>
+          <a href="index.html"><span class="lang active" data-lang="es">Inicio</span><span class="lang" data-lang="en">Home</span></a>
+          <a href="mailto:info@rcitutoring.com">info@rcitutoring.com</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    var buttons = document.querySelectorAll('[data-lang-btn]');
+    var langBlocks = document.querySelectorAll('.lang');
+    function setLanguage(lang) {
+      langBlocks.forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+      buttons.forEach(function(btn) { btn.classList.toggle('active', btn.dataset.langBtn === lang); });
+      document.documentElement.lang = lang;
+    }
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() { setLanguage(btn.dataset.langBtn); });
+    });
+    setLanguage('es');
+  </script>
+  <script src="assets/auth-gate.js"></script>
+  <script src="assets/cookie-banner.js"></script>
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>RCI Tutoring | Pol&#237;tica de Privacidad</title>
+  <script>if(sessionStorage.getItem('rci_auth')!=='ok')document.documentElement.classList.add('auth-pending');</script>
+  <style>.auth-pending body{display:none!important}</style>
+  <meta name="description" content="Pol&#237;tica de privacidad de RCI Tutoring." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8faff;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --dim: #94a3b8;
+      --line: #e2e8f0;
+      --brand: #1e40af;
+      --brand-light: #3b82f6;
+      --gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
+      --gradient-subtle: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(6,182,212,0.08));
+      --shadow-sm: 0 1px 3px rgba(15,23,42,0.06);
+      --shadow: 0 4px 24px rgba(15,23,42,0.08);
+      --shadow-lg: 0 20px 60px rgba(15,23,42,0.12);
+      --radius: 16px;
+      --radius-lg: 24px;
+      --max: 1200px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
+
+    /* NAV */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(226,232,240,0.8);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand img { width: 44px; height: 44px; border-radius: 12px; object-fit: contain; background: #fff; box-shadow: var(--shadow-sm); padding: 3px; }
+    .brand-title { font-weight: 900; font-size: 1.1rem; letter-spacing: -0.02em; }
+    .brand-sub { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .nav-link { padding: 8px 16px; font-size: 0.9rem; font-weight: 600; color: var(--muted); border-radius: 10px; transition: all 0.2s; }
+    .nav-link:hover { color: var(--text); background: rgba(15,23,42,0.04); }
+    .lang-pill { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-left: 8px; }
+    .lang-pill button {
+      padding: 7px 14px; border: none; background: transparent;
+      font-size: 0.8rem; font-weight: 700; color: var(--dim);
+      cursor: pointer; transition: all 0.2s; font-family: inherit;
+    }
+    .lang-pill button.active { background: var(--brand); color: #fff; }
+
+    /* LEGAL CONTENT */
+    .legal-hero {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+    .legal-hero h1 {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .legal-hero h1 .gradient-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .legal-hero p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 60ch;
+      margin: 0 auto;
+    }
+
+    .legal-content {
+      padding: 0 0 80px;
+    }
+    .legal-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 48px;
+      box-shadow: var(--shadow);
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .legal-card h2 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--line);
+    }
+    .legal-card h2 .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--gradient-subtle);
+      border: 1px solid rgba(99,102,241,0.12);
+      margin-right: 12px;
+      vertical-align: middle;
+      font-size: 1rem;
+    }
+    .legal-card h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    .legal-section {
+      margin-bottom: 24px;
+      padding: 20px 24px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+    .legal-section:hover {
+      border-color: var(--brand-light);
+      box-shadow: var(--shadow-sm);
+    }
+    .legal-section:last-child {
+      margin-bottom: 0;
+    }
+    .legal-section p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+    .legal-section ul {
+      list-style: none;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .legal-section ul li {
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.7;
+      padding-left: 18px;
+      position: relative;
+    }
+    .legal-section ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--brand-light);
+    }
+    .legal-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--brand);
+      background: rgba(30,64,175,0.06);
+      border: 1px solid rgba(30,64,175,0.12);
+      transition: all 0.2s;
+    }
+    .legal-back:hover {
+      background: rgba(30,64,175,0.1);
+      border-color: rgba(30,64,175,0.25);
+      transform: translateX(-2px);
+    }
+
+    /* FOOTER */
+    .footer { padding: 48px 0; border-top: 1px solid var(--line); }
+    .footer-inner { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 48px; }
+    .footer .brand { margin-bottom: 16px; }
+    .footer-note { font-size: 0.88rem; color: var(--muted); line-height: 1.7; max-width: 50ch; }
+    .footer-legal { font-size: 0.82rem; color: var(--dim); margin-top: 12px; line-height: 1.6; }
+    .footer-links h4 {
+      font-size: 0.85rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--dim); margin-bottom: 16px;
+    }
+    .footer-links a { display: block; font-size: 0.9rem; color: var(--muted); padding: 6px 0; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--brand); }
+
+    /* LANG */
+    .lang { display: none; }
+    .lang.active { display: block; }
+    span.lang { display: none; }
+    span.lang.active { display: inline; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 680px) {
+      .wrap { width: calc(100% - 32px); }
+      .legal-card { padding: 32px 24px; }
+      .legal-section { padding: 16px 18px; }
+      .nav-link { display: none; }
+    }
+    @media (max-width: 480px) {
+      .nav { height: 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <img src="assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" />
+        <div>
+          <div class="brand-title">RCI Tutoring</div>
+          <div class="brand-sub">Hemodialysis Education</div>
+        </div>
+      </a>
+      <div class="nav-right">
+        <a class="nav-link" href="index.html">
+          <span class="lang active" data-lang="es">&larr; Inicio</span>
+          <span class="lang" data-lang="en">&larr; Home</span>
+        </a>
+        <div class="lang-pill">
+          <button class="active" data-lang-btn="es">ES</button>
+          <button data-lang-btn="en">EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="legal-hero">
+    <div class="wrap">
+      <div class="lang active" data-lang="es">
+        <h1><span class="gradient-text">Pol&#237;tica de Privacidad</span></h1>
+        <p>Conoce c&#243;mo RCI Tutoring recopila, utiliza y protege tu informaci&#243;n personal.</p>
+      </div>
+      <div class="lang" data-lang="en">
+        <h1><span class="gradient-text">Privacy Policy</span></h1>
+        <p>Learn how RCI Tutoring collects, uses, and protects your personal information.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRIVACY CONTENT -->
+  <section class="legal-content">
+    <div class="wrap">
+      <div class="legal-card">
+
+        <!-- SPANISH VERSION -->
+        <div class="lang active" data-lang="es">
+          <h2><span class="icon">&#128274;</span> Pol&#237;tica de Privacidad de RCI Tutoring</h2>
+
+          <div class="legal-section">
+            <h3>1. Informaci&#243;n que recopilamos</h3>
+            <p>RCI Tutoring puede recopilar la siguiente informaci&#243;n cuando usted utiliza nuestra plataforma:</p>
+            <ul>
+              <li>Nombre y apellido</li>
+              <li>Direcci&#243;n de correo electr&#243;nico</li>
+              <li>Pa&#237;s de residencia</li>
+              <li>Informaci&#243;n proporcionada voluntariamente a trav&#233;s del formulario de contacto</li>
+              <li>Datos de uso y navegaci&#243;n recopilados autom&#225;ticamente (direcci&#243;n IP, tipo de navegador, p&#225;ginas visitadas)</li>
+            </ul>
+          </div>
+
+          <div class="legal-section">
+            <h3>2. C&#243;mo utilizamos su informaci&#243;n</h3>
+            <p>La informaci&#243;n recopilada se utiliza para los siguientes fines:</p>
+            <ul>
+              <li>Responder a sus consultas y solicitudes de informaci&#243;n</li>
+              <li>Mejorar la experiencia del usuario en nuestra plataforma</li>
+              <li>Enviar comunicaciones relacionadas con nuestros servicios educativos (solo si usted ha dado su consentimiento)</li>
+              <li>Fines estad&#237;sticos y de an&#225;lisis para mejorar nuestros servicios</li>
+              <li>Cumplir con obligaciones legales aplicables</li>
+            </ul>
+          </div>
+
+          <div class="legal-section">
+            <h3>3. Compartir informaci&#243;n con terceros</h3>
+            <p>RCI Tutoring no vende, alquila ni comparte su informaci&#243;n personal con terceros con fines comerciales. Podemos compartir informaci&#243;n con proveedores de servicios que nos asisten en la operaci&#243;n de la plataforma (por ejemplo, servicios de alojamiento web, an&#225;lisis de datos), quienes est&#225;n obligados a mantener la confidencialidad de dicha informaci&#243;n.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>4. Protecci&#243;n de datos</h3>
+            <p>Implementamos medidas de seguridad t&#233;cnicas y organizativas razonables para proteger su informaci&#243;n personal contra acceso no autorizado, alteraci&#243;n, divulgaci&#243;n o destrucci&#243;n. Sin embargo, ning&#250;n m&#233;todo de transmisi&#243;n por Internet o almacenamiento electr&#243;nico es 100% seguro.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>5. Sus derechos</h3>
+            <p>Usted tiene derecho a:</p>
+            <ul>
+              <li>Acceder a la informaci&#243;n personal que tenemos sobre usted</li>
+              <li>Solicitar la correcci&#243;n de datos inexactos</li>
+              <li>Solicitar la eliminaci&#243;n de sus datos personales</li>
+              <li>Oponerse al procesamiento de sus datos</li>
+              <li>Retirar su consentimiento en cualquier momento</li>
+            </ul>
+            <p style="margin-top: 10px;">Para ejercer estos derechos, puede contactarnos a trav&#233;s de <strong>info@rcitutoring.com</strong>.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>6. Servicios de terceros</h3>
+            <p>Nuestra plataforma puede utilizar servicios de terceros como Google Analytics, servicios de inteligencia artificial (Anthropic/Claude) y herramientas de formularios. Cada uno de estos servicios tiene sus propias pol&#237;ticas de privacidad que le recomendamos consultar.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>7. Menores de edad</h3>
+            <p>RCI Tutoring no est&#225; dirigido a menores de 18 a&#241;os. No recopilamos intencionalmente informaci&#243;n de menores. Si descubrimos que hemos recopilado datos de un menor, los eliminaremos de inmediato.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>8. Cambios en esta pol&#237;tica</h3>
+            <p>Nos reservamos el derecho de actualizar esta pol&#237;tica de privacidad en cualquier momento. Los cambios ser&#225;n publicados en esta p&#225;gina. Le recomendamos revisarla peri&#243;dicamente.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>9. Contacto</h3>
+            <p>Si tiene preguntas sobre esta pol&#237;tica de privacidad, puede contactarnos en: <strong>info@rcitutoring.com</strong></p>
+          </div>
+
+          <a class="legal-back" href="index.html">&larr; Volver al inicio</a>
+        </div>
+
+        <!-- ENGLISH VERSION -->
+        <div class="lang" data-lang="en">
+          <h2><span class="icon">&#128274;</span> RCI Tutoring Privacy Policy</h2>
+
+          <div class="legal-section">
+            <h3>1. Information We Collect</h3>
+            <p>RCI Tutoring may collect the following information when you use our platform:</p>
+            <ul>
+              <li>First and last name</li>
+              <li>Email address</li>
+              <li>Country of residence</li>
+              <li>Information voluntarily provided through the contact form</li>
+              <li>Usage and browsing data collected automatically (IP address, browser type, pages visited)</li>
+            </ul>
+          </div>
+
+          <div class="legal-section">
+            <h3>2. How We Use Your Information</h3>
+            <p>The information collected is used for the following purposes:</p>
+            <ul>
+              <li>Responding to your inquiries and information requests</li>
+              <li>Improving the user experience on our platform</li>
+              <li>Sending communications related to our educational services (only if you have given consent)</li>
+              <li>Statistical and analytical purposes to improve our services</li>
+              <li>Complying with applicable legal obligations</li>
+            </ul>
+          </div>
+
+          <div class="legal-section">
+            <h3>3. Sharing Information with Third Parties</h3>
+            <p>RCI Tutoring does not sell, rent, or share your personal information with third parties for commercial purposes. We may share information with service providers who assist us in operating the platform (e.g., web hosting, data analytics), who are required to maintain the confidentiality of such information.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>4. Data Protection</h3>
+            <p>We implement reasonable technical and organizational security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of Internet transmission or electronic storage is 100% secure.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>5. Your Rights</h3>
+            <p>You have the right to:</p>
+            <ul>
+              <li>Access the personal information we hold about you</li>
+              <li>Request correction of inaccurate data</li>
+              <li>Request deletion of your personal data</li>
+              <li>Object to the processing of your data</li>
+              <li>Withdraw your consent at any time</li>
+            </ul>
+            <p style="margin-top: 10px;">To exercise these rights, you may contact us at <strong>info@rcitutoring.com</strong>.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>6. Third-Party Services</h3>
+            <p>Our platform may use third-party services such as Google Analytics, artificial intelligence services (Anthropic/Claude), and form tools. Each of these services has its own privacy policies that we recommend you review.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>7. Minors</h3>
+            <p>RCI Tutoring is not directed at individuals under 18 years of age. We do not intentionally collect information from minors. If we discover that we have collected data from a minor, we will delete it immediately.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>8. Changes to This Policy</h3>
+            <p>We reserve the right to update this privacy policy at any time. Changes will be posted on this page. We recommend reviewing it periodically.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>9. Contact</h3>
+            <p>If you have questions about this privacy policy, you may contact us at: <strong>info@rcitutoring.com</strong></p>
+          </div>
+
+          <a class="legal-back" href="index.html">&larr; Back to home</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-inner">
+        <div>
+          <div class="brand">
+            <img src="assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" />
+            <div>
+              <div class="brand-title">RCI Tutoring</div>
+              <div class="brand-sub">Hemodialysis Education</div>
+            </div>
+          </div>
+          <div class="lang active" data-lang="es">
+            <p class="footer-note">RCI Tutoring es una marca educativa orientada a tutor&#237;a y refuerzo acad&#233;mico en hemodi&#225;lisis.</p>
+          </div>
+          <div class="lang" data-lang="en">
+            <p class="footer-note">RCI Tutoring is an educational brand focused on tutoring and academic reinforcement in hemodialysis.</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4><span class="lang active" data-lang="es">Legal</span><span class="lang" data-lang="en">Legal</span></h4>
+          <a href="legal.html"><span class="lang active" data-lang="es">Aviso Legal</span><span class="lang" data-lang="en">Legal Disclaimer</span></a>
+          <a href="privacy.html"><span class="lang active" data-lang="es">Pol&#237;tica de Privacidad</span><span class="lang" data-lang="en">Privacy Policy</span></a>
+          <a href="cookies.html"><span class="lang active" data-lang="es">Pol&#237;tica de Cookies</span><span class="lang" data-lang="en">Cookies Policy</span></a>
+          <a href="index.html"><span class="lang active" data-lang="es">Inicio</span><span class="lang" data-lang="en">Home</span></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    var buttons = document.querySelectorAll('[data-lang-btn]');
+    var langBlocks = document.querySelectorAll('.lang');
+    function setLanguage(lang) {
+      langBlocks.forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+      buttons.forEach(function(btn) { btn.classList.toggle('active', btn.dataset.langBtn === lang); });
+      document.documentElement.lang = lang;
+    }
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() { setLanguage(btn.dataset.langBtn); });
+    });
+    setLanguage('es');
+  </script>
+  <script src="assets/auth-gate.js"></script>
+  <script src="assets/cookie-banner.js"></script>
+</body>
+</html>

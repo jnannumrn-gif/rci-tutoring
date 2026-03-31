@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>RCI Tutoring | Pol&#237;tica de Cookies</title>
+  <script>if(sessionStorage.getItem('rci_auth')!=='ok')document.documentElement.classList.add('auth-pending');</script>
+  <style>.auth-pending body{display:none!important}</style>
+  <meta name="description" content="Pol&#237;tica de cookies de RCI Tutoring." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8faff;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --dim: #94a3b8;
+      --line: #e2e8f0;
+      --brand: #1e40af;
+      --brand-light: #3b82f6;
+      --gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
+      --gradient-subtle: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(6,182,212,0.08));
+      --shadow-sm: 0 1px 3px rgba(15,23,42,0.06);
+      --shadow: 0 4px 24px rgba(15,23,42,0.08);
+      --shadow-lg: 0 20px 60px rgba(15,23,42,0.12);
+      --radius: 16px;
+      --radius-lg: 24px;
+      --max: 1200px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
+
+    /* NAV */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(226,232,240,0.8);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand img { width: 44px; height: 44px; border-radius: 12px; object-fit: contain; background: #fff; box-shadow: var(--shadow-sm); padding: 3px; }
+    .brand-title { font-weight: 900; font-size: 1.1rem; letter-spacing: -0.02em; }
+    .brand-sub { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .nav-link { padding: 8px 16px; font-size: 0.9rem; font-weight: 600; color: var(--muted); border-radius: 10px; transition: all 0.2s; }
+    .nav-link:hover { color: var(--text); background: rgba(15,23,42,0.04); }
+    .lang-pill { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-left: 8px; }
+    .lang-pill button {
+      padding: 7px 14px; border: none; background: transparent;
+      font-size: 0.8rem; font-weight: 700; color: var(--dim);
+      cursor: pointer; transition: all 0.2s; font-family: inherit;
+    }
+    .lang-pill button.active { background: var(--brand); color: #fff; }
+
+    /* LEGAL CONTENT */
+    .legal-hero {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+    .legal-hero h1 {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .legal-hero h1 .gradient-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .legal-hero p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 60ch;
+      margin: 0 auto;
+    }
+
+    .legal-content {
+      padding: 0 0 80px;
+    }
+    .legal-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 48px;
+      box-shadow: var(--shadow);
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .legal-card h2 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--line);
+    }
+    .legal-card h2 .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--gradient-subtle);
+      border: 1px solid rgba(99,102,241,0.12);
+      margin-right: 12px;
+      vertical-align: middle;
+      font-size: 1rem;
+    }
+    .legal-card h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    .legal-section {
+      margin-bottom: 24px;
+      padding: 20px 24px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+    .legal-section:hover {
+      border-color: var(--brand-light);
+      box-shadow: var(--shadow-sm);
+    }
+    .legal-section:last-child {
+      margin-bottom: 0;
+    }
+    .legal-section p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+    .legal-section ul {
+      list-style: none;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .legal-section ul li {
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.7;
+      padding-left: 18px;
+      position: relative;
+    }
+    .legal-section ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--brand-light);
+    }
+    .cookie-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.9rem;
+    }
+    .cookie-table th,
+    .cookie-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+    }
+    .cookie-table th {
+      font-weight: 800;
+      color: var(--text);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: rgba(99,102,241,0.04);
+    }
+    .cookie-table tr:last-child td {
+      border-bottom: none;
+    }
+    .legal-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--brand);
+      background: rgba(30,64,175,0.06);
+      border: 1px solid rgba(30,64,175,0.12);
+      transition: all 0.2s;
+    }
+    .legal-back:hover {
+      background: rgba(30,64,175,0.1);
+      border-color: rgba(30,64,175,0.25);
+      transform: translateX(-2px);
+    }
+
+    /* FOOTER */
+    .footer { padding: 48px 0; border-top: 1px solid var(--line); }
+    .footer-inner { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 48px; }
+    .footer .brand { margin-bottom: 16px; }
+    .footer-note { font-size: 0.88rem; color: var(--muted); line-height: 1.7; max-width: 50ch; }
+    .footer-legal { font-size: 0.82rem; color: var(--dim); margin-top: 12px; line-height: 1.6; }
+    .footer-links h4 {
+      font-size: 0.85rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--dim); margin-bottom: 16px;
+    }
+    .footer-links a { display: block; font-size: 0.9rem; color: var(--muted); padding: 6px 0; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--brand); }
+
+    /* LANG */
+    .lang { display: none; }
+    .lang.active { display: block; }
+    span.lang { display: none; }
+    span.lang.active { display: inline; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 680px) {
+      .wrap { width: calc(100% - 32px); }
+      .legal-card { padding: 32px 24px; }
+      .legal-section { padding: 16px 18px; }
+      .nav-link { display: none; }
+      .cookie-table { font-size: 0.82rem; }
+      .cookie-table th, .cookie-table td { padding: 8px 10px; }
+    }
+    @media (max-width: 480px) {
+      .nav { height: 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <img src="assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" />
+        <div>
+          <div class="brand-title">RCI Tutoring</div>
+          <div class="brand-sub">Hemodialysis Education</div>
+        </div>
+      </a>
+      <div class="nav-right">
+        <a class="nav-link" href="index.html">
+          <span class="lang active" data-lang="es">&larr; Inicio</span>
+          <span class="lang" data-lang="en">&larr; Home</span>
+        </a>
+        <div class="lang-pill">
+          <button class="active" data-lang-btn="es">ES</button>
+          <button data-lang-btn="en">EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="legal-hero">
+    <div class="wrap">
+      <div class="lang active" data-lang="es">
+        <h1><span class="gradient-text">Pol&#237;tica de Cookies</span></h1>
+        <p>Informaci&#243;n sobre el uso de cookies y tecnolog&#237;as similares en RCI Tutoring.</p>
+      </div>
+      <div class="lang" data-lang="en">
+        <h1><span class="gradient-text">Cookies Policy</span></h1>
+        <p>Information about the use of cookies and similar technologies on RCI Tutoring.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COOKIES CONTENT -->
+  <section class="legal-content">
+    <div class="wrap">
+      <div class="legal-card">
+
+        <!-- SPANISH VERSION -->
+        <div class="lang active" data-lang="es">
+          <h2><span class="icon">&#127850;</span> Pol&#237;tica de Cookies de RCI Tutoring</h2>
+
+          <div class="legal-section">
+            <h3>1. &#191;Qu&#233; son las cookies?</h3>
+            <p>Las cookies son peque&#241;os archivos de texto que se almacenan en su dispositivo (computadora, tableta o tel&#233;fono m&#243;vil) cuando visita un sitio web. Se utilizan ampliamente para hacer que los sitios web funcionen de manera eficiente y proporcionar informaci&#243;n a los propietarios del sitio.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>2. Cookies que utilizamos</h3>
+            <p>RCI Tutoring utiliza los siguientes tipos de cookies y tecnolog&#237;as de almacenamiento:</p>
+            <table class="cookie-table">
+              <thead>
+                <tr>
+                  <th>Nombre / Tipo</th>
+                  <th>Prop&#243;sito</th>
+                  <th>Duraci&#243;n</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>rci_auth</strong> (sessionStorage)</td>
+                  <td>Verifica que el usuario ha pasado la verificaci&#243;n de acceso a la plataforma</td>
+                  <td>Sesi&#243;n</td>
+                </tr>
+                <tr>
+                  <td><strong>rci_lang</strong> (localStorage)</td>
+                  <td>Almacena la preferencia de idioma del usuario (ES/EN)</td>
+                  <td>Persistente</td>
+                </tr>
+                <tr>
+                  <td><strong>Cookies de an&#225;lisis</strong></td>
+                  <td>Cookies de terceros (ej. Google Analytics) que nos ayudan a entender c&#243;mo se utiliza el sitio</td>
+                  <td>Variable</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="legal-section">
+            <h3>3. Tipos de cookies seg&#250;n su finalidad</h3>
+            <ul>
+              <li><strong>Cookies esenciales:</strong> Necesarias para el funcionamiento b&#225;sico del sitio (autenticaci&#243;n, preferencias de idioma). No se pueden desactivar.</li>
+              <li><strong>Cookies de an&#225;lisis:</strong> Nos permiten medir el tr&#225;fico y analizar el comportamiento de los usuarios para mejorar nuestros servicios.</li>
+              <li><strong>Cookies de terceros:</strong> Establecidas por servicios externos utilizados en nuestra plataforma (herramientas de an&#225;lisis, servicios de IA).</li>
+            </ul>
+          </div>
+
+          <div class="legal-section">
+            <h3>4. C&#243;mo gestionar las cookies</h3>
+            <p>Puede configurar su navegador para rechazar o eliminar cookies. Tenga en cuenta que si desactiva las cookies esenciales, algunas funciones del sitio pueden no funcionar correctamente. Consulte la documentaci&#243;n de su navegador para obtener instrucciones espec&#237;ficas:</p>
+            <ul>
+              <li>Google Chrome: Configuraci&#243;n &gt; Privacidad y seguridad &gt; Cookies</li>
+              <li>Mozilla Firefox: Opciones &gt; Privacidad &amp; Seguridad</li>
+              <li>Safari: Preferencias &gt; Privacidad</li>
+              <li>Microsoft Edge: Configuraci&#243;n &gt; Cookies y permisos del sitio</li>
+            </ul>
+          </div>
+
+          <div class="legal-section">
+            <h3>5. Almacenamiento local (localStorage y sessionStorage)</h3>
+            <p>Adem&#225;s de las cookies tradicionales, utilizamos tecnolog&#237;as de almacenamiento del navegador (localStorage y sessionStorage) para guardar preferencias y datos de sesi&#243;n. Estas tecnolog&#237;as funcionan de manera similar a las cookies pero se gestionan directamente en su navegador.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>6. Cambios en esta pol&#237;tica</h3>
+            <p>Nos reservamos el derecho de actualizar esta pol&#237;tica de cookies en cualquier momento. Los cambios ser&#225;n publicados en esta p&#225;gina.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>7. Contacto</h3>
+            <p>Si tiene preguntas sobre nuestra pol&#237;tica de cookies, puede contactarnos en: <strong>info@rcitutoring.com</strong></p>
+          </div>
+
+          <a class="legal-back" href="index.html">&larr; Volver al inicio</a>
+        </div>
+
+        <!-- ENGLISH VERSION -->
+        <div class="lang" data-lang="en">
+          <h2><span class="icon">&#127850;</span> RCI Tutoring Cookies Policy</h2>
+
+          <div class="legal-section">
+            <h3>1. What Are Cookies?</h3>
+            <p>Cookies are small text files that are stored on your device (computer, tablet, or mobile phone) when you visit a website. They are widely used to make websites work efficiently and to provide information to site owners.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>2. Cookies We Use</h3>
+            <p>RCI Tutoring uses the following types of cookies and storage technologies:</p>
+            <table class="cookie-table">
+              <thead>
+                <tr>
+                  <th>Name / Type</th>
+                  <th>Purpose</th>
+                  <th>Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>rci_auth</strong> (sessionStorage)</td>
+                  <td>Verifies that the user has passed the platform access verification</td>
+                  <td>Session</td>
+                </tr>
+                <tr>
+                  <td><strong>rci_lang</strong> (localStorage)</td>
+                  <td>Stores the user's language preference (ES/EN)</td>
+                  <td>Persistent</td>
+                </tr>
+                <tr>
+                  <td><strong>Analytics cookies</strong></td>
+                  <td>Third-party cookies (e.g., Google Analytics) that help us understand how the site is used</td>
+                  <td>Variable</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="legal-section">
+            <h3>3. Types of Cookies by Purpose</h3>
+            <ul>
+              <li><strong>Essential cookies:</strong> Necessary for basic site functionality (authentication, language preferences). These cannot be disabled.</li>
+              <li><strong>Analytics cookies:</strong> Allow us to measure traffic and analyze user behavior to improve our services.</li>
+              <li><strong>Third-party cookies:</strong> Set by external services used on our platform (analytics tools, AI services).</li>
+            </ul>
+          </div>
+
+          <div class="legal-section">
+            <h3>4. How to Manage Cookies</h3>
+            <p>You can configure your browser to reject or delete cookies. Please note that if you disable essential cookies, some site features may not work properly. Refer to your browser's documentation for specific instructions:</p>
+            <ul>
+              <li>Google Chrome: Settings &gt; Privacy and Security &gt; Cookies</li>
+              <li>Mozilla Firefox: Options &gt; Privacy &amp; Security</li>
+              <li>Safari: Preferences &gt; Privacy</li>
+              <li>Microsoft Edge: Settings &gt; Cookies and site permissions</li>
+            </ul>
+          </div>
+
+          <div class="legal-section">
+            <h3>5. Local Storage (localStorage and sessionStorage)</h3>
+            <p>In addition to traditional cookies, we use browser storage technologies (localStorage and sessionStorage) to save preferences and session data. These technologies work similarly to cookies but are managed directly in your browser.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>6. Changes to This Policy</h3>
+            <p>We reserve the right to update this cookies policy at any time. Changes will be posted on this page.</p>
+          </div>
+
+          <div class="legal-section">
+            <h3>7. Contact</h3>
+            <p>If you have questions about our cookies policy, you may contact us at: <strong>info@rcitutoring.com</strong></p>
+          </div>
+
+          <a class="legal-back" href="index.html">&larr; Back to home</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-inner">
+        <div>
+          <div class="brand">
+            <img src="assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" />
+            <div>
+              <div class="brand-title">RCI Tutoring</div>
+              <div class="brand-sub">Hemodialysis Education</div>
+            </div>
+          </div>
+          <div class="lang active" data-lang="es">
+            <p class="footer-note">RCI Tutoring es una marca educativa orientada a tutor&#237;a y refuerzo acad&#233;mico en hemodi&#225;lisis.</p>
+          </div>
+          <div class="lang" data-lang="en">
+            <p class="footer-note">RCI Tutoring is an educational brand focused on tutoring and academic reinforcement in hemodialysis.</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4><span class="lang active" data-lang="es">Legal</span><span class="lang" data-lang="en">Legal</span></h4>
+          <a href="legal.html"><span class="lang active" data-lang="es">Aviso Legal</span><span class="lang" data-lang="en">Legal Disclaimer</span></a>
+          <a href="privacy.html"><span class="lang active" data-lang="es">Pol&#237;tica de Privacidad</span><span class="lang" data-lang="en">Privacy Policy</span></a>
+          <a href="cookies.html"><span class="lang active" data-lang="es">Pol&#237;tica de Cookies</span><span class="lang" data-lang="en">Cookies Policy</span></a>
+          <a href="index.html"><span class="lang active" data-lang="es">Inicio</span><span class="lang" data-lang="en">Home</span></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    var buttons = document.querySelectorAll('[data-lang-btn]');
+    var langBlocks = document.querySelectorAll('.lang');
+    function setLanguage(lang) {
+      langBlocks.forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+      buttons.forEach(function(btn) { btn.classList.toggle('active', btn.dataset.langBtn === lang); });
+      document.documentElement.lang = lang;
+    }
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() { setLanguage(btn.dataset.langBtn); });
+    });
+    setLanguage('es');
+  </script>
+  <script src="assets/auth-gate.js"></script>
+  <script src="assets/cookie-banner.js"></script>
+</body>
+</html>
