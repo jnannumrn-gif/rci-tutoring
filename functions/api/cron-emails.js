@@ -22,12 +22,13 @@ const EMAIL_STEPS = [
 
 function getEmailTemplate(step, user) {
   const lang = user.idioma || 'es';
-  const name = user.nombre ? user.nombre.split(' ')[0] : '';
+  const rawName = user.nombre ? user.nombre.split(' ')[0] : '';
+  const name = rawName.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
   const templates = {
     1: {
       es: {
-        subject: `¡Bienvenido a RCI Tutoring, ${name}!`,
+        subject: `¡Bienvenido a RCI Tutoring, ${rawName}!`,
         html: `
           <h2>¡Hola ${name}!</h2>
           <p>Tu cuenta de RCI Tutoring está activa. Tienes <strong>7 días de acceso gratuito</strong> a toda la plataforma.</p>
@@ -42,7 +43,7 @@ function getEmailTemplate(step, user) {
         `
       },
       en: {
-        subject: `Welcome to RCI Tutoring, ${name}!`,
+        subject: `Welcome to RCI Tutoring, ${rawName}!`,
         html: `
           <h2>Hi ${name}!</h2>
           <p>Your RCI Tutoring account is active. You have <strong>7 days of free access</strong> to the entire platform.</p>
@@ -59,7 +60,7 @@ function getEmailTemplate(step, user) {
     },
     2: {
       es: {
-        subject: `${name}, ¿cómo va tu aprendizaje?`,
+        subject: `${rawName}, ¿cómo va tu aprendizaje?`,
         html: `
           <h2>¡Hola ${name}!</h2>
           <p>Llevas 3 días en RCI Tutoring. ¿Has tenido la oportunidad de explorar la plataforma?</p>
@@ -74,7 +75,7 @@ function getEmailTemplate(step, user) {
         `
       },
       en: {
-        subject: `${name}, how's your learning going?`,
+        subject: `${rawName}, how's your learning going?`,
         html: `
           <h2>Hi ${name}!</h2>
           <p>You've been on RCI Tutoring for 3 days. Have you had a chance to explore the platform?</p>
@@ -91,7 +92,7 @@ function getEmailTemplate(step, user) {
     },
     3: {
       es: {
-        subject: `${name}, el valor de invertir en tu carrera`,
+        subject: `${rawName}, el valor de invertir en tu carrera`,
         html: `
           <h2>¡Hola ${name}!</h2>
           <p>En 5 días has tenido acceso a herramientas que normalmente cuestan cientos de dólares en programas formales.</p>
@@ -107,7 +108,7 @@ function getEmailTemplate(step, user) {
         `
       },
       en: {
-        subject: `${name}, the value of investing in your career`,
+        subject: `${rawName}, the value of investing in your career`,
         html: `
           <h2>Hi ${name}!</h2>
           <p>In 5 days you've had access to tools that typically cost hundreds of dollars in formal programs.</p>
@@ -125,7 +126,7 @@ function getEmailTemplate(step, user) {
     },
     4: {
       es: {
-        subject: `⚠️ ${name}, tu acceso termina mañana`,
+        subject: `⚠️ ${rawName}, tu acceso termina mañana`,
         html: `
           <h2>${name}, tu prueba termina mañana</h2>
           <p>Este es un recordatorio de que tu acceso gratuito a RCI Tutoring <strong>termina mañana</strong>.</p>
@@ -141,7 +142,7 @@ function getEmailTemplate(step, user) {
         `
       },
       en: {
-        subject: `⚠️ ${name}, your access ends tomorrow`,
+        subject: `⚠️ ${rawName}, your access ends tomorrow`,
         html: `
           <h2>${name}, your trial ends tomorrow</h2>
           <p>This is a reminder that your free access to RCI Tutoring <strong>ends tomorrow</strong>.</p>
@@ -159,7 +160,7 @@ function getEmailTemplate(step, user) {
     },
     5: {
       es: {
-        subject: `🚨 ${name}, tu acceso ha sido bloqueado`,
+        subject: `🚨 ${rawName}, tu acceso ha sido bloqueado`,
         html: `
           <h2>${name}, tu periodo de prueba ha terminado</h2>
           <p>Tu acceso gratuito de 7 días a RCI Tutoring ha finalizado. Tu cuenta ha sido bloqueada.</p>
@@ -173,7 +174,7 @@ function getEmailTemplate(step, user) {
         `
       },
       en: {
-        subject: `🚨 ${name}, your access has been blocked`,
+        subject: `🚨 ${rawName}, your access has been blocked`,
         html: `
           <h2>${name}, your trial has ended</h2>
           <p>Your 7-day free access to RCI Tutoring has ended. Your account has been blocked.</p>
@@ -281,6 +282,9 @@ export async function processEmailSequences(env) {
             'INSERT INTO email_sequences (user_id, step, sent_at) VALUES (?, ?, ?)'
           ).bind(user.id, stepConfig.step, now.toISOString()).run();
         }
+
+        // Only send one email per user per cron run to avoid batch-sending
+        break;
       }
     }
   }
