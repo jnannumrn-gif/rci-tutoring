@@ -26,8 +26,8 @@ const PRICE_MAP_REGULAR = {
   lifetime_latam: 'price_1THXLJCPTBMEWNnk55ASU0iO',   // $39.00 one-time
 };
 
-// Cutover date: July 1, 2025 00:00 UTC
-const REGULAR_PRICING_DATE = new Date('2025-07-01T00:00:00Z');
+// Cutover date: July 1, 2026 00:00 UTC
+const REGULAR_PRICING_DATE = new Date('2026-07-01T00:00:00Z');
 
 function getPriceMap() {
   return new Date() >= REGULAR_PRICING_DATE ? PRICE_MAP_REGULAR : PRICE_MAP_LAUNCH;
