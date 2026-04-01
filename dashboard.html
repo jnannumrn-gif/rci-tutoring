@@ -243,22 +243,22 @@
 
           if (user.days_left >= 4) {
             trialBanner.className = 'trial-banner green';
-            trialText.textContent = currentLang === 'en'
-              ? 'Free trial: ' + user.days_left + ' days remaining'
-              : 'Prueba gratuita: ' + user.days_left + ' d\u00edas restantes';
+            trialText.innerHTML = '<span class="lang" data-lang="es">Prueba gratuita: ' + user.days_left + ' d\u00edas restantes</span>' +
+              '<span class="lang" data-lang="en">Free trial: ' + user.days_left + ' days remaining</span>';
           } else if (user.days_left >= 2) {
             trialBanner.className = 'trial-banner orange';
-            trialText.textContent = currentLang === 'en'
-              ? '\u26a0\ufe0f Only ' + user.days_left + ' days left in your trial'
-              : '\u26a0\ufe0f Solo ' + user.days_left + ' d\u00edas en tu prueba';
+            trialText.innerHTML = '<span class="lang" data-lang="es">\u26a0\ufe0f Solo ' + user.days_left + ' d\u00edas en tu prueba</span>' +
+              '<span class="lang" data-lang="en">\u26a0\ufe0f Only ' + user.days_left + ' days left in your trial</span>';
             upgradeBtn.style.display = 'inline-flex';
           } else {
             trialBanner.className = 'trial-banner red';
-            trialText.textContent = currentLang === 'en'
-              ? '\ud83d\udea8 Last day of your free trial!'
-              : '\ud83d\udea8 \u00daltimo d\u00eda de tu prueba gratuita!';
+            trialText.innerHTML = '<span class="lang" data-lang="es">\ud83d\udea8 \u00daltimo d\u00eda de tu prueba gratuita!</span>' +
+              '<span class="lang" data-lang="en">\ud83d\udea8 Last day of your free trial!</span>';
             upgradeBtn.style.display = 'inline-flex';
           }
+          // Refresh langBlocks to include new spans and re-apply language
+          langBlocks = document.querySelectorAll('.lang');
+          setLanguage(currentLang);
         } else if (user.status === 'active') {
           // Active subscriber — no banner needed
           trialBanner.style.display = 'none';
