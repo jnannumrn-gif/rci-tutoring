@@ -272,6 +272,25 @@
 
     loadUserData();
 
+    // Check for payment success redirect
+    (function checkPaymentSuccess() {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('payment') === 'success') {
+        var successBanner = document.createElement('div');
+        successBanner.className = 'trial-banner green';
+        successBanner.style.display = 'flex';
+        successBanner.innerHTML = '<span class="trial-banner-text">' +
+          '<span class="lang" data-lang="es">\u2705 \u00a1Pago exitoso! Tu cuenta ha sido activada. Disfruta tu acceso completo.</span>' +
+          '<span class="lang" data-lang="en">\u2705 Payment successful! Your account has been activated. Enjoy your full access.</span>' +
+          '</span>';
+        var dashWrap = document.querySelector('.dashboard-page .wrap');
+        dashWrap.insertBefore(successBanner, dashWrap.firstChild);
+        langBlocks = document.querySelectorAll('.lang');
+        setLanguage(currentLang);
+        window.history.replaceState({}, '', '/dashboard.html');
+      }
+    })();
+
     // Logout
     document.getElementById('logoutBtn').addEventListener('click', async function() {
       try { await fetch('/api/logout', { method: 'POST' }); } catch(e) {}

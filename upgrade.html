@@ -65,7 +65,11 @@
             <span class="lang active" data-lang="es">Flexibilidad total, cancela cuando quieras</span>
             <span class="lang" data-lang="en">Total flexibility, cancel anytime</span>
           </p>
-          <div class="price" id="priceMonthly">$XX</div>
+          <div class="price" id="priceMonthly">$19</div>
+          <div class="price-latam" id="priceMonthlyLatam" style="font-size:0.85rem;color:var(--muted);display:none;">
+            <span class="lang active" data-lang="es">LATAM: $5/mes</span>
+            <span class="lang" data-lang="en">LATAM: $5/mo</span>
+          </div>
           <div class="price-period">
             <span class="lang active" data-lang="es">por mes</span>
             <span class="lang" data-lang="en">per month</span>
@@ -108,7 +112,11 @@
             <span class="lang active" data-lang="es">Un solo pago, acceso para siempre</span>
             <span class="lang" data-lang="en">One payment, access forever</span>
           </p>
-          <div class="price" id="priceLifetime">$XXX</div>
+          <div class="price" id="priceLifetime">$59</div>
+          <div class="price-latam" id="priceLifetimeLatam" style="font-size:0.85rem;color:var(--muted);display:none;">
+            <span class="lang active" data-lang="es">LATAM: $19 pago &uacute;nico</span>
+            <span class="lang" data-lang="en">LATAM: $19 one-time</span>
+          </div>
           <div class="price-period">
             <span class="lang active" data-lang="es">pago &uacute;nico</span>
             <span class="lang" data-lang="en">one-time payment</span>
@@ -256,27 +264,84 @@
       document.getElementById('loginLink').style.display = 'none';
     }
 
-    // Stripe checkout handler (placeholder — needs Stripe keys)
+    // Detect LATAM user and adjust pricing display
+    var isLatam = false;
+    (function detectLatam() {
+      // Check user's country from profile
+      if (token) {
+        fetch('/api/me', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        }).then(function(r) { return r.json(); }).then(function(data) {
+          if (data.user && data.user.pais) {
+            var latamCountries = ['MX','CO','AR','PE','CL','EC','VE','GT','CU','BO','DO','HN','PY','SV','NI','CR','PA','UY','JM','HT','TT','PR','BZ','GY','SR','BS','BB','LC','GD','AG','KN','DM','VC'];
+            isLatam = latamCountries.indexOf(data.user.pais.toUpperCase()) !== -1;
+            if (isLatam) {
+              document.getElementById('priceMonthly').textContent = '$5';
+              document.getElementById('priceLifetime').textContent = '$19';
+              document.getElementById('priceMonthlyLatam').style.display = 'none';
+              document.getElementById('priceLifetimeLatam').style.display = 'none';
+            }
+          }
+        }).catch(function() {});
+      }
+    })();
+
+    // Check for payment result from Stripe redirect
+    (function checkPaymentResult() {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('payment') === 'cancelled') {
+        var cancelMsg = currentLang === 'en' ? 'Payment was cancelled. You can try again anytime.' : 'El pago fue cancelado. Puedes intentar de nuevo cuando quieras.';
+        alert(cancelMsg);
+        window.history.replaceState({}, '', '/upgrade.html');
+      }
+    })();
+
+    // Stripe checkout handler
     function handleSubscribe(plan) {
       if (!token) {
         window.location.href = '/register.html';
         return;
       }
 
-      // Phase 1: Show coming soon message
-      var msg = currentLang === 'en'
-        ? 'Payment processing will be available soon. Please contact info@rcitutoring.com for early access.'
-        : 'El procesamiento de pagos estar\u00e1 disponible pronto. Contacta info@rcitutoring.com para acceso anticipado.';
-      alert(msg);
+      // Use LATAM pricing if user is from LATAM
+      var actualPlan = plan;
+      if (isLatam) {
+        if (plan === 'monthly') actualPlan = 'monthly_latam';
+        if (plan === 'lifetime') actualPlan = 'lifetime_latam';
+      }
 
-      // Phase 2: This will create a Stripe Checkout session
-      // fetch('/api/create-checkout', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      //   body: JSON.stringify({ plan: plan })
-      // }).then(r => r.json()).then(data => {
-      //   if (data.url) window.location.href = data.url;
-      // });
+      // Disable buttons and show loading
+      var btns = document.querySelectorAll('.btn-price');
+      btns.forEach(function(b) { b.disabled = true; b.style.opacity = '0.6'; });
+      var clickedBtn = document.querySelector('[data-plan="' + plan + '"]');
+      if (clickedBtn) {
+        clickedBtn.innerHTML = currentLang === 'en' ? 'Redirecting to Stripe...' : 'Redirigiendo a Stripe...';
+      }
+
+      fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ plan: actualPlan })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          var errMsg = currentLang === 'en'
+            ? 'Could not start checkout: ' + (data.error || 'Unknown error')
+            : 'No se pudo iniciar el pago: ' + (data.error || 'Error desconocido');
+          alert(errMsg);
+          window.location.reload();
+        }
+      })
+      .catch(function(err) {
+        var errMsg = currentLang === 'en'
+          ? 'Connection error. Please try again.'
+          : 'Error de conexi\u00f3n. Por favor intenta de nuevo.';
+        alert(errMsg);
+        window.location.reload();
+      });
     }
   </script>
   <script src="assets/cookie-banner.js"></script>
