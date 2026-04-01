@@ -149,11 +149,16 @@ export async function onRequestPost(context) {
     // Send verification email
     const appUrl = env.APP_URL || 'https://rcitutoring.com';
     const verifyUrl = appUrl + '/verify-email.html?token=' + verifyToken;
-    await sendVerificationEmail(env, email.toLowerCase().trim(), nombre.trim(), idioma || 'es', verifyUrl);
+    const emailResult = await sendVerificationEmail(env, email.toLowerCase().trim(), nombre.trim(), idioma || 'es', verifyUrl);
+
+    if (emailResult.error || emailResult.skipped) {
+      console.error('[REGISTER] Verification email not sent for:', email, emailResult);
+    }
 
     return jsonResponse({
       success: true,
       needs_verification: true,
+      email_sent: !(emailResult.error || emailResult.skipped),
       message: 'Cuenta creada. Revisa tu email para verificar tu cuenta.',
       message_en: 'Account created. Check your email to verify your account.'
     }, 201);
