@@ -119,6 +119,32 @@ export async function onRequestPost(context) {
 
         console.log('[WEBHOOK] Checkout completed for user:', userId, 'plan:', plan);
 
+        // --- Billing address cross-check ---
+        // Stripe provides customer_details.address.country on the checkout session
+        const billingCountry = session.customer_details?.address?.country || null;
+
+        let billingFlag = 0;
+        if (billingCountry) {
+          // Fetch user's declared country
+          const userRow = await env.DB.prepare(
+            'SELECT pais FROM users WHERE id = ?'
+          ).bind(userId).first();
+
+          if (userRow && userRow.pais) {
+            // Puerto Rico (PR) maps to US billing, treat PR ↔ US as matching
+            const normalize = (c) => (c || '').toUpperCase() === 'PR' ? 'US' : (c || '').toUpperCase();
+            if (normalize(billingCountry) !== normalize(userRow.pais)) {
+              billingFlag = 1;
+              console.log('[BILLING] Country mismatch — declared:', userRow.pais, 'billing:', billingCountry, 'user:', userId);
+            }
+          }
+
+          // Store billing country and flag
+          await env.DB.prepare(
+            'UPDATE users SET billing_country = ?, billing_flag = ?, updated_at = datetime(?) WHERE id = ?'
+          ).bind(billingCountry, billingFlag, new Date().toISOString(), userId).run();
+        }
+
         // Determine tier and dates
         const isLifetime = plan && plan.startsWith('lifetime');
         const tier = plan || 'unknown';

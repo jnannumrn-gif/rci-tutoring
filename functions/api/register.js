@@ -73,6 +73,28 @@ async function sendVerificationEmail(env, to, nombre, lang, verifyUrl) {
   return await res.json();
 }
 
+/**
+ * Lookup the user's country via ipapi.co (free tier: 30k/month).
+ * Returns { ip, country } or { ip: clientIp, country: null } on failure.
+ */
+async function lookupIpCountry(clientIp) {
+  if (!clientIp) return { ip: null, country: null };
+  try {
+    const res = await fetch(`https://ipapi.co/${clientIp}/json/`, {
+      headers: { 'User-Agent': 'RCITutoring/1.0' }
+    });
+    if (!res.ok) {
+      console.error('[GEO] ipapi.co error:', res.status);
+      return { ip: clientIp, country: null };
+    }
+    const data = await res.json();
+    return { ip: clientIp, country: data.country_code || null };
+  } catch (err) {
+    console.error('[GEO] ipapi.co fetch failed:', err.message);
+    return { ip: clientIp, country: null };
+  }
+}
+
 export async function onRequestPost(context) {
   const { env } = context;
 
@@ -113,6 +135,22 @@ export async function onRequestPost(context) {
       return jsonResponse({ error: 'Este email ya está registrado', field: 'email' }, 409);
     }
 
+    // IP geolocation check via ipapi.co
+    const clientIp = context.request.headers.get('CF-Connecting-IP')
+      || context.request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim()
+      || null;
+    const geo = await lookupIpCountry(clientIp);
+    const ipCountry = geo.country; // e.g. "US", "HN", etc.
+
+    // Determine if there is a country mismatch (geo_flag)
+    // Puerto Rico (PR) maps to US IP, so treat PR ↔ US as matching
+    const normalizeCountry = (c) => (c || '').toUpperCase() === 'PR' ? 'US' : (c || '').toUpperCase();
+    const geoFlag = (ipCountry && pais && normalizeCountry(ipCountry) !== normalizeCountry(pais)) ? 1 : 0;
+
+    if (geoFlag) {
+      console.log('[GEO] Country mismatch — declared:', pais, 'IP country:', ipCountry, 'IP:', clientIp);
+    }
+
     // Use placeholder trial dates (real dates set on verification)
     const now = new Date();
     const placeholderEnd = new Date(now);
@@ -125,12 +163,13 @@ export async function onRequestPost(context) {
     const verifyToken = generateToken();
     const tokenExpires = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours
 
-    // Insert user (unverified)
+    // Insert user (unverified) with geo data
     await env.DB.prepare(`
       INSERT INTO users
       (nombre, email, password_hash, telefono, codigo_pais, pais, rol, idioma,
-       trial_start_date, trial_end_date, status, email_verified, email_verify_token, email_verify_expires)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'trial', 0, ?, ?)
+       trial_start_date, trial_end_date, status, email_verified, email_verify_token, email_verify_expires,
+       registration_ip, ip_country, geo_flag)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'trial', 0, ?, ?, ?, ?, ?)
     `).bind(
       nombre.trim(),
       email.toLowerCase().trim(),
@@ -143,7 +182,10 @@ export async function onRequestPost(context) {
       now.toISOString(),
       placeholderEnd.toISOString(),
       verifyToken,
-      tokenExpires.toISOString()
+      tokenExpires.toISOString(),
+      clientIp || null,
+      ipCountry || null,
+      geoFlag
     ).run();
 
     // Send verification email
