@@ -92,9 +92,14 @@ export async function onRequestPost(context) {
     // Send verification email
     var appUrl = env.APP_URL || 'https://rcitutoring.com';
     var verifyUrl = appUrl + '/verify-email.html?token=' + verifyToken;
-    await sendVerificationEmail(env, user.email, user.nombre, user.idioma || 'es', verifyUrl);
+    var emailResult = await sendVerificationEmail(env, user.email, user.nombre, user.idioma || 'es', verifyUrl);
 
-    return jsonResponse({ success: true, message: 'Email de verificación reenviado' });
+    if (emailResult.error || emailResult.skipped) {
+      console.error('[RESEND] Verification email not sent for:', user.email, emailResult);
+      return jsonResponse({ success: false, error: 'No se pudo enviar el email', error_en: 'Could not send email', email_sent: false }, 500);
+    }
+
+    return jsonResponse({ success: true, message: 'Email de verificación reenviado', email_sent: true });
 
   } catch (err) {
     console.error('Resend verification error:', err);
