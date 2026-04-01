@@ -50,6 +50,16 @@
 
       <div id="alertBox" class="alert alert-error"></div>
 
+      <!-- Verification needed banner -->
+      <div id="verifyBanner" style="display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:12px;padding:16px;margin-bottom:16px;text-align:center;">
+        <p style="margin-bottom:8px;color:#92400e;font-weight:600;" id="verifyBannerMsg"></p>
+        <button id="resendFromLogin" style="background:#1e40af;color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:0.85rem;">
+          <span class="lang active" data-lang="es">Reenviar email de verificaci&oacute;n</span>
+          <span class="lang" data-lang="en">Resend verification email</span>
+        </button>
+        <p id="resendLoginStatus" style="font-size:0.8rem;margin-top:8px;display:none;"></p>
+      </div>
+
       <form id="loginForm" novalidate>
         <div class="form-group">
           <label for="email">
@@ -191,6 +201,16 @@
         var data = await res.json();
 
         if (!res.ok) {
+          if (data.needs_verification) {
+            var verifyBanner = document.getElementById('verifyBanner');
+            var bannerMsg = document.getElementById('verifyBannerMsg');
+            bannerMsg.textContent = currentLang === 'en'
+              ? (data.error_en || 'Your email has not been verified. Check your inbox.')
+              : (data.error || 'Tu email no ha sido verificado. Revisa tu bandeja de entrada.');
+            verifyBanner.style.display = 'block';
+            verifyBanner._email = data.email || email;
+            return;
+          }
           alertBox.textContent = data.error || (currentLang === 'en' ? 'Login error' : 'Error al iniciar sesi\u00f3n');
           alertBox.classList.add('visible');
           return;
@@ -224,6 +244,48 @@
     if (localStorage.getItem('rci_token')) {
       window.location.href = '/dashboard.html';
     }
+
+    // Resend verification from login page
+    document.getElementById('resendFromLogin').addEventListener('click', function() {
+      var btn = document.getElementById('resendFromLogin');
+      var statusEl = document.getElementById('resendLoginStatus');
+      var verifyBanner = document.getElementById('verifyBanner');
+      var emailToResend = verifyBanner._email;
+      if (!emailToResend) return;
+
+      btn.disabled = true;
+      btn.textContent = currentLang === 'en' ? 'Sending...' : 'Enviando...';
+
+      fetch('/api/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailToResend })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        statusEl.style.display = 'block';
+        if (data.success) {
+          statusEl.textContent = currentLang === 'en' ? 'Email sent! Check your inbox.' : '\u00a1Email enviado! Revisa tu bandeja.';
+          statusEl.style.color = '#16a34a';
+        } else {
+          statusEl.textContent = currentLang === 'en' ? (data.error_en || data.error) : data.error;
+          statusEl.style.color = '#dc2626';
+          btn.disabled = false;
+        }
+        setTimeout(function() {
+          btn.disabled = false;
+          btn.innerHTML = '<span class="lang" data-lang="es">Reenviar email de verificaci\u00f3n</span><span class="lang" data-lang="en">Resend verification email</span>';
+          langBlocks = document.querySelectorAll('.lang');
+          setLanguage(currentLang);
+        }, 5000);
+      })
+      .catch(function() {
+        statusEl.style.display = 'block';
+        statusEl.textContent = currentLang === 'en' ? 'Error. Try again.' : 'Error. Intenta de nuevo.';
+        statusEl.style.color = '#dc2626';
+        btn.disabled = false;
+      });
+    });
   </script>
   <script src="assets/cookie-banner.js"></script>
 </body>

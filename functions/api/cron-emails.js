@@ -232,11 +232,12 @@ export async function processEmailSequences(env) {
   const now = new Date();
   const results = { processed: 0, sent: 0, skipped: 0, errors: 0 };
 
-  // Get all trial users who haven't completed the email sequence
+  // Get all trial users who haven't completed the email sequence (only verified users)
   const users = await env.DB.prepare(`
     SELECT u.id, u.nombre, u.email, u.idioma, u.trial_start_date, u.trial_end_date, u.status
     FROM users u
     WHERE u.status IN ('trial', 'expired')
+      AND u.email_verified = 1
   `).all();
 
   for (const user of users.results) {

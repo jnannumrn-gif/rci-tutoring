@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS users (
   trial_end_date      TEXT NOT NULL,
   stripe_customer_id  TEXT,
   status              TEXT DEFAULT 'trial',
+  email_verified      INTEGER DEFAULT 0,
+  email_verify_token  TEXT,
+  email_verify_expires TEXT,
   created_at          TEXT DEFAULT (datetime('now')),
   updated_at          TEXT DEFAULT (datetime('now'))
 );

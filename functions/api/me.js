@@ -20,7 +20,7 @@ export async function onRequestGet(context) {
     }
 
     const user = await env.DB.prepare(
-      'SELECT id, nombre, email, telefono, pais, rol, idioma, trial_start_date, trial_end_date, status, created_at FROM users WHERE id = ?'
+      'SELECT id, nombre, email, telefono, pais, rol, idioma, trial_start_date, trial_end_date, status, email_verified, created_at FROM users WHERE id = ?'
     ).bind(payload.sub).first();
 
     if (!user) {
@@ -56,6 +56,7 @@ export async function onRequestGet(context) {
         trial_start: user.trial_start_date,
         trial_end: user.trial_end_date,
         days_left: daysLeft,
+        email_verified: user.email_verified === 1,
         created_at: user.created_at
       }
     });

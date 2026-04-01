@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RCI Tutoring | Verificar Email</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/shared-styles.css">
+</head>
+<body>
+  <!-- NAV -->
+  <header class="topbar">
+    <div class="wrap">
+      <nav class="nav">
+        <a href="/" class="brand">
+          <img src="logo.png" alt="RCI Tutoring" />
+          <div>
+            <div class="brand-title">RCI Tutoring</div>
+            <div class="brand-sub">Hemodialysis Education</div>
+          </div>
+        </a>
+        <div class="nav-right">
+          <div class="lang-pill">
+            <button data-lang-btn="es" class="active">ES</button>
+            <button data-lang-btn="en">EN</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- VERIFY EMAIL -->
+  <main class="auth-page">
+    <div class="auth-card" style="text-align:center;">
+      <!-- Loading state -->
+      <div id="loadingState">
+        <div style="font-size:2.5rem;margin-bottom:16px;">&#9993;</div>
+        <h1 style="font-size:1.4rem;">
+          <span class="lang active" data-lang="es">Verificando tu email...</span>
+          <span class="lang" data-lang="en">Verifying your email...</span>
+        </h1>
+        <p class="subtitle">
+          <span class="lang active" data-lang="es">Un momento por favor.</span>
+          <span class="lang" data-lang="en">One moment please.</span>
+        </p>
+      </div>
+
+      <!-- Success state -->
+      <div id="successState" style="display:none;">
+        <div style="font-size:2.5rem;margin-bottom:16px;">&#9989;</div>
+        <h1 style="font-size:1.4rem;color:#16a34a;">
+          <span class="lang active" data-lang="es">&iexcl;Email verificado!</span>
+          <span class="lang" data-lang="en">Email verified!</span>
+        </h1>
+        <p class="subtitle">
+          <span class="lang active" data-lang="es">Tu cuenta ha sido activada. Tu prueba gratuita de 7 d&iacute;as comienza ahora.</span>
+          <span class="lang" data-lang="en">Your account has been activated. Your 7-day free trial starts now.</span>
+        </p>
+        <p class="subtitle" id="redirectMsg">
+          <span class="lang active" data-lang="es">Redirigiendo al dashboard en <span id="countdownEs">3</span> segundos...</span>
+          <span class="lang" data-lang="en">Redirecting to dashboard in <span id="countdownEn">3</span> seconds...</span>
+        </p>
+        <a href="/dashboard.html" class="btn-submit" style="display:inline-block;text-decoration:none;margin-top:16px;">
+          <span class="lang active" data-lang="es">Ir al Dashboard</span>
+          <span class="lang" data-lang="en">Go to Dashboard</span>
+        </a>
+      </div>
+
+      <!-- Error state -->
+      <div id="errorState" style="display:none;">
+        <div style="font-size:2.5rem;margin-bottom:16px;">&#10060;</div>
+        <h1 style="font-size:1.4rem;color:#dc2626;">
+          <span class="lang active" data-lang="es">Error de verificaci&oacute;n</span>
+          <span class="lang" data-lang="en">Verification error</span>
+        </h1>
+        <p class="subtitle" id="errorMessage"></p>
+        <button id="resendBtn" class="btn-submit" style="margin-top:16px;display:none;">
+          <span class="lang active" data-lang="es">Reenviar email de verificaci&oacute;n</span>
+          <span class="lang" data-lang="en">Resend verification email</span>
+        </button>
+        <div style="margin-top:16px;">
+          <a href="/register.html" class="nav-link">
+            <span class="lang active" data-lang="es">Volver al registro</span>
+            <span class="lang" data-lang="en">Back to registration</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Already verified state -->
+      <div id="alreadyVerifiedState" style="display:none;">
+        <div style="font-size:2.5rem;margin-bottom:16px;">&#9989;</div>
+        <h1 style="font-size:1.4rem;color:#16a34a;">
+          <span class="lang active" data-lang="es">Email ya verificado</span>
+          <span class="lang" data-lang="en">Email already verified</span>
+        </h1>
+        <p class="subtitle">
+          <span class="lang active" data-lang="es">Tu email ya fue verificado anteriormente. Puedes iniciar sesi&oacute;n.</span>
+          <span class="lang" data-lang="en">Your email was already verified. You can sign in.</span>
+        </p>
+        <a href="/login.html" class="btn-submit" style="display:inline-block;text-decoration:none;margin-top:16px;">
+          <span class="lang active" data-lang="es">Iniciar sesi&oacute;n</span>
+          <span class="lang" data-lang="en">Sign in</span>
+        </a>
+      </div>
+
+      <!-- No token state -->
+      <div id="noTokenState" style="display:none;">
+        <div style="font-size:2.5rem;margin-bottom:16px;">&#9993;</div>
+        <h1 style="font-size:1.4rem;">
+          <span class="lang active" data-lang="es">Verificaci&oacute;n de email</span>
+          <span class="lang" data-lang="en">Email verification</span>
+        </h1>
+        <p class="subtitle">
+          <span class="lang active" data-lang="es">Si acabas de registrarte, revisa tu bandeja de entrada para el enlace de verificaci&oacute;n.</span>
+          <span class="lang" data-lang="en">If you just registered, check your inbox for the verification link.</span>
+        </p>
+        <div style="margin-top:16px;">
+          <a href="/login.html" class="btn-submit" style="display:inline-block;text-decoration:none;">
+            <span class="lang active" data-lang="es">Iniciar sesi&oacute;n</span>
+            <span class="lang" data-lang="en">Sign in</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-inner">
+        <div>
+          <div class="brand">
+            <img src="logo.png" alt="RCI Tutoring" />
+            <div>
+              <div class="brand-title">RCI Tutoring</div>
+              <div class="brand-sub">Hemodialysis Education</div>
+            </div>
+          </div>
+          <div class="lang active" data-lang="es">
+            <p class="footer-note">RCI Tutoring es una marca educativa orientada a tutor&iacute;a y refuerzo acad&eacute;mico en hemodi&aacute;lisis.</p>
+          </div>
+          <div class="lang" data-lang="en">
+            <p class="footer-note">RCI Tutoring is an educational brand focused on tutoring and academic reinforcement in hemodialysis.</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4><span class="lang active" data-lang="es">Legal</span><span class="lang" data-lang="en">Legal</span></h4>
+          <a href="legal.html"><span class="lang active" data-lang="es">Aviso Legal</span><span class="lang" data-lang="en">Legal Disclaimer</span></a>
+          <a href="privacy.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Privacidad</span><span class="lang" data-lang="en">Privacy Policy</span></a>
+          <a href="cookies.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Cookies</span><span class="lang" data-lang="en">Cookies Policy</span></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Language toggle
+    var buttons = document.querySelectorAll('[data-lang-btn]');
+    var langBlocks = document.querySelectorAll('.lang');
+    var currentLang = localStorage.getItem('rci_lang') || 'es';
+    function setLanguage(lang) {
+      langBlocks.forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+      buttons.forEach(function(btn) { btn.classList.toggle('active', btn.dataset.langBtn === lang); });
+      document.documentElement.lang = lang;
+      currentLang = lang;
+    }
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        setLanguage(btn.dataset.langBtn);
+        localStorage.setItem('rci_lang', btn.dataset.langBtn);
+      });
+    });
+    setLanguage(currentLang);
+
+    // Get token from URL
+    var params = new URLSearchParams(window.location.search);
+    var verifyToken = params.get('token');
+
+    function showState(stateId) {
+      ['loadingState', 'successState', 'errorState', 'alreadyVerifiedState', 'noTokenState'].forEach(function(id) {
+        document.getElementById(id).style.display = 'none';
+      });
+      document.getElementById(stateId).style.display = 'block';
+      langBlocks = document.querySelectorAll('.lang');
+      setLanguage(currentLang);
+    }
+
+    if (!verifyToken) {
+      showState('noTokenState');
+    } else {
+      // Call verify API
+      fetch('/api/verify-email?token=' + encodeURIComponent(verifyToken))
+        .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, status: res.status, data: data }; }); })
+        .then(function(result) {
+          if (result.ok && result.data.success) {
+            if (result.data.already_verified) {
+              showState('alreadyVerifiedState');
+            } else {
+              // Store token and user data
+              if (result.data.token) {
+                localStorage.setItem('rci_token', result.data.token);
+                localStorage.setItem('rci_user', JSON.stringify(result.data.user));
+              }
+              showState('successState');
+              // Countdown redirect
+              var countdown = 3;
+              var interval = setInterval(function() {
+                countdown--;
+                var esEl = document.getElementById('countdownEs');
+                var enEl = document.getElementById('countdownEn');
+                if (esEl) esEl.textContent = countdown;
+                if (enEl) enEl.textContent = countdown;
+                if (countdown <= 0) {
+                  clearInterval(interval);
+                  window.location.href = '/dashboard.html';
+                }
+              }, 1000);
+            }
+          } else {
+            var errorMsg = document.getElementById('errorMessage');
+            var msg = currentLang === 'en'
+              ? (result.data.error_en || result.data.error || 'Verification failed')
+              : (result.data.error || 'Error de verificaci\u00f3n');
+            errorMsg.textContent = msg;
+            showState('errorState');
+
+            // Show resend button if token expired
+            if (result.status === 410) {
+              document.getElementById('resendBtn').style.display = 'inline-block';
+            }
+          }
+        })
+        .catch(function() {
+          var errorMsg = document.getElementById('errorMessage');
+          errorMsg.textContent = currentLang === 'en'
+            ? 'Connection error. Please try again.'
+            : 'Error de conexi\u00f3n. Intenta de nuevo.';
+          showState('errorState');
+        });
+    }
+
+    // Resend verification button
+    document.getElementById('resendBtn').addEventListener('click', function() {
+      var btn = document.getElementById('resendBtn');
+      btn.disabled = true;
+      btn.textContent = currentLang === 'en' ? 'Sending...' : 'Enviando...';
+
+      // Try to get email from localStorage or ask user
+      var storedUser = null;
+      try { storedUser = JSON.parse(localStorage.getItem('rci_pending_verification')); } catch(e) {}
+      var email = storedUser ? storedUser.email : null;
+
+      if (!email) {
+        email = prompt(currentLang === 'en' ? 'Enter your email:' : 'Ingresa tu email:');
+      }
+
+      if (!email) {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="lang" data-lang="es">Reenviar email de verificaci\u00f3n</span><span class="lang" data-lang="en">Resend verification email</span>';
+        langBlocks = document.querySelectorAll('.lang');
+        setLanguage(currentLang);
+        return;
+      }
+
+      fetch('/api/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.success) {
+          btn.textContent = currentLang === 'en' ? 'Email sent! Check your inbox.' : '\u00a1Email enviado! Revisa tu bandeja.';
+          btn.style.background = '#16a34a';
+        } else {
+          var errMsg = currentLang === 'en' ? (data.error_en || data.error) : data.error;
+          btn.textContent = errMsg;
+          btn.style.background = '#dc2626';
+          setTimeout(function() {
+            btn.disabled = false;
+            btn.style.background = '';
+            btn.innerHTML = '<span class="lang" data-lang="es">Reenviar email de verificaci\u00f3n</span><span class="lang" data-lang="en">Resend verification email</span>';
+            langBlocks = document.querySelectorAll('.lang');
+            setLanguage(currentLang);
+          }, 3000);
+        }
+      })
+      .catch(function() {
+        btn.textContent = currentLang === 'en' ? 'Error. Try again.' : 'Error. Intenta de nuevo.';
+        btn.disabled = false;
+        setTimeout(function() {
+          btn.innerHTML = '<span class="lang" data-lang="es">Reenviar email de verificaci\u00f3n</span><span class="lang" data-lang="en">Resend verification email</span>';
+          langBlocks = document.querySelectorAll('.lang');
+          setLanguage(currentLang);
+        }, 2000);
+      });
+    });
+  </script>
+  <script src="assets/cookie-banner.js"></script>
+</body>
+</html>

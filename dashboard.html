@@ -223,6 +223,12 @@
         user = data.user;
         localStorage.setItem('rci_user', JSON.stringify(user));
 
+        // Block unverified users
+        if (user.email_verified === false) {
+          window.location.href = '/verify-email.html';
+          return;
+        }
+
         var firstName = user.nombre ? user.nombre.split(' ')[0] : '';
         document.getElementById('userName').textContent = firstName;
         document.getElementById('userNameEn').textContent = firstName;
