@@ -10,7 +10,7 @@
 import { verifyJWT, extractToken, jsonResponse, corsHeaders } from './_shared/auth.js';
 
 // Price IDs from Stripe Dashboard (test mode)
-// Launch pricing (until June 30, 2025)
+// Launch pricing (until June 30, 2026)
 const PRICE_MAP_LAUNCH = {
   monthly:        'price_1THAsICPTBMEWNnkBreOkbJZ',   // $19.00/month
   monthly_latam:  'price_1THB6TCPTBMEWNnkaiUJLEp5',   // $5.00/month
@@ -18,7 +18,7 @@ const PRICE_MAP_LAUNCH = {
   lifetime_latam: 'price_1THPRXCPTBMEWNnkAjhgTa8q',   // $19.00 one-time
 };
 
-// Regular pricing (July 1, 2025 onwards)
+// Regular pricing (July 1, 2026 onwards)
 const PRICE_MAP_REGULAR = {
   monthly:        'price_1THXL3CPTBMEWNnkF0aQ3ezS',   // $29.00/month
   monthly_latam:  'price_1THXL9CPTBMEWNnkfUJPCd6y',   // $9.00/month
