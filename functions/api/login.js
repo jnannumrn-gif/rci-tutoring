@@ -16,7 +16,7 @@ export async function onRequestPost(context) {
     }
 
     const user = await env.DB.prepare(
-      'SELECT id, nombre, email, password_hash, idioma, trial_end_date, status FROM users WHERE email = ?'
+      'SELECT id, nombre, email, password_hash, idioma, trial_end_date, status, email_verified FROM users WHERE email = ?'
     ).bind(email.toLowerCase().trim()).first();
 
     if (!user) {
@@ -26,6 +26,16 @@ export async function onRequestPost(context) {
     const valid = await verifyPassword(password, user.password_hash);
     if (!valid) {
       return jsonResponse({ error: 'Credenciales incorrectas' }, 401);
+    }
+
+    // Check if email is verified
+    if (user.email_verified === 0) {
+      return jsonResponse({
+        error: 'Tu email no ha sido verificado. Revisa tu bandeja de entrada.',
+        error_en: 'Your email has not been verified. Check your inbox.',
+        needs_verification: true,
+        email: user.email
+      }, 403);
     }
 
     // Check and update trial status if expired
@@ -62,7 +72,8 @@ export async function onRequestPost(context) {
         email: user.email,
         idioma: user.idioma,
         status,
-        trial_end: user.trial_end_date
+        trial_end: user.trial_end_date,
+        email_verified: true
       }
     }), { status: 200, headers });
 

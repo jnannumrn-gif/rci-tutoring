@@ -50,6 +50,28 @@
 
       <div id="alertBox" class="alert alert-error"></div>
 
+      <!-- Verification pending state (shown after successful registration) -->
+      <div id="verificationPending" style="display:none;text-align:center;">
+        <div style="font-size:2.5rem;margin-bottom:16px;">&#9993;</div>
+        <h2 style="font-size:1.3rem;margin-bottom:12px;">
+          <span class="lang active" data-lang="es">&iexcl;Revisa tu email!</span>
+          <span class="lang" data-lang="en">Check your email!</span>
+        </h2>
+        <p style="color:var(--muted);margin-bottom:20px;" id="verifyEmailMsg">
+          <span class="lang active" data-lang="es">Te enviamos un enlace de verificaci&oacute;n a <strong id="sentEmailEs"></strong>. Haz clic en el enlace para activar tu cuenta.</span>
+          <span class="lang" data-lang="en">We sent a verification link to <strong id="sentEmailEn"></strong>. Click the link to activate your account.</span>
+        </p>
+        <p style="color:var(--muted);font-size:0.85rem;margin-bottom:20px;">
+          <span class="lang active" data-lang="es">&iquest;No lo ves? Revisa tu carpeta de spam.</span>
+          <span class="lang" data-lang="en">Don't see it? Check your spam folder.</span>
+        </p>
+        <button id="resendVerifyBtn" class="btn-submit" style="background:var(--muted);margin-bottom:12px;">
+          <span class="lang active" data-lang="es">Reenviar email de verificaci&oacute;n</span>
+          <span class="lang" data-lang="en">Resend verification email</span>
+        </button>
+        <p id="resendStatus" style="font-size:0.85rem;color:var(--muted);display:none;"></p>
+      </div>
+
       <form id="registerForm" novalidate>
         <div class="form-group">
           <label for="nombre">
@@ -285,6 +307,11 @@
         var data = await res.json();
 
         if (!res.ok) {
+          // Handle unverified existing user
+          if (data.needs_verification && data.email) {
+            showVerificationPending(data.email);
+            return;
+          }
           if (data.field) {
             var msgEs = data.error;
             var msgEn = data.error;
@@ -296,7 +323,13 @@
           return;
         }
 
-        // Store token in localStorage for client-side access
+        // Check if verification is needed
+        if (data.needs_verification) {
+          showVerificationPending(email);
+          return;
+        }
+
+        // Fallback: Store token in localStorage for client-side access
         if (data.token) {
           localStorage.setItem('rci_token', data.token);
           localStorage.setItem('rci_user', JSON.stringify(data.user));
@@ -315,6 +348,89 @@
         langBlocks = document.querySelectorAll('.lang');
         setLanguage(currentLang);
       }
+    });
+
+    var pendingEmail = null;
+
+    function showVerificationPending(email) {
+      pendingEmail = email;
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('verificationPending').style.display = 'block';
+      var esEl = document.getElementById('sentEmailEs');
+      var enEl = document.getElementById('sentEmailEn');
+      if (esEl) esEl.textContent = email;
+      if (enEl) enEl.textContent = email;
+      // Save for resend use
+      localStorage.setItem('rci_pending_verification', JSON.stringify({ email: email }));
+      // Refresh lang blocks
+      langBlocks = document.querySelectorAll('.lang');
+      setLanguage(currentLang);
+    }
+
+    // Resend verification email
+    document.getElementById('resendVerifyBtn').addEventListener('click', function() {
+      var btn = document.getElementById('resendVerifyBtn');
+      var statusEl = document.getElementById('resendStatus');
+      btn.disabled = true;
+      btn.textContent = currentLang === 'en' ? 'Sending...' : 'Enviando...';
+
+      var emailToResend = pendingEmail;
+      if (!emailToResend) {
+        try {
+          var stored = JSON.parse(localStorage.getItem('rci_pending_verification'));
+          emailToResend = stored ? stored.email : null;
+        } catch(e) {}
+      }
+
+      if (!emailToResend) {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="lang" data-lang="es">Reenviar email de verificaci\u00f3n</span><span class="lang" data-lang="en">Resend verification email</span>';
+        langBlocks = document.querySelectorAll('.lang');
+        setLanguage(currentLang);
+        return;
+      }
+
+      fetch('/api/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailToResend })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        statusEl.style.display = 'block';
+        if (data.success) {
+          statusEl.textContent = currentLang === 'en' ? 'Email sent! Check your inbox.' : '\u00a1Email enviado! Revisa tu bandeja.';
+          statusEl.style.color = '#16a34a';
+          // Re-enable after 30 seconds
+          setTimeout(function() {
+            btn.disabled = false;
+            btn.innerHTML = '<span class="lang" data-lang="es">Reenviar email de verificaci\u00f3n</span><span class="lang" data-lang="en">Resend verification email</span>';
+            langBlocks = document.querySelectorAll('.lang');
+            setLanguage(currentLang);
+            statusEl.style.display = 'none';
+          }, 30000);
+        } else {
+          statusEl.textContent = currentLang === 'en' ? (data.error_en || data.error) : data.error;
+          statusEl.style.color = '#dc2626';
+          setTimeout(function() {
+            btn.disabled = false;
+            btn.innerHTML = '<span class="lang" data-lang="es">Reenviar email de verificaci\u00f3n</span><span class="lang" data-lang="en">Resend verification email</span>';
+            langBlocks = document.querySelectorAll('.lang');
+            setLanguage(currentLang);
+          }, 3000);
+        }
+      })
+      .catch(function() {
+        statusEl.style.display = 'block';
+        statusEl.textContent = currentLang === 'en' ? 'Error. Try again.' : 'Error. Intenta de nuevo.';
+        statusEl.style.color = '#dc2626';
+        btn.disabled = false;
+        setTimeout(function() {
+          btn.innerHTML = '<span class="lang" data-lang="es">Reenviar email de verificaci\u00f3n</span><span class="lang" data-lang="en">Resend verification email</span>';
+          langBlocks = document.querySelectorAll('.lang');
+          setLanguage(currentLang);
+        }, 2000);
+      });
     });
   </script>
   <script src="assets/cookie-banner.js"></script>

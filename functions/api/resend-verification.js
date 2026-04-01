@@ -1,7 +1,105 @@
-import { hashPassword, createJWT, jsonResponse, corsHeaders } from './_shared/auth.js';
+/**
+ * POST /api/resend-verification
+ *
+ * Resends the email verification link to the authenticated user.
+ * Rate limited: max 1 resend per 2 minutes.
+ */
+
+import { verifyJWT, extractToken, jsonResponse, corsHeaders } from './_shared/auth.js';
 
 export async function onRequestOptions() {
   return new Response(null, { headers: corsHeaders() });
+}
+
+export async function onRequestPost(context) {
+  var env = context.env;
+  var request = context.request;
+
+  try {
+    // Allow both JWT auth and email-based resend
+    var userId = null;
+    var userEmail = null;
+
+    var token = extractToken(request);
+    if (token) {
+      var jwtSecret = env.JWT_SECRET || 'rci-dev-secret-change-in-production';
+      var payload = await verifyJWT(token, jwtSecret);
+      if (payload) {
+        userId = payload.sub;
+      }
+    }
+
+    // Also accept email in body for users who don't have a token yet
+    if (!userId) {
+      try {
+        var body = await request.json();
+        userEmail = body.email;
+      } catch (e) {
+        // No body or invalid JSON
+      }
+    }
+
+    if (!userId && !userEmail) {
+      return jsonResponse({ error: 'Autenticación requerida o email necesario', error_en: 'Authentication required or email needed' }, 401);
+    }
+
+    // Find user
+    var user;
+    if (userId) {
+      user = await env.DB.prepare(
+        'SELECT id, nombre, email, idioma, email_verified, email_verify_expires FROM users WHERE id = ?'
+      ).bind(userId).first();
+    } else {
+      user = await env.DB.prepare(
+        'SELECT id, nombre, email, idioma, email_verified, email_verify_expires FROM users WHERE email = ?'
+      ).bind(userEmail.toLowerCase().trim()).first();
+    }
+
+    if (!user) {
+      return jsonResponse({ error: 'Usuario no encontrado', error_en: 'User not found' }, 404);
+    }
+
+    if (user.email_verified === 1) {
+      return jsonResponse({ error: 'Email ya verificado', error_en: 'Email already verified' }, 400);
+    }
+
+    // Rate limit: check if last token was created less than 2 minutes ago
+    if (user.email_verify_expires) {
+      var expiresAt = new Date(user.email_verify_expires);
+      // Token expires 24h after creation, so creation = expires - 24h
+      var createdAt = new Date(expiresAt.getTime() - 24 * 60 * 60 * 1000);
+      var now = new Date();
+      var minutesSinceCreation = (now.getTime() - createdAt.getTime()) / (1000 * 60);
+      if (minutesSinceCreation < 2) {
+        var waitSeconds = Math.ceil((2 - minutesSinceCreation) * 60);
+        return jsonResponse({
+          error: 'Espera ' + waitSeconds + ' segundos antes de reenviar',
+          error_en: 'Wait ' + waitSeconds + ' seconds before resending',
+          retry_after: waitSeconds
+        }, 429);
+      }
+    }
+
+    // Generate new verification token
+    var verifyToken = generateToken();
+    var now2 = new Date();
+    var expiresAt2 = new Date(now2.getTime() + 24 * 60 * 60 * 1000); // 24 hours
+
+    await env.DB.prepare(
+      "UPDATE users SET email_verify_token = ?, email_verify_expires = ?, updated_at = datetime('now') WHERE id = ?"
+    ).bind(verifyToken, expiresAt2.toISOString(), user.id).run();
+
+    // Send verification email
+    var appUrl = env.APP_URL || 'https://rcitutoring.com';
+    var verifyUrl = appUrl + '/verify-email.html?token=' + verifyToken;
+    await sendVerificationEmail(env, user.email, user.nombre, user.idioma || 'es', verifyUrl);
+
+    return jsonResponse({ success: true, message: 'Email de verificación reenviado' });
+
+  } catch (err) {
+    console.error('Resend verification error:', err);
+    return jsonResponse({ error: 'Error interno del servidor' }, 500);
+  }
 }
 
 function generateToken() {
@@ -71,95 +169,4 @@ async function sendVerificationEmail(env, to, nombre, lang, verifyUrl) {
   }
 
   return await res.json();
-}
-
-export async function onRequestPost(context) {
-  const { env } = context;
-
-  try {
-    const body = await context.request.json();
-    const { nombre, email, password, pais, telefono, codigo_pais, rol, idioma } = body;
-
-    // Validate required fields
-    if (!nombre || nombre.trim().length < 2) {
-      return jsonResponse({ error: 'Nombre es requerido (mín. 2 caracteres)', field: 'nombre' }, 400);
-    }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return jsonResponse({ error: 'Email inválido', field: 'email' }, 400);
-    }
-    if (!password || password.length < 8) {
-      return jsonResponse({ error: 'Contraseña debe tener mínimo 8 caracteres', field: 'password' }, 400);
-    }
-    if (!pais) {
-      return jsonResponse({ error: 'País es requerido', field: 'pais' }, 400);
-    }
-
-    // Check email uniqueness
-    const existing = await env.DB.prepare(
-      'SELECT id, email_verified FROM users WHERE email = ?'
-    ).bind(email.toLowerCase().trim()).first();
-
-    if (existing) {
-      if (existing.email_verified === 0) {
-        // User exists but hasn't verified — allow resending verification
-        return jsonResponse({
-          error: 'Este email ya está registrado pero no verificado. Revisa tu bandeja de entrada.',
-          error_en: 'This email is already registered but not verified. Check your inbox.',
-          field: 'email',
-          needs_verification: true,
-          email: email.toLowerCase().trim()
-        }, 409);
-      }
-      return jsonResponse({ error: 'Este email ya está registrado', field: 'email' }, 409);
-    }
-
-    // Use placeholder trial dates (real dates set on verification)
-    const now = new Date();
-    const placeholderEnd = new Date(now);
-    placeholderEnd.setDate(placeholderEnd.getDate() + 7);
-
-    // Hash password
-    const passwordHash = await hashPassword(password);
-
-    // Generate verification token
-    const verifyToken = generateToken();
-    const tokenExpires = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours
-
-    // Insert user (unverified)
-    await env.DB.prepare(`
-      INSERT INTO users
-      (nombre, email, password_hash, telefono, codigo_pais, pais, rol, idioma,
-       trial_start_date, trial_end_date, status, email_verified, email_verify_token, email_verify_expires)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'trial', 0, ?, ?)
-    `).bind(
-      nombre.trim(),
-      email.toLowerCase().trim(),
-      passwordHash,
-      telefono || null,
-      codigo_pais || null,
-      pais,
-      rol || null,
-      idioma || 'es',
-      now.toISOString(),
-      placeholderEnd.toISOString(),
-      verifyToken,
-      tokenExpires.toISOString()
-    ).run();
-
-    // Send verification email
-    const appUrl = env.APP_URL || 'https://rcitutoring.com';
-    const verifyUrl = appUrl + '/verify-email.html?token=' + verifyToken;
-    await sendVerificationEmail(env, email.toLowerCase().trim(), nombre.trim(), idioma || 'es', verifyUrl);
-
-    return jsonResponse({
-      success: true,
-      needs_verification: true,
-      message: 'Cuenta creada. Revisa tu email para verificar tu cuenta.',
-      message_en: 'Account created. Check your email to verify your account.'
-    }, 201);
-
-  } catch (err) {
-    console.error('Register error:', err);
-    return jsonResponse({ error: 'Error interno del servidor' }, 500);
-  }
 }
