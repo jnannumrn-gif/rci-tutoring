@@ -26,7 +26,7 @@ export async function onRequestPost(context) {
     return jsonResponse({ error: 'Not authenticated' }, 401);
   }
 
-  const secret = env.JWT_SECRET || 'rci-dev-secret';
+  const secret = env.JWT_SECRET || 'rci-dev-secret-change-in-production';
   const payload = await verifyJWT(token, secret);
   if (!payload) {
     return jsonResponse({ error: 'Invalid or expired token' }, 401);

@@ -4,11 +4,57 @@
  * Handles Stripe webhook events.
  * On successful checkout, activates the user's subscription.
  *
- * Note: For Phase 1 (test mode), we do basic signature-less verification.
- * Phase 2 will add full webhook signature verification with STRIPE_WEBHOOK_SECRET.
+ * Verifies the stripe-signature header using STRIPE_WEBHOOK_SECRET
+ * to prevent forged events from activating accounts.
  */
 
 import { corsHeaders } from './_shared/auth.js';
+
+const encoder = new TextEncoder();
+
+/**
+ * Verify Stripe webhook signature using Web Crypto API.
+ */
+async function verifyStripeSignature(rawBody, signatureHeader, webhookSecret) {
+  if (!signatureHeader || !webhookSecret) return false;
+
+  const parts = {};
+  signatureHeader.split(',').forEach(function(item) {
+    const [key, value] = item.split('=');
+    parts[key] = value;
+  });
+
+  const timestamp = parts['t'];
+  const signature = parts['v1'];
+  if (!timestamp || !signature) return false;
+
+  // Reject events older than 5 minutes
+  const age = Math.floor(Date.now() / 1000) - parseInt(timestamp, 10);
+  if (isNaN(age) || age > 300) return false;
+
+  // Compute expected signature: HMAC-SHA256 of "timestamp.rawBody"
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(webhookSecret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+
+  const signedPayload = `${timestamp}.${rawBody}`;
+  const expectedBytes = await crypto.subtle.sign('HMAC', key, encoder.encode(signedPayload));
+  const expectedHex = Array.from(new Uint8Array(expectedBytes))
+    .map(function(b) { return b.toString(16).padStart(2, '0'); })
+    .join('');
+
+  // Timing-safe comparison
+  if (expectedHex.length !== signature.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < expectedHex.length; i++) {
+    mismatch |= expectedHex.charCodeAt(i) ^ signature.charCodeAt(i);
+  }
+  return mismatch === 0;
+}
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -18,22 +64,39 @@ export async function onRequestPost(context) {
     ...corsHeaders(),
   };
 
+  // Read raw body first (needed for signature verification)
+  let rawBody;
+  try {
+    rawBody = await request.text();
+  } catch {
+    return new Response(JSON.stringify({ error: 'Could not read body' }), { status: 400, headers });
+  }
+
+  // Verify Stripe webhook signature
+  const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
+  const stripeSignature = request.headers.get('stripe-signature');
+
+  if (!webhookSecret) {
+    console.error('[WEBHOOK] STRIPE_WEBHOOK_SECRET not configured — rejecting request');
+    return new Response(JSON.stringify({ error: 'Webhook not configured' }), { status: 500, headers });
+  }
+
+  const isValid = await verifyStripeSignature(rawBody, stripeSignature, webhookSecret);
+  if (!isValid) {
+    console.error('[WEBHOOK] Invalid signature — rejecting request');
+    return new Response(JSON.stringify({ error: 'Invalid signature' }), { status: 401, headers });
+  }
+
+  // Parse the verified body
   let event;
   try {
-    event = await request.json();
+    event = JSON.parse(rawBody);
   } catch {
     return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers });
   }
 
-  // Phase 1: Basic event processing without signature verification
-  // Phase 2: Add STRIPE_WEBHOOK_SECRET verification
-  const stripeSignature = request.headers.get('stripe-signature');
-  if (!stripeSignature) {
-    console.warn('[WEBHOOK] No stripe-signature header — accepting in test mode');
-  }
-
   const type = event.type;
-  console.log('[WEBHOOK] Received event:', type);
+  console.log('[WEBHOOK] Verified event:', type);
 
   try {
     switch (type) {
