@@ -202,7 +202,7 @@ async function sendEmail(env, to, subject, html) {
   }
 
   const appUrl = env.APP_URL || 'https://rcitutoring.com';
-  const fromEmail = env.EMAIL_FROM || 'RCI Tutoring <onboarding@resend.dev>';
+  const fromEmail = env.EMAIL_FROM || 'RCI Tutoring <noreply@rcitutoring.com>';
   const processedHtml = html.replace(/\{\{APP_URL\}\}/g, appUrl);
 
   const res = await fetch('https://api.resend.com/emails', {
