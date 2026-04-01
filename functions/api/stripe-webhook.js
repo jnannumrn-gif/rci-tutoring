@@ -111,6 +111,12 @@ export async function onRequestPost(context) {
           break;
         }
 
+        // Only activate if payment is confirmed (handles async payment methods)
+        if (session.payment_status !== 'paid') {
+          console.log('[WEBHOOK] Payment not yet completed for user:', userId, 'status:', session.payment_status);
+          break;
+        }
+
         console.log('[WEBHOOK] Checkout completed for user:', userId, 'plan:', plan);
 
         // Determine tier and dates
@@ -142,6 +148,56 @@ export async function onRequestPost(context) {
         }
 
         console.log('[WEBHOOK] User', userId, 'activated with plan:', tier);
+        break;
+      }
+
+      case 'checkout.session.async_payment_succeeded': {
+        // Handle deferred payment confirmation (bank transfers, SEPA, etc.)
+        const asyncSession = event.data.object;
+        const asyncUserId = asyncSession.metadata?.rci_user_id;
+        const asyncPlan = asyncSession.metadata?.plan;
+        const asyncCustomerId = asyncSession.customer;
+
+        if (!asyncUserId) {
+          console.error('[WEBHOOK] No rci_user_id in async payment metadata');
+          break;
+        }
+
+        console.log('[WEBHOOK] Async payment succeeded for user:', asyncUserId, 'plan:', asyncPlan);
+
+        const asyncIsLifetime = asyncPlan && asyncPlan.startsWith('lifetime');
+        const asyncTier = asyncPlan || 'unknown';
+        const asyncNow = new Date().toISOString();
+        const asyncEndDate = asyncIsLifetime
+          ? '2099-12-31T23:59:59Z'
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+        await env.DB.prepare(
+          'UPDATE users SET status = ?, stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
+        ).bind('active', asyncCustomerId, asyncNow, asyncUserId).run();
+
+        const asyncExistingSub = await env.DB.prepare(
+          'SELECT id FROM subscriptions WHERE user_id = ?'
+        ).bind(asyncUserId).first();
+
+        if (asyncExistingSub) {
+          await env.DB.prepare(
+            'UPDATE subscriptions SET stripe_subscription_id = ?, tier = ?, start_date = ?, end_date = ?, active = 1 WHERE user_id = ?'
+          ).bind(asyncSession.subscription || asyncSession.payment_intent, asyncTier, asyncNow, asyncEndDate, asyncUserId).run();
+        } else {
+          await env.DB.prepare(
+            'INSERT INTO subscriptions (user_id, stripe_subscription_id, tier, start_date, end_date, active) VALUES (?, ?, ?, ?, ?, 1)'
+          ).bind(asyncUserId, asyncSession.subscription || asyncSession.payment_intent, asyncTier, asyncNow, asyncEndDate).run();
+        }
+
+        console.log('[WEBHOOK] User', asyncUserId, 'activated via async payment with plan:', asyncTier);
+        break;
+      }
+
+      case 'checkout.session.async_payment_failed': {
+        const failedSession = event.data.object;
+        const failedUserId = failedSession.metadata?.rci_user_id;
+        console.log('[WEBHOOK] Async payment failed for user:', failedUserId);
         break;
       }
 
