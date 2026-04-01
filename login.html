@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RCI Tutoring | Iniciar sesi&oacute;n</title>
+  <meta name="description" content="Inicia sesión en RCI Tutoring." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/shared-styles.css">
+</head>
+<body>
+  <!-- NAV -->
+  <header class="topbar">
+    <div class="wrap">
+      <nav class="nav">
+        <a href="/" class="brand">
+          <img src="logo.png" alt="RCI Tutoring" />
+          <div>
+            <div class="brand-title">RCI Tutoring</div>
+            <div class="brand-sub">Hemodialysis Education</div>
+          </div>
+        </a>
+        <div class="nav-right">
+          <a href="/register.html" class="nav-link">
+            <span class="lang active" data-lang="es">Crear cuenta</span>
+            <span class="lang" data-lang="en">Create account</span>
+          </a>
+          <div class="lang-pill">
+            <button data-lang-btn="es" class="active">ES</button>
+            <button data-lang-btn="en">EN</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- LOGIN FORM -->
+  <main class="auth-page">
+    <div class="auth-card">
+      <h1>
+        <span class="lang active" data-lang="es">Iniciar sesi&oacute;n</span>
+        <span class="lang" data-lang="en">Sign in</span>
+      </h1>
+      <p class="subtitle">
+        <span class="lang active" data-lang="es">Accede a tu cuenta de RCI Tutoring</span>
+        <span class="lang" data-lang="en">Access your RCI Tutoring account</span>
+      </p>
+
+      <div id="alertBox" class="alert alert-error"></div>
+
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="email">
+            <span class="lang active" data-lang="es">Correo electr&oacute;nico</span>
+            <span class="lang" data-lang="en">Email address</span>
+          </label>
+          <input type="email" id="email" name="email" required
+            placeholder="tu@correo.com" autocomplete="email" />
+          <div class="form-error" id="email-error"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">
+            <span class="lang active" data-lang="es">Contrase&ntilde;a</span>
+            <span class="lang" data-lang="en">Password</span>
+          </label>
+          <input type="password" id="password" name="password" required
+            placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password" />
+          <div class="form-error" id="password-error"></div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <span class="lang active" data-lang="es">Iniciar sesi&oacute;n</span>
+          <span class="lang" data-lang="en">Sign in</span>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <span class="lang active" data-lang="es">&iquest;No tienes cuenta?</span>
+        <span class="lang" data-lang="en">Don't have an account?</span>
+        <a href="/register.html">
+          <span class="lang active" data-lang="es">Reg&iacute;strate gratis</span>
+          <span class="lang" data-lang="en">Register for free</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-inner">
+        <div>
+          <div class="brand">
+            <img src="logo.png" alt="RCI Tutoring" />
+            <div>
+              <div class="brand-title">RCI Tutoring</div>
+              <div class="brand-sub">Hemodialysis Education</div>
+            </div>
+          </div>
+          <div class="lang active" data-lang="es">
+            <p class="footer-note">RCI Tutoring es una marca educativa orientada a tutor&iacute;a y refuerzo acad&eacute;mico en hemodi&aacute;lisis.</p>
+          </div>
+          <div class="lang" data-lang="en">
+            <p class="footer-note">RCI Tutoring is an educational brand focused on tutoring and academic reinforcement in hemodialysis.</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4><span class="lang active" data-lang="es">Legal</span><span class="lang" data-lang="en">Legal</span></h4>
+          <a href="legal.html"><span class="lang active" data-lang="es">Aviso Legal</span><span class="lang" data-lang="en">Legal Disclaimer</span></a>
+          <a href="privacy.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Privacidad</span><span class="lang" data-lang="en">Privacy Policy</span></a>
+          <a href="cookies.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Cookies</span><span class="lang" data-lang="en">Cookies Policy</span></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Language toggle
+    var buttons = document.querySelectorAll('[data-lang-btn]');
+    var langBlocks = document.querySelectorAll('.lang');
+    function setLanguage(lang) {
+      langBlocks.forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+      buttons.forEach(function(btn) { btn.classList.toggle('active', btn.dataset.langBtn === lang); });
+      document.documentElement.lang = lang;
+    }
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() { setLanguage(btn.dataset.langBtn); });
+    });
+    var savedLang = localStorage.getItem('rci_lang') || 'es';
+    setLanguage(savedLang);
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() { localStorage.setItem('rci_lang', btn.dataset.langBtn); });
+    });
+
+    // Form
+    var form = document.getElementById('loginForm');
+    var alertBox = document.getElementById('alertBox');
+    var submitBtn = document.getElementById('submitBtn');
+    var currentLang = savedLang;
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() { currentLang = btn.dataset.langBtn; });
+    });
+
+    function showError(field, msgEs, msgEn) {
+      var input = document.getElementById(field);
+      var err = document.getElementById(field + '-error');
+      if (input) input.classList.add('error');
+      if (err) {
+        err.textContent = currentLang === 'en' ? msgEn : msgEs;
+        err.classList.add('visible');
+      }
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('.form-error').forEach(function(e) { e.classList.remove('visible'); e.textContent = ''; });
+      document.querySelectorAll('.error').forEach(function(e) { e.classList.remove('error'); });
+      alertBox.classList.remove('visible');
+    }
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      clearErrors();
+
+      var email = document.getElementById('email').value.trim();
+      var password = document.getElementById('password').value;
+      var valid = true;
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('email', 'Email inv\u00e1lido', 'Invalid email');
+        valid = false;
+      }
+      if (!password) {
+        showError('password', 'Contrase\u00f1a requerida', 'Password required');
+        valid = false;
+      }
+      if (!valid) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = currentLang === 'en' ? 'Signing in...' : 'Iniciando sesi\u00f3n...';
+
+      try {
+        var res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, password: password })
+        });
+
+        var data = await res.json();
+
+        if (!res.ok) {
+          alertBox.textContent = data.error || (currentLang === 'en' ? 'Login error' : 'Error al iniciar sesi\u00f3n');
+          alertBox.classList.add('visible');
+          return;
+        }
+
+        if (data.token) {
+          localStorage.setItem('rci_token', data.token);
+          localStorage.setItem('rci_user', JSON.stringify(data.user));
+        }
+
+        // Redirect based on status
+        if (data.user.status === 'expired') {
+          window.location.href = '/upgrade.html';
+        } else {
+          window.location.href = '/dashboard.html';
+        }
+
+      } catch (err) {
+        alertBox.textContent = currentLang === 'en' ? 'Connection error. Please try again.' : 'Error de conexi\u00f3n. Intenta de nuevo.';
+        alertBox.classList.add('visible');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="lang" data-lang="es">Iniciar sesi\u00f3n</span>' +
+          '<span class="lang" data-lang="en">Sign in</span>';
+        langBlocks = document.querySelectorAll('.lang');
+        setLanguage(currentLang);
+      }
+    });
+
+    // If already logged in, redirect
+    if (localStorage.getItem('rci_token')) {
+      window.location.href = '/dashboard.html';
+    }
+  </script>
+  <script src="assets/cookie-banner.js"></script>
+</body>
+</html>

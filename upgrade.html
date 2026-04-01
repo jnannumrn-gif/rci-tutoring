@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RCI Tutoring | Planes</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/shared-styles.css">
+</head>
+<body>
+  <!-- NAV -->
+  <header class="topbar">
+    <div class="wrap">
+      <nav class="nav">
+        <a href="/" class="brand">
+          <img src="logo.png" alt="RCI Tutoring" />
+          <div>
+            <div class="brand-title">RCI Tutoring</div>
+            <div class="brand-sub">Hemodialysis Education</div>
+          </div>
+        </a>
+        <div class="nav-right">
+          <a href="/dashboard.html" class="nav-link" id="dashLink" style="display:none;">
+            <span class="lang active" data-lang="es">Dashboard</span>
+            <span class="lang" data-lang="en">Dashboard</span>
+          </a>
+          <a href="/login.html" class="nav-link" id="loginLink">
+            <span class="lang active" data-lang="es">Iniciar sesi&oacute;n</span>
+            <span class="lang" data-lang="en">Sign in</span>
+          </a>
+          <div class="lang-pill">
+            <button data-lang-btn="es" class="active">ES</button>
+            <button data-lang-btn="en">EN</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- UPGRADE PAGE -->
+  <main class="upgrade-page">
+    <div class="wrap">
+      <div class="upgrade-header">
+        <h1>
+          <span class="lang active" data-lang="es">Elige tu plan</span>
+          <span class="lang" data-lang="en">Choose your plan</span>
+        </h1>
+        <p>
+          <span class="lang active" data-lang="es">Acceso completo a tutor&iacute;a IA, tutores humanos certificados y preparaci&oacute;n CCHT. Invierte en tu futuro profesional.</span>
+          <span class="lang" data-lang="en">Full access to AI tutoring, certified human tutors, and CCHT preparation. Invest in your professional future.</span>
+        </p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Monthly Plan -->
+        <div class="price-card">
+          <h3>
+            <span class="lang active" data-lang="es">Mensual</span>
+            <span class="lang" data-lang="en">Monthly</span>
+          </h3>
+          <p style="color:var(--muted);font-size:0.88rem;">
+            <span class="lang active" data-lang="es">Flexibilidad total, cancela cuando quieras</span>
+            <span class="lang" data-lang="en">Total flexibility, cancel anytime</span>
+          </p>
+          <div class="price" id="priceMonthly">$XX</div>
+          <div class="price-period">
+            <span class="lang active" data-lang="es">por mes</span>
+            <span class="lang" data-lang="en">per month</span>
+          </div>
+          <ul class="price-features">
+            <li>
+              <span class="lang active" data-lang="es">Tutor IA 24/7 ilimitado</span>
+              <span class="lang" data-lang="en">Unlimited 24/7 AI Tutor</span>
+            </li>
+            <li>
+              <span class="lang active" data-lang="es">2 sesiones/mes con tutor humano</span>
+              <span class="lang" data-lang="en">2 sessions/month with human tutor</span>
+            </li>
+            <li>
+              <span class="lang active" data-lang="es">Acceso a CCHT Prep App</span>
+              <span class="lang" data-lang="en">CCHT Prep App access</span>
+            </li>
+            <li>
+              <span class="lang active" data-lang="es">Soporte por email</span>
+              <span class="lang" data-lang="en">Email support</span>
+            </li>
+          </ul>
+          <button class="btn-price btn-price-outline" data-plan="monthly" onclick="handleSubscribe('monthly')">
+            <span class="lang active" data-lang="es">Suscribirse</span>
+            <span class="lang" data-lang="en">Subscribe</span>
+          </button>
+        </div>
+
+        <!-- Lifetime Plan (Featured) -->
+        <div class="price-card featured">
+          <div class="popular-tag">
+            <span class="lang active" data-lang="es">POPULAR</span>
+            <span class="lang" data-lang="en">POPULAR</span>
+          </div>
+          <h3>
+            <span class="lang active" data-lang="es">Vitalicio</span>
+            <span class="lang" data-lang="en">Lifetime</span>
+          </h3>
+          <p style="color:var(--muted);font-size:0.88rem;">
+            <span class="lang active" data-lang="es">Un solo pago, acceso para siempre</span>
+            <span class="lang" data-lang="en">One payment, access forever</span>
+          </p>
+          <div class="price" id="priceLifetime">$XXX</div>
+          <div class="price-period">
+            <span class="lang active" data-lang="es">pago &uacute;nico</span>
+            <span class="lang" data-lang="en">one-time payment</span>
+          </div>
+          <ul class="price-features">
+            <li>
+              <span class="lang active" data-lang="es">Todo lo del plan Mensual</span>
+              <span class="lang" data-lang="en">Everything in Monthly plan</span>
+            </li>
+            <li>
+              <span class="lang active" data-lang="es">Sesiones ilimitadas con tutor humano</span>
+              <span class="lang" data-lang="en">Unlimited human tutor sessions</span>
+            </li>
+            <li>
+              <span class="lang active" data-lang="es">Acceso vitalicio a todas las actualizaciones</span>
+              <span class="lang" data-lang="en">Lifetime access to all updates</span>
+            </li>
+            <li>
+              <span class="lang active" data-lang="es">Soporte prioritario</span>
+              <span class="lang" data-lang="en">Priority support</span>
+            </li>
+            <li>
+              <span class="lang active" data-lang="es">Certificado de completado</span>
+              <span class="lang" data-lang="en">Completion certificate</span>
+            </li>
+          </ul>
+          <button class="btn-price btn-price-primary" data-plan="lifetime" onclick="handleSubscribe('lifetime')">
+            <span class="lang active" data-lang="es">Obtener acceso vitalicio</span>
+            <span class="lang" data-lang="en">Get lifetime access</span>
+          </button>
+        </div>
+
+        <!-- Institutional Plan -->
+        <div class="price-card">
+          <h3>
+            <span class="lang active" data-lang="es">Institucional</span>
+            <span class="lang" data-lang="en">Institutional</span>
+          </h3>
+          <p style="color:var(--muted);font-size:0.88rem;">
+            <span class="lang active" data-lang="es">Para cl&iacute;nicas, hospitales y programas educativos</span>
+            <span class="lang" data-lang="en">For clinics, hospitals, and educational programs</span>
+          </p>
+          <div class="price">
+            <span class="lang active" data-lang="es" style="font-size:1.4rem;">Personalizado</span>
+            <span class="lang" data-lang="en" style="font-size:1.4rem;">Custom</span>
+          </div>
+          <div class="price-period">
+            <span class="lang active" data-lang="es">cotizaci&oacute;n personalizada</span>
+            <span class="lang" data-lang="en">custom quote</span>
+          </div>
+          <ul class="price-features">
+            <li>
+              <span class="lang active" data-lang="es">Todo lo del plan Vitalicio</span>
+              <span class="lang" data-lang="en">Everything in Lifetime plan</span>
+            </li>
+            <li>
+              <span class="lang active" data-lang="es">Licencias m&uacute;ltiples para equipos</span>
+              <span class="lang" data-lang="en">Multiple licenses for teams</span>
+            </li>
+            <li>
+              <span class="lang active" data-lang="es">Panel de administraci&oacute;n</span>
+              <span class="lang" data-lang="en">Admin dashboard</span>
+            </li>
+            <li>
+              <span class="lang active" data-lang="es">Reportes de progreso del equipo</span>
+              <span class="lang" data-lang="en">Team progress reports</span>
+            </li>
+            <li>
+              <span class="lang active" data-lang="es">Onboarding personalizado</span>
+              <span class="lang" data-lang="en">Custom onboarding</span>
+            </li>
+          </ul>
+          <a href="mailto:info@rcitutoring.com?subject=Institutional%20Plan" class="btn-price btn-price-outline" style="text-align:center;display:block;">
+            <span class="lang active" data-lang="es">Contactar para cotizaci&oacute;n</span>
+            <span class="lang" data-lang="en">Contact for quote</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- FAQ / Guarantee -->
+      <div style="text-align:center;margin-top:48px;max-width:600px;margin-left:auto;margin-right:auto;">
+        <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">
+          <span class="lang active" data-lang="es">&#128274; Pagos seguros procesados por Stripe. Puedes cancelar tu suscripci&oacute;n mensual en cualquier momento sin preguntas.</span>
+          <span class="lang" data-lang="en">&#128274; Secure payments processed by Stripe. Cancel your monthly subscription anytime, no questions asked.</span>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-inner">
+        <div>
+          <div class="brand">
+            <img src="logo.png" alt="RCI Tutoring" />
+            <div>
+              <div class="brand-title">RCI Tutoring</div>
+              <div class="brand-sub">Hemodialysis Education</div>
+            </div>
+          </div>
+          <div class="lang active" data-lang="es">
+            <p class="footer-note">RCI Tutoring es una marca educativa orientada a tutor&iacute;a y refuerzo acad&eacute;mico en hemodi&aacute;lisis.</p>
+          </div>
+          <div class="lang" data-lang="en">
+            <p class="footer-note">RCI Tutoring is an educational brand focused on tutoring and academic reinforcement in hemodialysis.</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4><span class="lang active" data-lang="es">Legal</span><span class="lang" data-lang="en">Legal</span></h4>
+          <a href="legal.html"><span class="lang active" data-lang="es">Aviso Legal</span><span class="lang" data-lang="en">Legal Disclaimer</span></a>
+          <a href="privacy.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Privacidad</span><span class="lang" data-lang="en">Privacy Policy</span></a>
+          <a href="cookies.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Cookies</span><span class="lang" data-lang="en">Cookies Policy</span></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Language toggle
+    var buttons = document.querySelectorAll('[data-lang-btn]');
+    var langBlocks = document.querySelectorAll('.lang');
+    function setLanguage(lang) {
+      langBlocks.forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+      buttons.forEach(function(btn) { btn.classList.toggle('active', btn.dataset.langBtn === lang); });
+      document.documentElement.lang = lang;
+    }
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        setLanguage(btn.dataset.langBtn);
+        localStorage.setItem('rci_lang', btn.dataset.langBtn);
+      });
+    });
+    var savedLang = localStorage.getItem('rci_lang') || 'es';
+    setLanguage(savedLang);
+    var currentLang = savedLang;
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() { currentLang = btn.dataset.langBtn; });
+    });
+
+    // Show dashboard link if logged in
+    var token = localStorage.getItem('rci_token');
+    if (token) {
+      document.getElementById('dashLink').style.display = '';
+      document.getElementById('loginLink').style.display = 'none';
+    }
+
+    // Stripe checkout handler (placeholder — needs Stripe keys)
+    function handleSubscribe(plan) {
+      if (!token) {
+        window.location.href = '/register.html';
+        return;
+      }
+
+      // Phase 1: Show coming soon message
+      var msg = currentLang === 'en'
+        ? 'Payment processing will be available soon. Please contact info@rcitutoring.com for early access.'
+        : 'El procesamiento de pagos estar\u00e1 disponible pronto. Contacta info@rcitutoring.com para acceso anticipado.';
+      alert(msg);
+
+      // Phase 2: This will create a Stripe Checkout session
+      // fetch('/api/create-checkout', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      //   body: JSON.stringify({ plan: plan })
+      // }).then(r => r.json()).then(data => {
+      //   if (data.url) window.location.href = data.url;
+      // });
+    }
+  </script>
+  <script src="assets/cookie-banner.js"></script>
+</body>
+</html>

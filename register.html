@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RCI Tutoring | Registro</title>
+  <meta name="description" content="Crea tu cuenta en RCI Tutoring y obtén 7 días de acceso gratuito." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/shared-styles.css">
+</head>
+<body>
+  <!-- NAV -->
+  <header class="topbar">
+    <div class="wrap">
+      <nav class="nav">
+        <a href="/" class="brand">
+          <img src="logo.png" alt="RCI Tutoring" />
+          <div>
+            <div class="brand-title">RCI Tutoring</div>
+            <div class="brand-sub">Hemodialysis Education</div>
+          </div>
+        </a>
+        <div class="nav-right">
+          <a href="/login.html" class="nav-link">
+            <span class="lang active" data-lang="es">Iniciar sesi&oacute;n</span>
+            <span class="lang" data-lang="en">Sign in</span>
+          </a>
+          <div class="lang-pill">
+            <button data-lang-btn="es" class="active">ES</button>
+            <button data-lang-btn="en">EN</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- REGISTER FORM -->
+  <main class="auth-page">
+    <div class="auth-card">
+      <h1>
+        <span class="lang active" data-lang="es">Crear cuenta</span>
+        <span class="lang" data-lang="en">Create account</span>
+      </h1>
+      <p class="subtitle">
+        <span class="lang active" data-lang="es">Obt&eacute;n 7 d&iacute;as de acceso gratuito a toda la plataforma</span>
+        <span class="lang" data-lang="en">Get 7 days of free access to the entire platform</span>
+      </p>
+
+      <div id="alertBox" class="alert alert-error"></div>
+
+      <form id="registerForm" novalidate>
+        <div class="form-group">
+          <label for="nombre">
+            <span class="lang active" data-lang="es">Nombre completo *</span>
+            <span class="lang" data-lang="en">Full name *</span>
+          </label>
+          <input type="text" id="nombre" name="nombre" required minlength="2"
+            placeholder="Tu nombre completo" autocomplete="name" />
+          <div class="form-error" id="nombre-error"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">
+            <span class="lang active" data-lang="es">Correo electr&oacute;nico *</span>
+            <span class="lang" data-lang="en">Email address *</span>
+          </label>
+          <input type="email" id="email" name="email" required
+            placeholder="tu@correo.com" autocomplete="email" />
+          <div class="form-error" id="email-error"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">
+            <span class="lang active" data-lang="es">Contrase&ntilde;a * (m&iacute;n. 8 caracteres)</span>
+            <span class="lang" data-lang="en">Password * (min. 8 characters)</span>
+          </label>
+          <input type="password" id="password" name="password" required minlength="8"
+            placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="new-password" />
+          <div class="form-error" id="password-error"></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pais">
+              <span class="lang active" data-lang="es">Pa&iacute;s *</span>
+              <span class="lang" data-lang="en">Country *</span>
+            </label>
+            <select id="pais" name="pais" required>
+              <option value="">-- Seleccionar --</option>
+              <option value="US">Estados Unidos / United States</option>
+              <option value="MX">M&eacute;xico</option>
+              <option value="CO">Colombia</option>
+              <option value="AR">Argentina</option>
+              <option value="CL">Chile</option>
+              <option value="PE">Per&uacute;</option>
+              <option value="VE">Venezuela</option>
+              <option value="EC">Ecuador</option>
+              <option value="GT">Guatemala</option>
+              <option value="CU">Cuba</option>
+              <option value="DO">Rep&uacute;blica Dominicana</option>
+              <option value="HN">Honduras</option>
+              <option value="SV">El Salvador</option>
+              <option value="NI">Nicaragua</option>
+              <option value="CR">Costa Rica</option>
+              <option value="PA">Panam&aacute;</option>
+              <option value="PR">Puerto Rico</option>
+              <option value="UY">Uruguay</option>
+              <option value="PY">Paraguay</option>
+              <option value="BO">Bolivia</option>
+              <option value="ES">Espa&ntilde;a / Spain</option>
+              <option value="OTHER">Otro / Other</option>
+            </select>
+            <div class="form-error" id="pais-error"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">
+              <span class="lang active" data-lang="es">Tel&eacute;fono (opcional)</span>
+              <span class="lang" data-lang="en">Phone (optional)</span>
+            </label>
+            <input type="tel" id="telefono" name="telefono"
+              placeholder="+1 (555) 123-4567" autocomplete="tel" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="rol">
+            <span class="lang active" data-lang="es">Rol profesional (opcional)</span>
+            <span class="lang" data-lang="en">Professional role (optional)</span>
+          </label>
+          <select id="rol" name="rol">
+            <option value="">-- Seleccionar --</option>
+            <option value="rn">RN (Registered Nurse)</option>
+            <option value="lpn">LPN / LVN</option>
+            <option value="tech">Technician / PCT</option>
+            <option value="student">Estudiante / Student</option>
+            <option value="other">Otro / Other</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <span class="lang active" data-lang="es">Crear cuenta gratuita</span>
+          <span class="lang" data-lang="en">Create free account</span>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <span class="lang active" data-lang="es">&iquest;Ya tienes cuenta?</span>
+        <span class="lang" data-lang="en">Already have an account?</span>
+        <a href="/login.html">
+          <span class="lang active" data-lang="es">Inicia sesi&oacute;n</span>
+          <span class="lang" data-lang="en">Sign in</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-inner">
+        <div>
+          <div class="brand">
+            <img src="logo.png" alt="RCI Tutoring" />
+            <div>
+              <div class="brand-title">RCI Tutoring</div>
+              <div class="brand-sub">Hemodialysis Education</div>
+            </div>
+          </div>
+          <div class="lang active" data-lang="es">
+            <p class="footer-note">RCI Tutoring es una marca educativa orientada a tutor&iacute;a y refuerzo acad&eacute;mico en hemodi&aacute;lisis.</p>
+          </div>
+          <div class="lang" data-lang="en">
+            <p class="footer-note">RCI Tutoring is an educational brand focused on tutoring and academic reinforcement in hemodialysis.</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4><span class="lang active" data-lang="es">Legal</span><span class="lang" data-lang="en">Legal</span></h4>
+          <a href="legal.html"><span class="lang active" data-lang="es">Aviso Legal</span><span class="lang" data-lang="en">Legal Disclaimer</span></a>
+          <a href="privacy.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Privacidad</span><span class="lang" data-lang="en">Privacy Policy</span></a>
+          <a href="cookies.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Cookies</span><span class="lang" data-lang="en">Cookies Policy</span></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Language toggle
+    var buttons = document.querySelectorAll('[data-lang-btn]');
+    var langBlocks = document.querySelectorAll('.lang');
+    function setLanguage(lang) {
+      langBlocks.forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+      buttons.forEach(function(btn) { btn.classList.toggle('active', btn.dataset.langBtn === lang); });
+      document.documentElement.lang = lang;
+    }
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() { setLanguage(btn.dataset.langBtn); });
+    });
+
+    // Detect language preference
+    var savedLang = localStorage.getItem('rci_lang') || 'es';
+    setLanguage(savedLang);
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() { localStorage.setItem('rci_lang', btn.dataset.langBtn); });
+    });
+
+    // Form validation and submission
+    var form = document.getElementById('registerForm');
+    var alertBox = document.getElementById('alertBox');
+    var submitBtn = document.getElementById('submitBtn');
+    var currentLang = savedLang;
+
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() { currentLang = btn.dataset.langBtn; });
+    });
+
+    function showError(field, msgEs, msgEn) {
+      var input = document.getElementById(field);
+      var err = document.getElementById(field + '-error');
+      if (input) input.classList.add('error');
+      if (err) {
+        err.textContent = currentLang === 'en' ? msgEn : msgEs;
+        err.classList.add('visible');
+      }
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('.form-error').forEach(function(e) { e.classList.remove('visible'); e.textContent = ''; });
+      document.querySelectorAll('.error').forEach(function(e) { e.classList.remove('error'); });
+      alertBox.classList.remove('visible');
+    }
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      clearErrors();
+
+      var nombre = document.getElementById('nombre').value.trim();
+      var email = document.getElementById('email').value.trim();
+      var password = document.getElementById('password').value;
+      var pais = document.getElementById('pais').value;
+      var telefono = document.getElementById('telefono').value.trim();
+      var rol = document.getElementById('rol').value;
+
+      var valid = true;
+
+      if (!nombre || nombre.length < 2) {
+        showError('nombre', 'Nombre es requerido (mín. 2 caracteres)', 'Name is required (min. 2 characters)');
+        valid = false;
+      }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('email', 'Email inválido', 'Invalid email');
+        valid = false;
+      }
+      if (!password || password.length < 8) {
+        showError('password', 'Mínimo 8 caracteres', 'Minimum 8 characters');
+        valid = false;
+      }
+      if (!pais) {
+        showError('pais', 'Selecciona tu país', 'Select your country');
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = currentLang === 'en' ? 'Creating account...' : 'Creando cuenta...';
+
+      try {
+        var res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nombre: nombre,
+            email: email,
+            password: password,
+            pais: pais,
+            telefono: telefono || null,
+            rol: rol || null,
+            idioma: currentLang
+          })
+        });
+
+        var data = await res.json();
+
+        if (!res.ok) {
+          if (data.field) {
+            var msgEs = data.error;
+            var msgEn = data.error;
+            showError(data.field, msgEs, msgEn);
+          } else {
+            alertBox.textContent = data.error || (currentLang === 'en' ? 'Registration error' : 'Error al registrar');
+            alertBox.classList.add('visible');
+          }
+          return;
+        }
+
+        // Store token in localStorage for client-side access
+        if (data.token) {
+          localStorage.setItem('rci_token', data.token);
+          localStorage.setItem('rci_user', JSON.stringify(data.user));
+        }
+
+        // Redirect to dashboard
+        window.location.href = '/dashboard.html';
+
+      } catch (err) {
+        alertBox.textContent = currentLang === 'en' ? 'Connection error. Please try again.' : 'Error de conexión. Intenta de nuevo.';
+        alertBox.classList.add('visible');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="lang" data-lang="es">Crear cuenta gratuita</span>' +
+          '<span class="lang" data-lang="en">Create free account</span>';
+        langBlocks = document.querySelectorAll('.lang');
+        setLanguage(currentLang);
+      }
+    });
+  </script>
+  <script src="assets/cookie-banner.js"></script>
+</body>
+</html>

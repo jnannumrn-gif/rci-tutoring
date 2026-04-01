@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RCI Tutoring | Dashboard</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/shared-styles.css">
+</head>
+<body>
+  <!-- NAV -->
+  <header class="topbar">
+    <div class="wrap">
+      <nav class="nav">
+        <a href="/" class="brand">
+          <img src="logo.png" alt="RCI Tutoring" />
+          <div>
+            <div class="brand-title">RCI Tutoring</div>
+            <div class="brand-sub">Hemodialysis Education</div>
+          </div>
+        </a>
+        <div class="nav-right">
+          <span id="userGreeting" class="nav-link" style="cursor:default;"></span>
+          <button id="logoutBtn" class="nav-link" style="cursor:pointer;border:none;background:none;font-family:inherit;">
+            <span class="lang active" data-lang="es">Cerrar sesi&oacute;n</span>
+            <span class="lang" data-lang="en">Sign out</span>
+          </button>
+          <div class="lang-pill">
+            <button data-lang-btn="es" class="active">ES</button>
+            <button data-lang-btn="en">EN</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- DASHBOARD -->
+  <main class="dashboard-page">
+    <div class="wrap">
+      <!-- Trial Banner -->
+      <div id="trialBanner" class="trial-banner" style="display:none;">
+        <span class="trial-banner-text" id="trialText"></span>
+        <a href="/upgrade.html" class="btn-upgrade" id="upgradeBtn" style="display:none;">
+          <span class="lang active" data-lang="es">Actualizar plan</span>
+          <span class="lang" data-lang="en">Upgrade plan</span>
+        </a>
+      </div>
+
+      <!-- Expired Banner -->
+      <div id="expiredBanner" class="trial-banner red" style="display:none;">
+        <span class="trial-banner-text">
+          <span class="lang active" data-lang="es">Tu periodo de prueba ha terminado. Actualiza tu plan para continuar aprendiendo.</span>
+          <span class="lang" data-lang="en">Your trial has ended. Upgrade your plan to continue learning.</span>
+        </span>
+        <a href="/upgrade.html" class="btn-upgrade">
+          <span class="lang active" data-lang="es">Ver planes</span>
+          <span class="lang" data-lang="en">View plans</span>
+        </a>
+      </div>
+
+      <!-- Welcome Section -->
+      <h1 style="font-size:1.8rem;font-weight:900;margin-bottom:8px;">
+        <span class="lang active" data-lang="es">Bienvenido, <span id="userName"></span></span>
+        <span class="lang" data-lang="en">Welcome, <span id="userNameEn"></span></span>
+      </h1>
+      <p style="color:var(--muted);margin-bottom:32px;">
+        <span class="lang active" data-lang="es">Tu plataforma de entrenamiento en hemodi&aacute;lisis</span>
+        <span class="lang" data-lang="en">Your hemodialysis training platform</span>
+      </p>
+
+      <!-- Dashboard Cards -->
+      <div class="dashboard-grid" id="dashCards">
+        <div class="dash-card">
+          <h3>
+            <span class="lang active" data-lang="es">&#129302; Tutor IA</span>
+            <span class="lang" data-lang="en">&#129302; AI Tutor</span>
+          </h3>
+          <p>
+            <span class="lang active" data-lang="es">Practica con nuestro tutor de inteligencia artificial disponible 24/7. Respuestas instant&aacute;neas y personalizadas.</span>
+            <span class="lang" data-lang="en">Practice with our AI tutor available 24/7. Instant, personalized answers.</span>
+          </p>
+          <a href="/tutoring/ai/" class="dash-link">
+            <span class="lang active" data-lang="es">Iniciar sesi&oacute;n de tutor&iacute;a &rarr;</span>
+            <span class="lang" data-lang="en">Start tutoring session &rarr;</span>
+          </a>
+        </div>
+
+        <div class="dash-card">
+          <h3>
+            <span class="lang active" data-lang="es">&#128105;&#8205;&#9877;&#65039; Tutor Humano</span>
+            <span class="lang" data-lang="en">&#128105;&#8205;&#9877;&#65039; Human Tutor</span>
+          </h3>
+          <p>
+            <span class="lang active" data-lang="es">Agenda sesiones en vivo con enfermeras certificadas en hemodi&aacute;lisis con experiencia real.</span>
+            <span class="lang" data-lang="en">Schedule live sessions with certified hemodialysis nurses with real experience.</span>
+          </p>
+          <a href="/tutoring/human/" class="dash-link">
+            <span class="lang active" data-lang="es">Agendar tutor&iacute;a &rarr;</span>
+            <span class="lang" data-lang="en">Schedule tutoring &rarr;</span>
+          </a>
+        </div>
+
+        <div class="dash-card">
+          <h3>
+            <span class="lang active" data-lang="es">&#128218; CCHT Prep</span>
+            <span class="lang" data-lang="en">&#128218; CCHT Prep</span>
+          </h3>
+          <p>
+            <span class="lang active" data-lang="es">Practica con ex&aacute;menes de simulaci&oacute;n CCHT. Preguntas tipo BONENT con retroalimentaci&oacute;n detallada.</span>
+            <span class="lang" data-lang="en">Practice with CCHT mock exams. BONENT-style questions with detailed feedback.</span>
+          </p>
+          <a href="https://rci-prep.pages.dev" target="_blank" rel="noopener" class="dash-link">
+            <span class="lang active" data-lang="es">Ir a CCHT Prep &rarr;</span>
+            <span class="lang" data-lang="en">Go to CCHT Prep &rarr;</span>
+          </a>
+        </div>
+
+        <div class="dash-card">
+          <h3>
+            <span class="lang active" data-lang="es">&#9881;&#65039; Mi cuenta</span>
+            <span class="lang" data-lang="en">&#9881;&#65039; My account</span>
+          </h3>
+          <p>
+            <span class="lang active" data-lang="es">Administra tu perfil, suscripci&oacute;n y preferencias de la plataforma.</span>
+            <span class="lang" data-lang="en">Manage your profile, subscription, and platform preferences.</span>
+          </p>
+          <a href="/upgrade.html" class="dash-link">
+            <span class="lang active" data-lang="es">Ver mi plan &rarr;</span>
+            <span class="lang" data-lang="en">View my plan &rarr;</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-inner">
+        <div>
+          <div class="brand">
+            <img src="logo.png" alt="RCI Tutoring" />
+            <div>
+              <div class="brand-title">RCI Tutoring</div>
+              <div class="brand-sub">Hemodialysis Education</div>
+            </div>
+          </div>
+          <div class="lang active" data-lang="es">
+            <p class="footer-note">RCI Tutoring es una marca educativa orientada a tutor&iacute;a y refuerzo acad&eacute;mico en hemodi&aacute;lisis.</p>
+          </div>
+          <div class="lang" data-lang="en">
+            <p class="footer-note">RCI Tutoring is an educational brand focused on tutoring and academic reinforcement in hemodialysis.</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4><span class="lang active" data-lang="es">Legal</span><span class="lang" data-lang="en">Legal</span></h4>
+          <a href="legal.html"><span class="lang active" data-lang="es">Aviso Legal</span><span class="lang" data-lang="en">Legal Disclaimer</span></a>
+          <a href="privacy.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Privacidad</span><span class="lang" data-lang="en">Privacy Policy</span></a>
+          <a href="cookies.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Cookies</span><span class="lang" data-lang="en">Cookies Policy</span></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Language toggle
+    var buttons = document.querySelectorAll('[data-lang-btn]');
+    var langBlocks = document.querySelectorAll('.lang');
+    function setLanguage(lang) {
+      langBlocks.forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+      buttons.forEach(function(btn) { btn.classList.toggle('active', btn.dataset.langBtn === lang); });
+      document.documentElement.lang = lang;
+    }
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        setLanguage(btn.dataset.langBtn);
+        localStorage.setItem('rci_lang', btn.dataset.langBtn);
+      });
+    });
+    var savedLang = localStorage.getItem('rci_lang') || 'es';
+    setLanguage(savedLang);
+    var currentLang = savedLang;
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() { currentLang = btn.dataset.langBtn; });
+    });
+
+    // Auth check
+    var token = localStorage.getItem('rci_token');
+    if (!token) {
+      window.location.href = '/login.html';
+    }
+
+    // Load user data
+    var user = null;
+    try { user = JSON.parse(localStorage.getItem('rci_user')); } catch(e) {}
+
+    if (user) {
+      var firstName = user.nombre ? user.nombre.split(' ')[0] : '';
+      document.getElementById('userName').textContent = firstName;
+      document.getElementById('userNameEn').textContent = firstName;
+      document.getElementById('userGreeting').textContent = firstName;
+    }
+
+    // Fetch fresh user data from API
+    async function loadUserData() {
+      try {
+        var res = await fetch('/api/me', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            localStorage.removeItem('rci_token');
+            localStorage.removeItem('rci_user');
+            window.location.href = '/login.html';
+            return;
+          }
+          return;
+        }
+        var data = await res.json();
+        user = data.user;
+        localStorage.setItem('rci_user', JSON.stringify(user));
+
+        var firstName = user.nombre ? user.nombre.split(' ')[0] : '';
+        document.getElementById('userName').textContent = firstName;
+        document.getElementById('userNameEn').textContent = firstName;
+        document.getElementById('userGreeting').textContent = firstName;
+
+        // Show trial banner
+        var trialBanner = document.getElementById('trialBanner');
+        var expiredBanner = document.getElementById('expiredBanner');
+        var trialText = document.getElementById('trialText');
+        var upgradeBtn = document.getElementById('upgradeBtn');
+
+        if (user.status === 'expired') {
+          expiredBanner.style.display = 'flex';
+          trialBanner.style.display = 'none';
+        } else if (user.status === 'trial' && user.days_left !== null) {
+          trialBanner.style.display = 'flex';
+          expiredBanner.style.display = 'none';
+
+          if (user.days_left >= 4) {
+            trialBanner.className = 'trial-banner green';
+            trialText.innerHTML = '<span class="lang" data-lang="es">Prueba gratuita: ' + user.days_left + ' d\u00edas restantes</span>' +
+              '<span class="lang" data-lang="en">Free trial: ' + user.days_left + ' days remaining</span>';
+          } else if (user.days_left >= 2) {
+            trialBanner.className = 'trial-banner orange';
+            trialText.innerHTML = '<span class="lang" data-lang="es">\u26a0\ufe0f Solo ' + user.days_left + ' d\u00edas en tu prueba</span>' +
+              '<span class="lang" data-lang="en">\u26a0\ufe0f Only ' + user.days_left + ' days left in your trial</span>';
+            upgradeBtn.style.display = 'inline-flex';
+          } else {
+            trialBanner.className = 'trial-banner red';
+            trialText.innerHTML = '<span class="lang" data-lang="es">\ud83d\udea8 \u00daltimo d\u00eda de tu prueba gratuita!</span>' +
+              '<span class="lang" data-lang="en">\ud83d\udea8 Last day of your free trial!</span>';
+            upgradeBtn.style.display = 'inline-flex';
+          }
+          // Refresh langBlocks to include new spans and re-apply language
+          langBlocks = document.querySelectorAll('.lang');
+          setLanguage(currentLang);
+        } else if (user.status === 'active') {
+          // Active subscriber — no banner needed
+          trialBanner.style.display = 'none';
+          expiredBanner.style.display = 'none';
+        }
+
+      } catch (err) {
+        console.error('Error loading user data:', err);
+      }
+    }
+
+    loadUserData();
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async function() {
+      try { await fetch('/api/logout', { method: 'POST' }); } catch(e) {}
+      localStorage.removeItem('rci_token');
+      localStorage.removeItem('rci_user');
+      window.location.href = '/';
+    });
+  </script>
+  <script src="assets/cookie-banner.js"></script>
+</body>
+</html>
