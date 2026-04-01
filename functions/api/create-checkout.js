@@ -10,12 +10,28 @@
 import { verifyJWT, extractToken, jsonResponse, corsHeaders } from './_shared/auth.js';
 
 // Price IDs from Stripe Dashboard (test mode)
-const PRICE_MAP = {
+// Launch pricing (until June 30, 2025)
+const PRICE_MAP_LAUNCH = {
   monthly:        'price_1THAsICPTBMEWNnkBreOkbJZ',   // $19.00/month
   monthly_latam:  'price_1THB6TCPTBMEWNnkaiUJLEp5',   // $5.00/month
   lifetime:       'price_1THPBDCPTBMEWNnkHFyxrkR8',   // $59.00 one-time
   lifetime_latam: 'price_1THPRXCPTBMEWNnkAjhgTa8q',   // $19.00 one-time
 };
+
+// Regular pricing (July 1, 2025 onwards)
+const PRICE_MAP_REGULAR = {
+  monthly:        'price_1THXL3CPTBMEWNnkF0aQ3ezS',   // $29.00/month
+  monthly_latam:  'price_1THXL9CPTBMEWNnkfUJPCd6y',   // $9.00/month
+  lifetime:       'price_1THXLECPTBMEWNnkqwobHtWQ',   // $99.00 one-time
+  lifetime_latam: 'price_1THXLJCPTBMEWNnk55ASU0iO',   // $39.00 one-time
+};
+
+// Cutover date: July 1, 2025 00:00 UTC
+const REGULAR_PRICING_DATE = new Date('2025-07-01T00:00:00Z');
+
+function getPriceMap() {
+  return new Date() >= REGULAR_PRICING_DATE ? PRICE_MAP_REGULAR : PRICE_MAP_LAUNCH;
+}
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -41,7 +57,7 @@ export async function onRequestPost(context) {
   }
 
   const { plan } = body;
-  const priceId = PRICE_MAP[plan];
+  const priceId = getPriceMap()[plan];
   if (!priceId) {
     return jsonResponse({ error: 'Invalid plan. Valid: monthly, monthly_latam, lifetime, lifetime_latam' }, 400);
   }

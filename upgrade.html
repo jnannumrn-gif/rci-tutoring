@@ -67,8 +67,8 @@
           </p>
           <div class="price" id="priceMonthly">$19</div>
           <div class="price-latam" id="priceMonthlyLatam" style="font-size:0.85rem;color:var(--muted);display:none;">
-            <span class="lang active" data-lang="es">LATAM: $5/mes</span>
-            <span class="lang" data-lang="en">LATAM: $5/mo</span>
+            <span class="lang active" data-lang="es">LATAM: <span id="priceMonthlyLatamVal">$5</span>/mes</span>
+            <span class="lang" data-lang="en">LATAM: <span id="priceMonthlyLatamValEn">$5</span>/mo</span>
           </div>
           <div class="price-period">
             <span class="lang active" data-lang="es">por mes</span>
@@ -114,8 +114,8 @@
           </p>
           <div class="price" id="priceLifetime">$59</div>
           <div class="price-latam" id="priceLifetimeLatam" style="font-size:0.85rem;color:var(--muted);display:none;">
-            <span class="lang active" data-lang="es">LATAM: $19 pago &uacute;nico</span>
-            <span class="lang" data-lang="en">LATAM: $19 one-time</span>
+            <span class="lang active" data-lang="es">LATAM: <span id="priceLifetimeLatamVal">$19</span> pago &uacute;nico</span>
+            <span class="lang" data-lang="en">LATAM: <span id="priceLifetimeLatamValEn">$19</span> one-time</span>
           </div>
           <div class="price-period">
             <span class="lang active" data-lang="es">pago &uacute;nico</span>
@@ -257,6 +257,22 @@
       btn.addEventListener('click', function() { currentLang = btn.dataset.langBtn; });
     });
 
+    // --- Date-based pricing (launch vs regular) ---
+    var REGULAR_DATE = new Date('2025-07-01T00:00:00Z');
+    var isRegularPricing = new Date() >= REGULAR_DATE;
+    if (isRegularPricing) {
+      document.getElementById('priceMonthly').textContent = '$29';
+      document.getElementById('priceLifetime').textContent = '$99';
+      var mlv = document.getElementById('priceMonthlyLatamVal');
+      var mlve = document.getElementById('priceMonthlyLatamValEn');
+      var llv = document.getElementById('priceLifetimeLatamVal');
+      var llve = document.getElementById('priceLifetimeLatamValEn');
+      if (mlv) mlv.textContent = '$9';
+      if (mlve) mlve.textContent = '$9';
+      if (llv) llv.textContent = '$39';
+      if (llve) llve.textContent = '$39';
+    }
+
     // Show dashboard link if logged in
     var token = localStorage.getItem('rci_token');
     if (token) {
@@ -276,8 +292,8 @@
             var latamCountries = ['MX','CO','AR','PE','CL','EC','VE','GT','CU','BO','DO','HN','PY','SV','NI','CR','PA','UY','JM','HT','TT','PR','BZ','GY','SR','BS','BB','LC','GD','AG','KN','DM','VC'];
             isLatam = latamCountries.indexOf(data.user.pais.toUpperCase()) !== -1;
             if (isLatam) {
-              document.getElementById('priceMonthly').textContent = '$5';
-              document.getElementById('priceLifetime').textContent = '$19';
+              document.getElementById('priceMonthly').textContent = isRegularPricing ? '$9' : '$5';
+              document.getElementById('priceLifetime').textContent = isRegularPricing ? '$39' : '$19';
               document.getElementById('priceMonthlyLatam').style.display = 'none';
               document.getElementById('priceLifetimeLatam').style.display = 'none';
             }
