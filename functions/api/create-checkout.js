@@ -103,6 +103,7 @@ export async function onRequestPost(context) {
     'line_items[0][price]': priceId,
     'line_items[0][quantity]': '1',
     'mode': mode,
+    'billing_address_collection': 'required',
     'success_url': `${appUrl}/dashboard.html?payment=success`,
     'cancel_url': `${appUrl}/upgrade.html?payment=cancelled`,
     'metadata[rci_user_id]': user.id,
