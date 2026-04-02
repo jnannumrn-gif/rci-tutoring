@@ -14,8 +14,8 @@ import { verifyJWT, extractToken, jsonResponse, corsHeaders } from './_shared/au
 const PRICE_MAP_LAUNCH = {
   monthly:        'price_1THAsICPTBMEWNnkBreOkbJZ',   // $19.00/month
   monthly_latam:  'price_1THB6TCPTBMEWNnkaiUJLEp5',   // $5.00/month
-  lifetime:       'price_1THPBDCPTBMEWNnkHFyxrkR8',   // $59.00 one-time
-  lifetime_latam: 'price_1THPRXCPTBMEWNnkAjhgTa8q',   // $19.00 one-time
+  lifetime:       'price_1THrS6CPTBMEWNnkntqx8ZZ5',   // $99.00 one-time
+  lifetime_latam: 'price_1THrSNCPTBMEWNnkA3eLZ6Xh',   // $49.00 one-time
   human_session:  'price_1THqmJCPTBMEWNnkrvEFolaP',   // $49.00 one-time per session
 };
 
@@ -23,8 +23,8 @@ const PRICE_MAP_LAUNCH = {
 const PRICE_MAP_REGULAR = {
   monthly:        'price_1THXL3CPTBMEWNnkF0aQ3ezS',   // $29.00/month
   monthly_latam:  'price_1THXL9CPTBMEWNnkfUJPCd6y',   // $9.00/month
-  lifetime:       'price_1THXLECPTBMEWNnkqwobHtWQ',   // $99.00 one-time
-  lifetime_latam: 'price_1THXLJCPTBMEWNnk55ASU0iO',   // $39.00 one-time
+  lifetime:       'price_1THrSCCPTBMEWNnkO7X0Z7Ck',   // $119.00 one-time
+  lifetime_latam: 'price_1THrT5CPTBMEWNnkp9sZalqB',   // $69.00 one-time
   human_session:  'price_1THqmJCPTBMEWNnkrvEFolaP',   // $49.00 one-time per session
 };
 
