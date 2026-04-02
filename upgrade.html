@@ -55,8 +55,43 @@
       </div>
 
       <div class="pricing-grid">
-        <!-- Monthly Plan -->
+        <!-- Free Plan -->
         <div class="price-card">
+          <h3>
+            <span class="lang active" data-lang="es">Gratis</span>
+            <span class="lang" data-lang="en">Free</span>
+          </h3>
+          <p style="color:var(--muted);font-size:0.88rem;">
+            <span class="lang active" data-lang="es">Empieza con acceso b&aacute;sico al tutor IA</span>
+            <span class="lang" data-lang="en">Start with basic AI tutor access</span>
+          </p>
+          <div class="price">$0</div>
+          <div class="price-period">
+            <span class="lang active" data-lang="es">gratis para siempre</span>
+            <span class="lang" data-lang="en">free forever</span>
+          </div>
+          <ul class="price-features">
+            <li>
+              <span class="lang active" data-lang="es">Tutor IA b&aacute;sico</span>
+              <span class="lang" data-lang="en">Basic AI Tutor</span>
+            </li>
+            <li>
+              <span class="lang active" data-lang="es">Acceso limitado</span>
+              <span class="lang" data-lang="en">Limited access</span>
+            </li>
+          </ul>
+          <a href="/register.html" class="btn-price btn-price-outline" style="text-align:center;display:block;">
+            <span class="lang active" data-lang="es">Crear cuenta gratis</span>
+            <span class="lang" data-lang="en">Create free account</span>
+          </a>
+        </div>
+
+        <!-- Monthly Plan -->
+        <div class="price-card featured">
+          <div class="popular-tag">
+            <span class="lang active" data-lang="es">POPULAR</span>
+            <span class="lang" data-lang="en">POPULAR</span>
+          </div>
           <h3>
             <span class="lang active" data-lang="es">Mensual</span>
             <span class="lang" data-lang="en">Monthly</span>
@@ -94,12 +129,8 @@
           </button>
         </div>
 
-        <!-- Lifetime Plan (Featured) -->
-        <div class="price-card featured">
-          <div class="popular-tag">
-            <span class="lang active" data-lang="es">POPULAR</span>
-            <span class="lang" data-lang="en">POPULAR</span>
-          </div>
+        <!-- Lifetime Plan -->
+        <div class="price-card">
           <h3>
             <span class="lang active" data-lang="es">Vitalicio</span>
             <span class="lang" data-lang="en">Lifetime</span>
@@ -108,10 +139,10 @@
             <span class="lang active" data-lang="es">Un solo pago, acceso para siempre</span>
             <span class="lang" data-lang="en">One payment, access forever</span>
           </p>
-          <div class="price" id="priceLifetime">$59</div>
+          <div class="price" id="priceLifetime">$99</div>
           <div class="price-latam" id="priceLifetimeLatam" style="font-size:0.85rem;color:var(--muted);display:none;">
-            <span class="lang active" data-lang="es">LATAM: <span id="priceLifetimeLatamVal">$19</span> pago &uacute;nico</span>
-            <span class="lang" data-lang="en">LATAM: <span id="priceLifetimeLatamValEn">$19</span> one-time</span>
+            <span class="lang active" data-lang="es">LATAM: <span id="priceLifetimeLatamVal">$49</span> pago &uacute;nico</span>
+            <span class="lang" data-lang="en">LATAM: <span id="priceLifetimeLatamValEn">$49</span> one-time</span>
           </div>
           <div class="price-period">
             <span class="lang active" data-lang="es">pago &uacute;nico</span>
@@ -130,12 +161,8 @@
               <span class="lang active" data-lang="es">Soporte prioritario</span>
               <span class="lang" data-lang="en">Priority support</span>
             </li>
-            <li>
-              <span class="lang active" data-lang="es">Certificado de completado</span>
-              <span class="lang" data-lang="en">Completion certificate</span>
-            </li>
           </ul>
-          <button class="btn-price btn-price-primary" data-plan="lifetime" onclick="handleSubscribe('lifetime')">
+          <button class="btn-price btn-price-outline" data-plan="lifetime" onclick="handleSubscribe('lifetime')">
             <span class="lang active" data-lang="es">Obtener acceso vitalicio</span>
             <span class="lang" data-lang="en">Get lifetime access</span>
           </button>
@@ -294,15 +321,15 @@
     var isRegularPricing = new Date() >= REGULAR_DATE;
     if (isRegularPricing) {
       document.getElementById('priceMonthly').textContent = '$29';
-      document.getElementById('priceLifetime').textContent = '$99';
+      document.getElementById('priceLifetime').textContent = '$119';
       var mlv = document.getElementById('priceMonthlyLatamVal');
       var mlve = document.getElementById('priceMonthlyLatamValEn');
       var llv = document.getElementById('priceLifetimeLatamVal');
       var llve = document.getElementById('priceLifetimeLatamValEn');
       if (mlv) mlv.textContent = '$9';
       if (mlve) mlve.textContent = '$9';
-      if (llv) llv.textContent = '$39';
-      if (llve) llve.textContent = '$39';
+      if (llv) llv.textContent = '$69';
+      if (llve) llve.textContent = '$69';
     }
 
     // Show dashboard link if logged in
@@ -325,7 +352,7 @@
             isLatam = latamCountries.indexOf(data.user.pais.toUpperCase()) !== -1;
             if (isLatam) {
               document.getElementById('priceMonthly').textContent = isRegularPricing ? '$9' : '$5';
-              document.getElementById('priceLifetime').textContent = isRegularPricing ? '$39' : '$19';
+              document.getElementById('priceLifetime').textContent = isRegularPricing ? '$69' : '$49';
               document.getElementById('priceMonthlyLatam').style.display = 'none';
               document.getElementById('priceLifetimeLatam').style.display = 'none';
             }
