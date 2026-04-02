@@ -2,7 +2,7 @@
  * POST /api/create-checkout
  *
  * Creates a Stripe Checkout Session for the authenticated user.
- * Expects JSON body: { plan: "monthly" | "monthly_latam" | "lifetime" | "lifetime_latam" }
+ * Expects JSON body: { plan: "monthly" | "monthly_latam" | "lifetime" | "lifetime_latam" | "human_session" }
  *
  * Returns: { url: "https://checkout.stripe.com/..." }
  */
@@ -16,6 +16,7 @@ const PRICE_MAP_LAUNCH = {
   monthly_latam:  'price_1THB6TCPTBMEWNnkaiUJLEp5',   // $5.00/month
   lifetime:       'price_1THPBDCPTBMEWNnkHFyxrkR8',   // $59.00 one-time
   lifetime_latam: 'price_1THPRXCPTBMEWNnkAjhgTa8q',   // $19.00 one-time
+  human_session:  'price_1THqmJCPTBMEWNnkrvEFolaP',   // $49.00 one-time per session
 };
 
 // Regular pricing (July 1, 2026 onwards)
@@ -24,6 +25,7 @@ const PRICE_MAP_REGULAR = {
   monthly_latam:  'price_1THXL9CPTBMEWNnkfUJPCd6y',   // $9.00/month
   lifetime:       'price_1THXLECPTBMEWNnkqwobHtWQ',   // $99.00 one-time
   lifetime_latam: 'price_1THXLJCPTBMEWNnk55ASU0iO',   // $39.00 one-time
+  human_session:  'price_1THqmJCPTBMEWNnkrvEFolaP',   // $49.00 one-time per session
 };
 
 // Cutover date: July 1, 2026 00:00 UTC
@@ -59,11 +61,12 @@ export async function onRequestPost(context) {
   const { plan } = body;
   const priceId = getPriceMap()[plan];
   if (!priceId) {
-    return jsonResponse({ error: 'Invalid plan. Valid: monthly, monthly_latam, lifetime, lifetime_latam' }, 400);
+    return jsonResponse({ error: 'Invalid plan. Valid: monthly, monthly_latam, lifetime, lifetime_latam, human_session' }, 400);
   }
 
   // Determine mode based on price type
   const isRecurring = plan.startsWith('monthly');
+  const isHumanSession = plan === 'human_session';
   const mode = isRecurring ? 'subscription' : 'payment';
 
   // Get or create Stripe customer
