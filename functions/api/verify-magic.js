@@ -2,7 +2,7 @@
  * GET /api/verify-magic?token=XXX
  *
  * Verifies a magic sign-in token and logs the user in.
- * The token is single-use and expires after 72 hours.
+ * The token is single-use and expires after 24 hours.
  */
 
 import { createJWT, jsonResponse, corsHeaders } from './_shared/auth.js';
