@@ -66,8 +66,8 @@ export async function onRequestPost(context) {
     // Rate limit: check if last token was created less than 2 minutes ago
     if (user.email_verify_expires) {
       var expiresAt = new Date(user.email_verify_expires);
-      // Token expires 24h after creation, so creation = expires - 24h
-      var createdAt = new Date(expiresAt.getTime() - 24 * 60 * 60 * 1000);
+      // Token expires 72h after creation, so creation = expires - 72h
+      var createdAt = new Date(expiresAt.getTime() - 72 * 60 * 60 * 1000);
       var now = new Date();
       var minutesSinceCreation = (now.getTime() - createdAt.getTime()) / (1000 * 60);
       if (minutesSinceCreation < 2) {
