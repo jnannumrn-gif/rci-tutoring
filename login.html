@@ -49,6 +49,7 @@
       </p>
 
       <div id="alertBox" class="alert alert-error"></div>
+      <div id="successBox" class="alert alert-success"></div>
 
       <!-- Verification needed banner -->
       <div id="verifyBanner" style="display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:12px;padding:16px;margin-bottom:16px;text-align:center;">
@@ -60,6 +61,19 @@
         <p id="resendLoginStatus" style="font-size:0.8rem;margin-top:8px;display:none;"></p>
       </div>
 
+      <!-- Login mode tabs -->
+      <div style="display:flex;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:24px;">
+        <button id="tabPassword" class="login-tab active" style="flex:1;padding:11px 8px;border:none;background:var(--brand);color:#fff;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.2s;">
+          <span class="lang active" data-lang="es">&#128274; Contrase&ntilde;a</span>
+          <span class="lang" data-lang="en">&#128274; Password</span>
+        </button>
+        <button id="tabMagic" class="login-tab" style="flex:1;padding:11px 8px;border:none;background:transparent;color:var(--muted);font-size:0.85rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.2s;">
+          <span class="lang active" data-lang="es">&#10024; Magic Link</span>
+          <span class="lang" data-lang="en">&#10024; Magic Link</span>
+        </button>
+      </div>
+
+      <!-- PASSWORD LOGIN FORM -->
       <form id="loginForm" novalidate>
         <div class="form-group">
           <label for="email">
@@ -86,6 +100,40 @@
           <span class="lang" data-lang="en">Sign in</span>
         </button>
       </form>
+
+      <!-- MAGIC LINK FORM -->
+      <div id="magicLinkForm" style="display:none;">
+        <p style="text-align:center;color:var(--muted);font-size:0.9rem;margin-bottom:20px;">
+          <span class="lang active" data-lang="es">Ingresa tu email y te enviaremos un enlace para iniciar sesi&oacute;n sin contrase&ntilde;a.</span>
+          <span class="lang" data-lang="en">Enter your email and we'll send you a link to sign in without a password.</span>
+        </p>
+        <div class="form-group">
+          <label for="magicEmail">
+            <span class="lang active" data-lang="es">Correo electr&oacute;nico</span>
+            <span class="lang" data-lang="en">Email address</span>
+          </label>
+          <input type="email" id="magicEmail" name="magicEmail" required
+            placeholder="tu@correo.com" autocomplete="email" />
+          <div class="form-error" id="magicEmail-error"></div>
+        </div>
+        <button type="button" class="btn-submit" id="magicBtn" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
+          <span class="lang active" data-lang="es">&#10024; Enviar enlace de acceso</span>
+          <span class="lang" data-lang="en">&#10024; Send sign-in link</span>
+        </button>
+
+        <!-- Magic link sent state -->
+        <div id="magicSentState" style="display:none;text-align:center;margin-top:20px;">
+          <div style="font-size:2rem;margin-bottom:8px;">&#9993;</div>
+          <p style="font-weight:700;color:var(--text);margin-bottom:4px;">
+            <span class="lang active" data-lang="es">&iexcl;Enlace enviado!</span>
+            <span class="lang" data-lang="en">Link sent!</span>
+          </p>
+          <p style="color:var(--muted);font-size:0.88rem;">
+            <span class="lang active" data-lang="es">Revisa tu bandeja de entrada y haz clic en el enlace para acceder. El enlace expira en 24 horas.</span>
+            <span class="lang" data-lang="en">Check your inbox and click the link to sign in. The link expires in 24 hours.</span>
+          </p>
+        </div>
+      </div>
 
       <div class="auth-footer">
         <span class="lang active" data-lang="es">&iquest;No tienes cuenta?</span>
@@ -236,6 +284,102 @@
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<span class="lang" data-lang="es">Iniciar sesi\u00f3n</span>' +
           '<span class="lang" data-lang="en">Sign in</span>';
+        langBlocks = document.querySelectorAll('.lang');
+        setLanguage(currentLang);
+      }
+    });
+
+    // Tab switching: Password vs Magic Link
+    var tabPassword = document.getElementById('tabPassword');
+    var tabMagic = document.getElementById('tabMagic');
+    var loginFormEl = document.getElementById('loginForm');
+    var magicFormEl = document.getElementById('magicLinkForm');
+    var successBox = document.getElementById('successBox');
+
+    function switchTab(tab) {
+      clearErrors();
+      alertBox.classList.remove('visible');
+      successBox.classList.remove('visible');
+      document.getElementById('magicSentState').style.display = 'none';
+      document.getElementById('magicBtn').style.display = '';
+      if (tab === 'password') {
+        tabPassword.style.background = 'var(--brand)';
+        tabPassword.style.color = '#fff';
+        tabMagic.style.background = 'transparent';
+        tabMagic.style.color = 'var(--muted)';
+        loginFormEl.style.display = '';
+        magicFormEl.style.display = 'none';
+      } else {
+        tabMagic.style.background = 'linear-gradient(135deg,#6366f1,#3b82f6)';
+        tabMagic.style.color = '#fff';
+        tabPassword.style.background = 'transparent';
+        tabPassword.style.color = 'var(--muted)';
+        loginFormEl.style.display = 'none';
+        magicFormEl.style.display = '';
+      }
+    }
+    tabPassword.addEventListener('click', function() { switchTab('password'); });
+    tabMagic.addEventListener('click', function() { switchTab('magic'); });
+
+    // Magic Link submit
+    document.getElementById('magicBtn').addEventListener('click', async function() {
+      clearErrors();
+      alertBox.classList.remove('visible');
+      successBox.classList.remove('visible');
+
+      var magicEmailInput = document.getElementById('magicEmail');
+      var magicEmail = magicEmailInput.value.trim();
+
+      if (!magicEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(magicEmail)) {
+        var errEl = document.getElementById('magicEmail-error');
+        magicEmailInput.classList.add('error');
+        errEl.textContent = currentLang === 'en' ? 'Invalid email' : 'Email inv\u00e1lido';
+        errEl.classList.add('visible');
+        return;
+      }
+
+      var magicBtn = document.getElementById('magicBtn');
+      magicBtn.disabled = true;
+      magicBtn.textContent = currentLang === 'en' ? 'Sending...' : 'Enviando...';
+
+      try {
+        var res = await fetch('/api/magic-link', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: magicEmail, lang: currentLang })
+        });
+
+        var data = await res.json();
+
+        if (!res.ok) {
+          if (data.needs_verification) {
+            var verifyBanner = document.getElementById('verifyBanner');
+            var bannerMsg = document.getElementById('verifyBannerMsg');
+            bannerMsg.textContent = currentLang === 'en'
+              ? (data.error_en || 'Your email has not been verified.')
+              : (data.error || 'Tu email no ha sido verificado.');
+            verifyBanner.style.display = 'block';
+            verifyBanner._email = data.email || magicEmail;
+          } else {
+            alertBox.textContent = currentLang === 'en' ? (data.error_en || data.error) : data.error;
+            alertBox.classList.add('visible');
+          }
+          return;
+        }
+
+        // Show success state
+        magicBtn.style.display = 'none';
+        document.getElementById('magicSentState').style.display = 'block';
+        langBlocks = document.querySelectorAll('.lang');
+        setLanguage(currentLang);
+
+      } catch (err) {
+        alertBox.textContent = currentLang === 'en' ? 'Connection error. Please try again.' : 'Error de conexi\u00f3n. Intenta de nuevo.';
+        alertBox.classList.add('visible');
+      } finally {
+        magicBtn.disabled = false;
+        magicBtn.innerHTML = '<span class="lang" data-lang="es">\u2728 Enviar enlace de acceso</span>' +
+          '<span class="lang" data-lang="en">\u2728 Send sign-in link</span>';
         langBlocks = document.querySelectorAll('.lang');
         setLanguage(currentLang);
       }

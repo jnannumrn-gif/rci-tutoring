@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RCI Tutoring | Magic Sign In</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/shared-styles.css">
+</head>
+<body>
+  <!-- NAV -->
+  <header class="topbar">
+    <div class="wrap">
+      <nav class="nav">
+        <a href="/" class="brand">
+          <img src="logo.png" alt="RCI Tutoring" />
+          <div>
+            <div class="brand-title">RCI Tutoring</div>
+            <div class="brand-sub">Hemodialysis Education</div>
+          </div>
+        </a>
+        <div class="nav-right">
+          <div class="lang-pill">
+            <button data-lang-btn="es" class="active">ES</button>
+            <button data-lang-btn="en">EN</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- VERIFY MAGIC LINK -->
+  <main class="auth-page">
+    <div class="auth-card" style="text-align:center;">
+      <!-- Loading state -->
+      <div id="loadingState">
+        <div style="font-size:2.5rem;margin-bottom:16px;">&#10024;</div>
+        <h1 style="font-size:1.4rem;">
+          <span class="lang active" data-lang="es">Iniciando sesi&oacute;n...</span>
+          <span class="lang" data-lang="en">Signing you in...</span>
+        </h1>
+        <p class="subtitle">
+          <span class="lang active" data-lang="es">Un momento por favor.</span>
+          <span class="lang" data-lang="en">One moment please.</span>
+        </p>
+      </div>
+
+      <!-- Success state -->
+      <div id="successState" style="display:none;">
+        <div style="font-size:2.5rem;margin-bottom:16px;">&#9989;</div>
+        <h1 style="font-size:1.4rem;color:#16a34a;">
+          <span class="lang active" data-lang="es">&iexcl;Sesi&oacute;n iniciada!</span>
+          <span class="lang" data-lang="en">Signed in!</span>
+        </h1>
+        <p class="subtitle">
+          <span class="lang active" data-lang="es">Bienvenido de vuelta. Redirigiendo en <span id="countdownEs">3</span> segundos...</span>
+          <span class="lang" data-lang="en">Welcome back. Redirecting in <span id="countdownEn">3</span> seconds...</span>
+        </p>
+        <p class="subtitle" style="font-size:0.8rem;color:var(--dim);">
+          <span class="lang active" data-lang="es">Tu enlace de acceso ha sido utilizado y ya no es v&aacute;lido.</span>
+          <span class="lang" data-lang="en">Your sign-in link has been used and is no longer valid.</span>
+        </p>
+        <a href="/dashboard.html" class="btn-submit" style="display:inline-block;text-decoration:none;margin-top:16px;">
+          <span class="lang active" data-lang="es">Ir al Dashboard</span>
+          <span class="lang" data-lang="en">Go to Dashboard</span>
+        </a>
+      </div>
+
+      <!-- Error state -->
+      <div id="errorState" style="display:none;">
+        <div style="font-size:2.5rem;margin-bottom:16px;">&#10060;</div>
+        <h1 style="font-size:1.4rem;color:#dc2626;">
+          <span class="lang active" data-lang="es">Error de acceso</span>
+          <span class="lang" data-lang="en">Sign-in error</span>
+        </h1>
+        <p class="subtitle" id="errorMessage"></p>
+        <a href="/login.html" class="btn-submit" style="display:inline-block;text-decoration:none;margin-top:16px;">
+          <span class="lang active" data-lang="es">Volver a iniciar sesi&oacute;n</span>
+          <span class="lang" data-lang="en">Back to sign in</span>
+        </a>
+      </div>
+
+      <!-- Expired state -->
+      <div id="expiredState" style="display:none;">
+        <div style="font-size:2.5rem;margin-bottom:16px;">&#9200;</div>
+        <h1 style="font-size:1.4rem;color:#d97706;">
+          <span class="lang active" data-lang="es">Enlace expirado</span>
+          <span class="lang" data-lang="en">Link expired</span>
+        </h1>
+        <p class="subtitle">
+          <span class="lang active" data-lang="es">Este enlace ya expir&oacute;. Solicita uno nuevo desde la p&aacute;gina de inicio de sesi&oacute;n.</span>
+          <span class="lang" data-lang="en">This link has expired. Request a new one from the sign-in page.</span>
+        </p>
+        <a href="/login.html" class="btn-submit" style="display:inline-block;text-decoration:none;margin-top:16px;">
+          <span class="lang active" data-lang="es">Solicitar nuevo enlace</span>
+          <span class="lang" data-lang="en">Request new link</span>
+        </a>
+      </div>
+
+      <!-- No token state -->
+      <div id="noTokenState" style="display:none;">
+        <div style="font-size:2.5rem;margin-bottom:16px;">&#10024;</div>
+        <h1 style="font-size:1.4rem;">
+          <span class="lang active" data-lang="es">Enlace de acceso</span>
+          <span class="lang" data-lang="en">Sign-in link</span>
+        </h1>
+        <p class="subtitle">
+          <span class="lang active" data-lang="es">Si solicitaste un enlace de acceso, revisa tu bandeja de entrada.</span>
+          <span class="lang" data-lang="en">If you requested a sign-in link, check your inbox.</span>
+        </p>
+        <div style="margin-top:16px;">
+          <a href="/login.html" class="btn-submit" style="display:inline-block;text-decoration:none;">
+            <span class="lang active" data-lang="es">Iniciar sesi&oacute;n</span>
+            <span class="lang" data-lang="en">Sign in</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-inner">
+        <div>
+          <div class="brand">
+            <img src="logo.png" alt="RCI Tutoring" />
+            <div>
+              <div class="brand-title">RCI Tutoring</div>
+              <div class="brand-sub">Hemodialysis Education</div>
+            </div>
+          </div>
+          <div class="lang active" data-lang="es">
+            <p class="footer-note">RCI Tutoring es una marca educativa orientada a tutor&iacute;a y refuerzo acad&eacute;mico en hemodi&aacute;lisis.</p>
+          </div>
+          <div class="lang" data-lang="en">
+            <p class="footer-note">RCI Tutoring is an educational brand focused on tutoring and academic reinforcement in hemodialysis.</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4><span class="lang active" data-lang="es">Legal</span><span class="lang" data-lang="en">Legal</span></h4>
+          <a href="legal.html"><span class="lang active" data-lang="es">Aviso Legal</span><span class="lang" data-lang="en">Legal Disclaimer</span></a>
+          <a href="privacy.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Privacidad</span><span class="lang" data-lang="en">Privacy Policy</span></a>
+          <a href="cookies.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Cookies</span><span class="lang" data-lang="en">Cookies Policy</span></a>
+          <a href="upgrade.html"><span class="lang active" data-lang="es">Precios</span><span class="lang" data-lang="en">Pricing</span></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Language toggle
+    var buttons = document.querySelectorAll('[data-lang-btn]');
+    var langBlocks = document.querySelectorAll('.lang');
+    var currentLang = localStorage.getItem('rci_lang') || 'es';
+    function setLanguage(lang) {
+      langBlocks.forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+      buttons.forEach(function(btn) { btn.classList.toggle('active', btn.dataset.langBtn === lang); });
+      document.documentElement.lang = lang;
+      currentLang = lang;
+    }
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        setLanguage(btn.dataset.langBtn);
+        localStorage.setItem('rci_lang', btn.dataset.langBtn);
+      });
+    });
+    setLanguage(currentLang);
+
+    // Get token from URL
+    var params = new URLSearchParams(window.location.search);
+    var magicToken = params.get('token');
+
+    function showState(stateId) {
+      ['loadingState', 'successState', 'errorState', 'expiredState', 'noTokenState'].forEach(function(id) {
+        document.getElementById(id).style.display = 'none';
+      });
+      document.getElementById(stateId).style.display = 'block';
+      langBlocks = document.querySelectorAll('.lang');
+      setLanguage(currentLang);
+    }
+
+    if (!magicToken) {
+      showState('noTokenState');
+    } else {
+      // Call verify-magic API
+      fetch('/api/verify-magic?token=' + encodeURIComponent(magicToken))
+        .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, status: res.status, data: data }; }); })
+        .then(function(result) {
+          if (result.ok && result.data.success) {
+            // Store token and user data
+            if (result.data.token) {
+              localStorage.setItem('rci_token', result.data.token);
+              localStorage.setItem('rci_user', JSON.stringify(result.data.user));
+            }
+            showState('successState');
+
+            // Determine redirect based on status
+            var redirectUrl = '/dashboard.html';
+            if (result.data.user && result.data.user.status === 'expired') {
+              redirectUrl = '/upgrade.html';
+            }
+
+            // Countdown redirect
+            var countdown = 3;
+            var interval = setInterval(function() {
+              countdown--;
+              var esEl = document.getElementById('countdownEs');
+              var enEl = document.getElementById('countdownEn');
+              if (esEl) esEl.textContent = countdown;
+              if (enEl) enEl.textContent = countdown;
+              if (countdown <= 0) {
+                clearInterval(interval);
+                window.location.href = redirectUrl;
+              }
+            }, 1000);
+          } else {
+            if (result.status === 410 || result.data.expired) {
+              showState('expiredState');
+            } else {
+              var errorMsg = document.getElementById('errorMessage');
+              var msg = currentLang === 'en'
+                ? (result.data.error_en || result.data.error || 'Sign-in failed')
+                : (result.data.error || 'Error al iniciar sesi\u00f3n');
+              errorMsg.textContent = msg;
+              showState('errorState');
+            }
+          }
+        })
+        .catch(function() {
+          var errorMsg = document.getElementById('errorMessage');
+          errorMsg.textContent = currentLang === 'en'
+            ? 'Connection error. Please try again.'
+            : 'Error de conexi\u00f3n. Intenta de nuevo.';
+          showState('errorState');
+        });
+    }
+  </script>
+  <script src="assets/cookie-banner.js"></script>
+</body>
+</html>
