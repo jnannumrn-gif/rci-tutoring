@@ -27,7 +27,7 @@ export async function onRequestGet(context) {
 
     // Find user with this magic token
     var user = await env.DB.prepare(
-      'SELECT id, nombre, email, idioma, trial_end_date, status, magic_token_expires FROM users WHERE magic_token = ?'
+      'SELECT id, nombre, email, idioma, trial_end_date, status, email_verified, magic_token_expires FROM users WHERE magic_token = ?'
     ).bind(token).first();
 
     if (!user) {
