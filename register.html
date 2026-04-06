@@ -375,10 +375,10 @@
         return;
       }
 
-      fetch('/api/resend-verification', {
+      fetch('/api/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailToResend })
+        body: JSON.stringify({ email: emailToResend, lang: currentLang })
       })
       .then(function(res) { return res.json(); })
       .then(function(data) {
