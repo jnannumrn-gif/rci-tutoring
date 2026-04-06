@@ -62,6 +62,39 @@
     .nav-right { display: flex; align-items: center; gap: 8px; }
     .nav-link { padding: 8px 16px; font-size: 0.9rem; font-weight: 600; color: var(--muted); border-radius: 10px; transition: all 0.2s; }
     .nav-link:hover { color: var(--text); background: rgba(15,23,42,0.04); }
+    .nav-pricing {
+      padding: 9px 20px; font-size: 0.88rem; font-weight: 800; color: var(--brand);
+      background: rgba(30,64,175,0.08); border: 1.5px solid rgba(30,64,175,0.2);
+      border-radius: 10px; transition: all 0.25s; letter-spacing: -0.01em;
+    }
+    .nav-pricing:hover { background: rgba(30,64,175,0.14); border-color: rgba(30,64,175,0.35); transform: translateY(-1px); }
+
+    /* INTRO PRICING BANNER */
+    .intro-banner {
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
+      color: #fff; text-align: center; padding: 12px 24px;
+      font-size: 0.92rem; font-weight: 700; letter-spacing: -0.01em;
+      position: relative; overflow: hidden;
+      animation: bannerFadeIn 0.5s ease-out;
+      transition: opacity 0.8s ease, max-height 0.8s ease, padding 0.8s ease;
+      max-height: 60px;
+    }
+    .intro-banner a {
+      color: #fff; text-decoration: underline; text-underline-offset: 3px;
+      font-weight: 800; margin-left: 6px;
+    }
+    .intro-banner a:hover { text-decoration-thickness: 2px; }
+    .intro-banner .banner-close {
+      position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,0.2); border: none; color: #fff;
+      width: 24px; height: 24px; border-radius: 50%; cursor: pointer;
+      font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .intro-banner .banner-close:hover { background: rgba(255,255,255,0.35); }
+    .intro-banner.fade-out { opacity: 0; max-height: 0; padding: 0 24px; }
+    @keyframes bannerFadeIn { from { opacity: 0; transform: translateY(-100%); } to { opacity: 1; transform: translateY(0); } }
+
     .nav-cta {
       display: inline-flex; align-items: center; padding: 10px 22px;
       font-size: 0.9rem; font-weight: 700; color: #fff;
@@ -386,6 +419,7 @@
       .form-row { grid-template-columns: 1fr; }
       .cta-card { padding: 40px 24px; }
       .nav-link { display: none; }
+      .nav-pricing { font-size: 0.82rem; padding: 7px 14px; }
       .get-started-widget { padding: 28px 20px; }
       .quote-card { padding: 32px 24px; }
     }
@@ -411,6 +445,7 @@
         </div>
       </a>
       <div class="nav-right">
+        <a class="nav-pricing" href="/upgrade.html" data-i18n="nav_pricing">&#128176; Precios</a>
         <a class="nav-link" href="#about" data-i18n="nav_about">Nosotros</a>
         <a class="nav-link" href="#services" data-i18n="nav_services">Servicios</a>
         <a class="nav-link" href="#contact" data-i18n="nav_contact">Contacto</a>
@@ -422,6 +457,13 @@
       </div>
     </div>
   </header>
+
+  <!-- INTRODUCTORY PRICING BANNER -->
+  <div class="intro-banner" id="introBanner">
+    <span class="lang active" data-lang="es">&#127881; <strong>Precios de introducci&oacute;n por tiempo limitado</strong> &mdash; Aprovecha antes de que suban.<a href="/upgrade.html">Ver precios &rarr;</a></span>
+    <span class="lang" data-lang="en">&#127881; <strong>Introductory pricing for a limited time</strong> &mdash; Lock in before prices go up.<a href="/upgrade.html">See pricing &rarr;</a></span>
+    <button class="banner-close" onclick="closeBanner()" aria-label="Close">&times;</button>
+  </div>
 
   <!-- HERO -->
   <section class="hero" id="top">
@@ -828,8 +870,8 @@
     var buttons = document.querySelectorAll('[data-lang-btn]');
     var langBlocks = document.querySelectorAll('.lang');
     var i18nMap = {
-      es: { nav_about: 'Nosotros', nav_services: 'Servicios', nav_contact: 'Contacto', nav_start: 'Comenzar \u2192', select: '-- Seleccionar --', other: 'Otro / Other' },
-      en: { nav_about: 'About', nav_services: 'Services', nav_contact: 'Contact', nav_start: 'Get started \u2192', select: '-- Select --', other: 'Other' }
+      es: { nav_about: 'Nosotros', nav_services: 'Servicios', nav_contact: 'Contacto', nav_start: 'Comenzar \u2192', nav_pricing: '\uD83D\uDCB0 Precios', select: '-- Seleccionar --', other: 'Otro / Other' },
+      en: { nav_about: 'About', nav_services: 'Services', nav_contact: 'Contact', nav_start: 'Get started \u2192', nav_pricing: '\uD83D\uDCB0 Pricing', select: '-- Select --', other: 'Other' }
     };
     function setLanguage(lang) {
       langBlocks.forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
@@ -848,6 +890,26 @@
       btn.addEventListener('click', function() { setLanguage(btn.dataset.langBtn); });
     });
     setLanguage('es');
+
+    // Intro banner auto-fade after 8 seconds
+    (function() {
+      var banner = document.getElementById('introBanner');
+      if (!banner) return;
+      if (sessionStorage.getItem('rci_banner_closed') === '1') {
+        banner.style.display = 'none';
+        return;
+      }
+      var autoFadeTimer = setTimeout(function() {
+        banner.classList.add('fade-out');
+        setTimeout(function() { banner.style.display = 'none'; }, 800);
+      }, 8000);
+      window.closeBanner = function() {
+        clearTimeout(autoFadeTimer);
+        banner.classList.add('fade-out');
+        sessionStorage.setItem('rci_banner_closed', '1');
+        setTimeout(function() { banner.style.display = 'none'; }, 800);
+      };
+    })();
 
     var form = document.getElementById('contactForm');
     if (form) {
