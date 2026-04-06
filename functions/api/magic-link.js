@@ -109,12 +109,12 @@ export async function onRequestPost(context) {
     }
 
     if (user.email_verified === 0) {
+      // Return same opaque response as non-existent user to prevent email enumeration
       return jsonResponse({
-        error: 'Tu email a\u00fan no ha sido verificado. Revisa tu bandeja de entrada para el enlace de verificaci\u00f3n.',
-        error_en: 'Your email has not been verified yet. Check your inbox for the verification link.',
-        needs_verification: true,
-        email: normalizedEmail
-      }, 403);
+        success: true,
+        message: 'Si existe una cuenta con ese email, recibir\u00e1s un enlace de acceso.',
+        message_en: 'If an account exists with that email, you will receive a sign-in link.'
+      });
     }
 
     // Rate limit: check if last magic token was created less than 2 minutes ago
