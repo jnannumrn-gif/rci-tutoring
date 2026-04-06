@@ -125,12 +125,13 @@ export async function onRequestPost(context) {
       var now = new Date();
       var minutesSinceCreation = (now.getTime() - createdAt.getTime()) / (1000 * 60);
       if (minutesSinceCreation < 2) {
-        var waitSeconds = Math.ceil((2 - minutesSinceCreation) * 60);
+        // Return same opaque response to prevent email enumeration via rate limit timing
+        console.log('[MAGIC] Rate limited magic link request for:', normalizedEmail);
         return jsonResponse({
-          error: 'Espera ' + waitSeconds + ' segundos antes de solicitar otro enlace.',
-          error_en: 'Wait ' + waitSeconds + ' seconds before requesting another link.',
-          retry_after: waitSeconds
-        }, 429);
+          success: true,
+          message: 'Si existe una cuenta con ese email, recibir\u00e1s un enlace de acceso.',
+          message_en: 'If an account exists with that email, you will receive a sign-in link.'
+        });
       }
     }
 
