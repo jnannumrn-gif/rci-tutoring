@@ -28,7 +28,7 @@ async function sendVerificationEmail(env, to, nombre, lang, verifyUrl) {
         '<p style="text-align:center;margin:30px 0;"><a href="' + verifyUrl + '" style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;font-size:16px;">Verificar mi email</a></p>' +
         '<p style="color:#64748b;font-size:0.85rem;">Si no puedes hacer clic en el bot\u00f3n, copia y pega este enlace en tu navegador:</p>' +
         '<p style="color:#64748b;font-size:0.8rem;word-break:break-all;">' + verifyUrl + '</p>' +
-        '<p style="color:#64748b;font-size:0.85rem;">Este enlace expira en 24 horas.</p>' +
+        '<p style="color:#64748b;font-size:0.85rem;">Este enlace expira en 72 horas.</p>' +
         '<hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;" />' +
         '<p style="color:#94a3b8;font-size:0.75rem;">Si no creaste una cuenta en RCI Tutoring, puedes ignorar este email.</p>' +
         '</div>'
@@ -41,7 +41,7 @@ async function sendVerificationEmail(env, to, nombre, lang, verifyUrl) {
         '<p style="text-align:center;margin:30px 0;"><a href="' + verifyUrl + '" style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;font-size:16px;">Verify my email</a></p>' +
         '<p style="color:#64748b;font-size:0.85rem;">If you can\'t click the button, copy and paste this link into your browser:</p>' +
         '<p style="color:#64748b;font-size:0.8rem;word-break:break-all;">' + verifyUrl + '</p>' +
-        '<p style="color:#64748b;font-size:0.85rem;">This link expires in 24 hours.</p>' +
+        '<p style="color:#64748b;font-size:0.85rem;">This link expires in 72 hours.</p>' +
         '<hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;" />' +
         '<p style="color:#94a3b8;font-size:0.75rem;">If you didn\'t create an account on RCI Tutoring, you can ignore this email.</p>' +
         '</div>'
@@ -161,7 +161,7 @@ export async function onRequestPost(context) {
 
     // Generate verification token
     const verifyToken = generateToken();
-    const tokenExpires = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours
+    const tokenExpires = new Date(now.getTime() + 72 * 60 * 60 * 1000); // 72 hours
 
     // Insert user (unverified) with geo data
     await env.DB.prepare(`
