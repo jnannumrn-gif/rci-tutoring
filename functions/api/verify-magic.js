@@ -27,7 +27,7 @@ export async function onRequestGet(context) {
 
     // Find user with this magic token
     var user = await env.DB.prepare(
-      'SELECT id, nombre, email, idioma, trial_end_date, status, magic_token, magic_token_expires FROM users WHERE magic_token = ?'
+      'SELECT id, nombre, email, idioma, trial_end_date, status, magic_token_expires FROM users WHERE magic_token = ?'
     ).bind(token).first();
 
     if (!user) {
@@ -53,10 +53,19 @@ export async function onRequestGet(context) {
       }, 410);
     }
 
-    // Invalidate token (single-use)
-    await env.DB.prepare(
-      "UPDATE users SET magic_token = NULL, magic_token_expires = NULL, updated_at = datetime('now') WHERE id = ?"
-    ).bind(user.id).run();
+    // Atomically invalidate token (single-use) — only clears if token still matches,
+    // preventing a race condition where two concurrent requests both consume the same token
+    var consume = await env.DB.prepare(
+      "UPDATE users SET magic_token = NULL, magic_token_expires = NULL, updated_at = datetime('now') WHERE id = ? AND magic_token = ?"
+    ).bind(user.id, token).run();
+
+    if (!consume.meta.changes) {
+      // Another request already consumed this token
+      return jsonResponse({
+        error: 'Enlace inv\u00e1lido o ya utilizado.',
+        error_en: 'Invalid or already used link.'
+      }, 400);
+    }
 
     // Check and update trial status if expired
     var status = user.status;

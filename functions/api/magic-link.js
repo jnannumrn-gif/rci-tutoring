@@ -151,6 +151,10 @@ export async function onRequestPost(context) {
 
     if (emailResult.error || emailResult.skipped) {
       console.error('[MAGIC] Magic link email not sent for:', user.email, emailResult);
+      // Clear token so user isn't rate-limited on retry
+      await env.DB.prepare(
+        "UPDATE users SET magic_token = NULL, magic_token_expires = NULL, updated_at = datetime('now') WHERE id = ?"
+      ).bind(user.id).run();
       return jsonResponse({
         success: false,
         error: 'No se pudo enviar el email. Intenta de nuevo.',
