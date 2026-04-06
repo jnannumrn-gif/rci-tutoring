@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS users (
   geo_flag            INTEGER DEFAULT 0,
   billing_country     TEXT,
   billing_flag        INTEGER DEFAULT 0,
+  magic_token         TEXT,
+  magic_token_expires TEXT,
   created_at          TEXT DEFAULT (datetime('now')),
   updated_at          TEXT DEFAULT (datetime('now'))
 );
@@ -57,3 +59,4 @@ CREATE INDEX IF NOT EXISTS idx_email_seq_user ON email_sequences(user_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_user ON subscriptions(user_id);
 CREATE INDEX IF NOT EXISTS idx_users_geo_flag ON users(geo_flag);
 CREATE INDEX IF NOT EXISTS idx_users_billing_flag ON users(billing_flag);
+CREATE INDEX IF NOT EXISTS idx_users_magic_token ON users(magic_token);
