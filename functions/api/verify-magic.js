@@ -53,10 +53,11 @@ export async function onRequestGet(context) {
       }, 410);
     }
 
-    // Atomically invalidate token (single-use) — only clears if token still matches,
-    // preventing a race condition where two concurrent requests both consume the same token
+    // Atomically invalidate token AND verify email (single-use) — only clears if token still matches,
+    // preventing a race condition where two concurrent requests both consume the same token.
+    // Also sets email_verified = 1 for new registrations (passwordless flow).
     var consume = await env.DB.prepare(
-      "UPDATE users SET magic_token = NULL, magic_token_expires = NULL, updated_at = datetime('now') WHERE id = ? AND magic_token = ?"
+      "UPDATE users SET magic_token = NULL, magic_token_expires = NULL, email_verified = 1, updated_at = datetime('now') WHERE id = ? AND magic_token = ?"
     ).bind(user.id, token).run();
 
     if (!consume.meta.changes) {
@@ -67,11 +68,22 @@ export async function onRequestGet(context) {
       }, 400);
     }
 
+    // If this was a new registration (first magic link click), reset trial dates to start now
+    if (user.email_verified === 0) {
+      var trialStart = now;
+      var trialEnd = new Date(now);
+      trialEnd.setDate(trialEnd.getDate() + 7);
+      await env.DB.prepare(
+        "UPDATE users SET trial_start_date = ?, trial_end_date = ?, updated_at = datetime('now') WHERE id = ?"
+      ).bind(trialStart.toISOString(), trialEnd.toISOString(), user.id).run();
+      user.trial_end_date = trialEnd.toISOString();
+    }
+
     // Check and update trial status if expired
     var status = user.status;
     if (status === 'trial') {
-      var trialEnd = new Date(user.trial_end_date);
-      if (now >= trialEnd) {
+      var trialEndDate = new Date(user.trial_end_date);
+      if (now >= trialEndDate) {
         await env.DB.prepare(
           "UPDATE users SET status = 'expired', updated_at = datetime('now') WHERE id = ?"
         ).bind(user.id).run();

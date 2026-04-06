@@ -2,7 +2,7 @@
  * POST /api/magic-link
  *
  * Sends a magic sign-in link to the user's email.
- * The user must already have a verified account.
+ * Works for both verified and unverified users (passwordless registration flow).
  * Rate limited: max 1 request per 2 minutes per email.
  */
 
@@ -108,14 +108,8 @@ export async function onRequestPost(context) {
       });
     }
 
-    if (user.email_verified === 0) {
-      // Return same opaque response as non-existent user to prevent email enumeration
-      return jsonResponse({
-        success: true,
-        message: 'Si existe una cuenta con ese email, recibir\u00e1s un enlace de acceso.',
-        message_en: 'If an account exists with that email, you will receive a sign-in link.'
-      });
-    }
+    // Allow both verified and unverified users to request magic links
+    // (unverified users registered via passwordless flow need magic links to verify + log in)
 
     // Rate limit: check if last magic token was created less than 2 minutes ago
     if (user.magic_token_expires) {

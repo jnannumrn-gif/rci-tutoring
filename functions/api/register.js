@@ -1,4 +1,4 @@
-import { hashPassword, createJWT, jsonResponse, corsHeaders } from './_shared/auth.js';
+import { jsonResponse, corsHeaders } from './_shared/auth.js';
 
 export async function onRequestOptions() {
   return new Response(null, { headers: corsHeaders() });
@@ -9,10 +9,10 @@ function generateToken() {
   return Array.from(bytes).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
 }
 
-async function sendVerificationEmail(env, to, nombre, lang, verifyUrl) {
+async function sendMagicLinkEmail(env, to, nombre, lang, magicUrl) {
   var apiKey = env.RESEND_API_KEY;
   if (!apiKey) {
-    console.log('[EMAIL] Resend API key not set — skipping verification email to:', to);
+    console.log('[EMAIL] Resend API key not set — skipping magic link email to:', to);
     return { skipped: true };
   }
 
@@ -21,27 +21,29 @@ async function sendVerificationEmail(env, to, nombre, lang, verifyUrl) {
 
   var templates = {
     es: {
-      subject: 'Verifica tu email — RCI Tutoring',
+      subject: '\u00a1Bienvenido a RCI Tutoring! Accede a tu cuenta',
       html: '<div style="font-family:Inter,Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">' +
         '<h2 style="color:#1e40af;">\u00a1Hola ' + name + '!</h2>' +
-        '<p>Gracias por registrarte en <strong>RCI Tutoring</strong>. Para activar tu cuenta y comenzar tu prueba gratuita de 7 d\u00edas, verifica tu email haciendo clic en el bot\u00f3n:</p>' +
-        '<p style="text-align:center;margin:30px 0;"><a href="' + verifyUrl + '" style="background-color:#1e40af;color:#ffffff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;font-size:16px;">Verificar mi email</a></p>' +
+        '<p>Gracias por registrarte en <strong>RCI Tutoring</strong>. Haz clic en el bot\u00f3n para activar tu cuenta y comenzar tu prueba gratuita de 7 d\u00edas:</p>' +
+        '<p style="text-align:center;margin:30px 0;"><a href="' + magicUrl + '" style="background:linear-gradient(135deg,#6366f1,#3b82f6);color:#fff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;font-size:16px;">\u2728 Acceder a mi cuenta</a></p>' +
+        '<p style="color:#64748b;font-size:0.85rem;">Sin contrase\u00f1a necesaria \u2014 este enlace te da acceso instant\u00e1neo.</p>' +
         '<p style="color:#64748b;font-size:0.85rem;">Si no puedes hacer clic en el bot\u00f3n, copia y pega este enlace en tu navegador:</p>' +
-        '<p style="color:#64748b;font-size:0.8rem;word-break:break-all;">' + verifyUrl + '</p>' +
-        '<p style="color:#64748b;font-size:0.85rem;">Este enlace expira en 24 horas.</p>' +
+        '<p style="color:#64748b;font-size:0.8rem;word-break:break-all;">' + magicUrl + '</p>' +
+        '<p style="color:#64748b;font-size:0.85rem;">Este enlace expira en 24 horas y solo puede usarse una vez.</p>' +
         '<hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;" />' +
         '<p style="color:#94a3b8;font-size:0.75rem;">Si no creaste una cuenta en RCI Tutoring, puedes ignorar este email.</p>' +
         '</div>'
     },
     en: {
-      subject: 'Verify your email — RCI Tutoring',
+      subject: 'Welcome to RCI Tutoring! Access your account',
       html: '<div style="font-family:Inter,Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">' +
         '<h2 style="color:#1e40af;">Hi ' + name + '!</h2>' +
-        '<p>Thanks for signing up for <strong>RCI Tutoring</strong>. To activate your account and start your 7-day free trial, verify your email by clicking the button below:</p>' +
-        '<p style="text-align:center;margin:30px 0;"><a href="' + verifyUrl + '" style="background-color:#1e40af;color:#ffffff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;font-size:16px;">Verify my email</a></p>' +
+        '<p>Thanks for signing up for <strong>RCI Tutoring</strong>. Click the button below to activate your account and start your 7-day free trial:</p>' +
+        '<p style="text-align:center;margin:30px 0;"><a href="' + magicUrl + '" style="background:linear-gradient(135deg,#6366f1,#3b82f6);color:#fff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;font-size:16px;">\u2728 Access my account</a></p>' +
+        '<p style="color:#64748b;font-size:0.85rem;">No password needed \u2014 this link gives you instant access.</p>' +
         '<p style="color:#64748b;font-size:0.85rem;">If you can\'t click the button, copy and paste this link into your browser:</p>' +
-        '<p style="color:#64748b;font-size:0.8rem;word-break:break-all;">' + verifyUrl + '</p>' +
-        '<p style="color:#64748b;font-size:0.85rem;">This link expires in 24 hours.</p>' +
+        '<p style="color:#64748b;font-size:0.8rem;word-break:break-all;">' + magicUrl + '</p>' +
+        '<p style="color:#64748b;font-size:0.85rem;">This link expires in 24 hours and can only be used once.</p>' +
         '<hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;" />' +
         '<p style="color:#94a3b8;font-size:0.75rem;">If you didn\'t create an account on RCI Tutoring, you can ignore this email.</p>' +
         '</div>'
@@ -100,7 +102,7 @@ export async function onRequestPost(context) {
 
   try {
     const body = await context.request.json();
-    const { nombre, email, password, pais, telefono, codigo_pais, rol, idioma } = body;
+    const { nombre, email, pais, telefono, codigo_pais, rol, idioma } = body;
 
     // Validate required fields
     if (!nombre || nombre.trim().length < 2) {
@@ -108,9 +110,6 @@ export async function onRequestPost(context) {
     }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return jsonResponse({ error: 'Email inválido', field: 'email' }, 400);
-    }
-    if (!password || password.length < 8) {
-      return jsonResponse({ error: 'Contraseña debe tener mínimo 8 caracteres', field: 'password' }, 400);
     }
     if (!pais) {
       return jsonResponse({ error: 'País es requerido', field: 'pais' }, 400);
@@ -156,24 +155,26 @@ export async function onRequestPost(context) {
     const placeholderEnd = new Date(now);
     placeholderEnd.setDate(placeholderEnd.getDate() + 7);
 
-    // Hash password
-    const passwordHash = await hashPassword(password);
+    // Generate a random password hash (passwordless registration — users sign in via magic link)
+    const randomBytes = crypto.getRandomValues(new Uint8Array(32));
+    const placeholderHash = 'MAGIC_LINK_USER:' + Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('');
 
-    // Generate verification token
-    const verifyToken = generateToken();
+    // Generate magic token for instant access
+    const magicToken = generateToken();
     const tokenExpires = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours
 
-    // Insert user (unverified) with geo data
+    // Insert user (unverified) with geo data — no real password
     await env.DB.prepare(`
       INSERT INTO users
       (nombre, email, password_hash, telefono, codigo_pais, pais, rol, idioma,
-       trial_start_date, trial_end_date, status, email_verified, email_verify_token, email_verify_expires,
+       trial_start_date, trial_end_date, status, email_verified,
+       magic_token, magic_token_expires,
        registration_ip, ip_country, geo_flag)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'trial', 0, ?, ?, ?, ?, ?)
     `).bind(
       nombre.trim(),
       email.toLowerCase().trim(),
-      passwordHash,
+      placeholderHash,
       telefono || null,
       codigo_pais || null,
       pais,
@@ -181,28 +182,28 @@ export async function onRequestPost(context) {
       idioma || 'es',
       now.toISOString(),
       placeholderEnd.toISOString(),
-      verifyToken,
+      magicToken,
       tokenExpires.toISOString(),
       clientIp || null,
       ipCountry || null,
       geoFlag
     ).run();
 
-    // Send verification email
+    // Send magic link email (verifies email + logs in when clicked)
     const appUrl = env.APP_URL || 'https://rcitutoring.com';
-    const verifyUrl = appUrl + '/verify-email.html?token=' + verifyToken;
-    const emailResult = await sendVerificationEmail(env, email.toLowerCase().trim(), nombre.trim(), idioma || 'es', verifyUrl);
+    const magicUrl = appUrl + '/verify-magic.html?token=' + magicToken;
+    const emailResult = await sendMagicLinkEmail(env, email.toLowerCase().trim(), nombre.trim(), idioma || 'es', magicUrl);
 
     if (emailResult.error || emailResult.skipped) {
-      console.error('[REGISTER] Verification email not sent for:', email, emailResult);
+      console.error('[REGISTER] Magic link email not sent for:', email, emailResult);
     }
 
     return jsonResponse({
       success: true,
       needs_verification: true,
       email_sent: !(emailResult.error || emailResult.skipped),
-      message: 'Cuenta creada. Revisa tu email para verificar tu cuenta.',
-      message_en: 'Account created. Check your email to verify your account.'
+      message: 'Cuenta creada. Revisa tu email para acceder a tu cuenta.',
+      message_en: 'Account created. Check your email to access your account.'
     }, 201);
 
   } catch (err) {
