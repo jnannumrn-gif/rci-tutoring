@@ -36,7 +36,7 @@ async function sendMagicLinkEmail(env, to, nombre, lang, magicUrl) {
         '<p style="text-align:center;margin:30px 0;"><a href="' + magicUrl + '" style="background:linear-gradient(135deg,#6366f1,#3b82f6);color:#fff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;font-size:16px;">\u2728 Iniciar sesi\u00f3n</a></p>' +
         '<p style="color:#64748b;font-size:0.85rem;">Si no puedes hacer clic en el bot\u00f3n, copia y pega este enlace en tu navegador:</p>' +
         '<p style="color:#64748b;font-size:0.8rem;word-break:break-all;">' + magicUrl + '</p>' +
-        '<p style="color:#64748b;font-size:0.85rem;">Este enlace expira en 15 minutos y solo puede usarse una vez.</p>' +
+        '<p style="color:#64748b;font-size:0.85rem;">Este enlace expira en 72 horas y solo puede usarse una vez.</p>' +
         '<hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;" />' +
         '<p style="color:#94a3b8;font-size:0.75rem;">Si no solicitaste este enlace, puedes ignorar este email. Tu cuenta est\u00e1 segura.</p>' +
         '</div>'
@@ -49,7 +49,7 @@ async function sendMagicLinkEmail(env, to, nombre, lang, magicUrl) {
         '<p style="text-align:center;margin:30px 0;"><a href="' + magicUrl + '" style="background:linear-gradient(135deg,#6366f1,#3b82f6);color:#fff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;font-size:16px;">\u2728 Sign in</a></p>' +
         '<p style="color:#64748b;font-size:0.85rem;">If you can\'t click the button, copy and paste this link into your browser:</p>' +
         '<p style="color:#64748b;font-size:0.8rem;word-break:break-all;">' + magicUrl + '</p>' +
-        '<p style="color:#64748b;font-size:0.85rem;">This link expires in 15 minutes and can only be used once.</p>' +
+        '<p style="color:#64748b;font-size:0.85rem;">This link expires in 72 hours and can only be used once.</p>' +
         '<hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;" />' +
         '<p style="color:#94a3b8;font-size:0.75rem;">If you didn\'t request this link, you can ignore this email. Your account is safe.</p>' +
         '</div>'
@@ -120,8 +120,8 @@ export async function onRequestPost(context) {
     // Rate limit: check if last magic token was created less than 2 minutes ago
     if (user.magic_token_expires) {
       var expiresAt = new Date(user.magic_token_expires);
-      // Token expires 15 min after creation, so creation = expires - 15 min
-      var createdAt = new Date(expiresAt.getTime() - 15 * 60 * 1000);
+      // Token expires 72h after creation, so creation = expires - 72h
+      var createdAt = new Date(expiresAt.getTime() - 72 * 60 * 60 * 1000);
       var now = new Date();
       var minutesSinceCreation = (now.getTime() - createdAt.getTime()) / (1000 * 60);
       if (minutesSinceCreation < 2) {
@@ -134,10 +134,10 @@ export async function onRequestPost(context) {
       }
     }
 
-    // Generate magic token (15 min expiration)
+    // Generate magic token (72 hour expiration)
     var magicToken = generateToken();
     var now2 = new Date();
-    var tokenExpires = new Date(now2.getTime() + 15 * 60 * 1000); // 15 minutes
+    var tokenExpires = new Date(now2.getTime() + 72 * 60 * 60 * 1000); // 72 hours
 
     await env.DB.prepare(
       "UPDATE users SET magic_token = ?, magic_token_expires = ?, updated_at = datetime('now') WHERE id = ?"
