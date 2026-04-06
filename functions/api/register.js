@@ -196,6 +196,10 @@ export async function onRequestPost(context) {
 
     if (emailResult.error || emailResult.skipped) {
       console.error('[REGISTER] Magic link email not sent for:', email, emailResult);
+      // Clear token so user isn't rate-limited on retry (consistent with magic-link.js)
+      await env.DB.prepare(
+        "UPDATE users SET magic_token = NULL, magic_token_expires = NULL, updated_at = datetime('now') WHERE email = ?"
+      ).bind(email.toLowerCase().trim()).run();
     }
 
     return jsonResponse({

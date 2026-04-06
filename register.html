@@ -352,10 +352,26 @@
       setLanguage(currentLang);
     }
 
-    // Resend access link
+    // Resend access link — enforce 2-minute frontend cooldown to avoid
+    // showing false "Email sent!" when the magic-link endpoint silently rate-limits
+    var lastResendTime = 0;
     document.getElementById('resendVerifyBtn').addEventListener('click', function() {
       var btn = document.getElementById('resendVerifyBtn');
       var statusEl = document.getElementById('resendStatus');
+
+      // Frontend cooldown: block resend if less than 2 minutes since last send
+      var now = Date.now();
+      var secondsSinceLast = (now - lastResendTime) / 1000;
+      if (lastResendTime && secondsSinceLast < 120) {
+        var remaining = Math.ceil(120 - secondsSinceLast);
+        statusEl.style.display = 'block';
+        statusEl.textContent = currentLang === 'en'
+          ? 'Please wait ' + remaining + ' seconds before resending.'
+          : 'Espera ' + remaining + ' segundos antes de reenviar.';
+        statusEl.style.color = '#f59e0b';
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = currentLang === 'en' ? 'Sending...' : 'Enviando...';
 
@@ -384,6 +400,7 @@
       .then(function(data) {
         statusEl.style.display = 'block';
         if (data.success) {
+          lastResendTime = Date.now();
           statusEl.textContent = currentLang === 'en' ? 'Email sent! Check your inbox.' : '\u00a1Email enviado! Revisa tu bandeja.';
           statusEl.style.color = '#16a34a';
           // Re-enable after 30 seconds
