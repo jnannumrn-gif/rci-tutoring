@@ -38,7 +38,7 @@ function getEmailTemplate(step, user) {
             <li><strong>Tutor Humano</strong> — Agenda sesiones con enfermeras certificadas</li>
             <li><strong>CCHT Prep</strong> — Practica con exámenes de simulación</li>
           </ul>
-          <p><a href="{{APP_URL}}/dashboard.html" style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:12px 24px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;">Ir al Dashboard</a></p>
+          <p><a href="{{APP_URL}}/dashboard.html" style="background-color:#1e40af;color:#ffffff;padding:12px 24px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;">Ir al Dashboard</a></p>
           <p style="color:#64748b;font-size:0.85rem;">Tu prueba termina el {{TRIAL_END}}.</p>
         `
       },
@@ -53,7 +53,7 @@ function getEmailTemplate(step, user) {
             <li><strong>Human Tutor</strong> — Schedule sessions with certified nurses</li>
             <li><strong>CCHT Prep</strong> — Practice with mock exams</li>
           </ul>
-          <p><a href="{{APP_URL}}/dashboard.html" style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:12px 24px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;">Go to Dashboard</a></p>
+          <p><a href="{{APP_URL}}/dashboard.html" style="background-color:#1e40af;color:#ffffff;padding:12px 24px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;">Go to Dashboard</a></p>
           <p style="color:#64748b;font-size:0.85rem;">Your trial ends on {{TRIAL_END}}.</p>
         `
       }
@@ -71,7 +71,7 @@ function getEmailTemplate(step, user) {
             <li>Explora los recursos disponibles</li>
           </ul>
           <p>Te quedan <strong>4 días de acceso gratuito</strong>.</p>
-          <p><a href="{{APP_URL}}/dashboard.html" style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:12px 24px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;">Continuar aprendiendo</a></p>
+          <p><a href="{{APP_URL}}/dashboard.html" style="background-color:#1e40af;color:#ffffff;padding:12px 24px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;">Continuar aprendiendo</a></p>
         `
       },
       en: {
@@ -86,7 +86,7 @@ function getEmailTemplate(step, user) {
             <li>Explore available resources</li>
           </ul>
           <p>You have <strong>4 days of free access</strong> remaining.</p>
-          <p><a href="{{APP_URL}}/dashboard.html" style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:12px 24px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;">Continue learning</a></p>
+          <p><a href="{{APP_URL}}/dashboard.html" style="background-color:#1e40af;color:#ffffff;padding:12px 24px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;">Continue learning</a></p>
         `
       }
     },
@@ -104,7 +104,7 @@ function getEmailTemplate(step, user) {
           </ul>
           <p>Profesionales como tú ya están mejorando sus conocimientos con nuestra plataforma.</p>
           <p>Te quedan <strong>2 días de prueba gratuita</strong>.</p>
-          <p><a href="{{APP_URL}}/upgrade.html" style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:12px 24px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;">Ver planes</a></p>
+          <p><a href="{{APP_URL}}/upgrade.html" style="background-color:#1e40af;color:#ffffff;padding:12px 24px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;">Ver planes</a></p>
         `
       },
       en: {
@@ -120,7 +120,7 @@ function getEmailTemplate(step, user) {
           </ul>
           <p>Professionals like you are already improving their knowledge with our platform.</p>
           <p>You have <strong>2 days of free trial</strong> remaining.</p>
-          <p><a href="{{APP_URL}}/upgrade.html" style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:12px 24px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;">View plans</a></p>
+          <p><a href="{{APP_URL}}/upgrade.html" style="background-color:#1e40af;color:#ffffff;padding:12px 24px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;">View plans</a></p>
         `
       }
     },
@@ -138,7 +138,7 @@ function getEmailTemplate(step, user) {
             <li>Todo el contenido de la plataforma</li>
           </ul>
           <p><strong>No pierdas tu progreso.</strong> Elige un plan y continúa aprendiendo sin interrupciones.</p>
-          <p><a href="{{APP_URL}}/upgrade.html" style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:800;text-decoration:none;">Actualizar ahora</a></p>
+          <p><a href="{{APP_URL}}/upgrade.html" style="background-color:#dc2626;color:#ffffff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:800;text-decoration:none;">Actualizar ahora</a></p>
         `
       },
       en: {
@@ -154,7 +154,7 @@ function getEmailTemplate(step, user) {
             <li>All platform content</li>
           </ul>
           <p><strong>Don't lose your progress.</strong> Choose a plan and continue learning without interruptions.</p>
-          <p><a href="{{APP_URL}}/upgrade.html" style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:800;text-decoration:none;">Upgrade now</a></p>
+          <p><a href="{{APP_URL}}/upgrade.html" style="background-color:#dc2626;color:#ffffff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:800;text-decoration:none;">Upgrade now</a></p>
         `
       }
     },
@@ -169,7 +169,7 @@ function getEmailTemplate(step, user) {
             <li><strong>Plan Mensual</strong> — Flexibilidad total</li>
             <li><strong>Plan Vitalicio</strong> — Un solo pago, acceso para siempre</li>
           </ul>
-          <p><a href="{{APP_URL}}/upgrade.html" style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:800;text-decoration:none;">Recuperar mi acceso</a></p>
+          <p><a href="{{APP_URL}}/upgrade.html" style="background-color:#1e40af;color:#ffffff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:800;text-decoration:none;">Recuperar mi acceso</a></p>
           <p style="color:#64748b;font-size:0.85rem;">¿Preguntas? Escríbenos a info@rcitutoring.com</p>
         `
       },
@@ -183,7 +183,7 @@ function getEmailTemplate(step, user) {
             <li><strong>Monthly Plan</strong> — Total flexibility</li>
             <li><strong>Lifetime Plan</strong> — One payment, access forever</li>
           </ul>
-          <p><a href="{{APP_URL}}/upgrade.html" style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:800;text-decoration:none;">Recover my access</a></p>
+          <p><a href="{{APP_URL}}/upgrade.html" style="background-color:#1e40af;color:#ffffff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:800;text-decoration:none;">Recover my access</a></p>
           <p style="color:#64748b;font-size:0.85rem;">Questions? Contact us at info@rcitutoring.com</p>
         `
       }

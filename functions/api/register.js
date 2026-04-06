@@ -25,7 +25,7 @@ async function sendVerificationEmail(env, to, nombre, lang, verifyUrl) {
       html: '<div style="font-family:Inter,Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">' +
         '<h2 style="color:#1e40af;">\u00a1Hola ' + name + '!</h2>' +
         '<p>Gracias por registrarte en <strong>RCI Tutoring</strong>. Para activar tu cuenta y comenzar tu prueba gratuita de 7 d\u00edas, verifica tu email haciendo clic en el bot\u00f3n:</p>' +
-        '<p style="text-align:center;margin:30px 0;"><a href="' + verifyUrl + '" style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;font-size:16px;">Verificar mi email</a></p>' +
+        '<p style="text-align:center;margin:30px 0;"><a href="' + verifyUrl + '" style="background-color:#1e40af;color:#ffffff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;font-size:16px;">Verificar mi email</a></p>' +
         '<p style="color:#64748b;font-size:0.85rem;">Si no puedes hacer clic en el bot\u00f3n, copia y pega este enlace en tu navegador:</p>' +
         '<p style="color:#64748b;font-size:0.8rem;word-break:break-all;">' + verifyUrl + '</p>' +
         '<p style="color:#64748b;font-size:0.85rem;">Este enlace expira en 72 horas.</p>' +
@@ -38,7 +38,7 @@ async function sendVerificationEmail(env, to, nombre, lang, verifyUrl) {
       html: '<div style="font-family:Inter,Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">' +
         '<h2 style="color:#1e40af;">Hi ' + name + '!</h2>' +
         '<p>Thanks for signing up for <strong>RCI Tutoring</strong>. To activate your account and start your 7-day free trial, verify your email by clicking the button below:</p>' +
-        '<p style="text-align:center;margin:30px 0;"><a href="' + verifyUrl + '" style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;font-size:16px;">Verify my email</a></p>' +
+        '<p style="text-align:center;margin:30px 0;"><a href="' + verifyUrl + '" style="background-color:#1e40af;color:#ffffff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:700;text-decoration:none;font-size:16px;">Verify my email</a></p>' +
         '<p style="color:#64748b;font-size:0.85rem;">If you can\'t click the button, copy and paste this link into your browser:</p>' +
         '<p style="color:#64748b;font-size:0.8rem;word-break:break-all;">' + verifyUrl + '</p>' +
         '<p style="color:#64748b;font-size:0.85rem;">This link expires in 72 hours.</p>' +
