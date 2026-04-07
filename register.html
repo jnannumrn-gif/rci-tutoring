@@ -339,6 +339,7 @@
 
     function showVerificationPending(email) {
       pendingEmail = email;
+      lastResendTime = Date.now(); // Registration just sent the magic link — start cooldown
       document.getElementById('registerForm').style.display = 'none';
       document.getElementById('verificationPending').style.display = 'block';
       var esEl = document.getElementById('sentEmailEs');
