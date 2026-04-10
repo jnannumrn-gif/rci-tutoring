@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow" />
-<title>RCI Tutoring — AI Tutor</title>
+<title>RCI Tutoring — HHA AI Tutor</title>
 <script>if(sessionStorage.getItem('rci_auth')!=='ok')document.documentElement.classList.add('auth-pending');</script>
 <style>.auth-pending body{display:none!important}</style>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
@@ -14,13 +14,13 @@
     --surface: #161b22;
     --surface2: #1c2330;
     --border: #2a3441;
-    --accent: #4f8ef7;
-    --accent2: #38bdf8;
+    --accent: #7c3aed;
+    --accent2: #a78bfa;
     --gold: #d4a843;
     --text: #e6edf3;
     --text-dim: #8b949e;
     --text-dimmer: #484f58;
-    --user-bubble: #1a2744;
+    --user-bubble: #1f1533;
     --ai-bubble: #161b22;
     --success: #3fb950;
     --radius: 12px;
@@ -186,7 +186,7 @@
   .topic-pill:hover, .topic-pill.active {
     border-color: var(--accent);
     color: var(--accent);
-    background: rgba(79, 142, 247, 0.08);
+    background: rgba(124, 58, 237, 0.08);
   }
 
   .chat-area {
@@ -250,7 +250,7 @@
   .suggestion-card:hover {
     border-color: var(--accent);
     color: var(--text);
-    background: rgba(79, 142, 247, 0.05);
+    background: rgba(124, 58, 237, 0.05);
   }
 
   .suggestion-card .s-icon {
@@ -314,7 +314,7 @@
 
   .msg.user .msg-bubble {
     background: var(--user-bubble);
-    border: 1px solid rgba(79, 142, 247, 0.25);
+    border: 1px solid rgba(124, 58, 237, 0.25);
     color: var(--text);
     border-top-right-radius: 4px;
   }
@@ -424,11 +424,11 @@
 <body>
 
 <div class="header">
-  <a class="logo-area" href="../../">
-    <img src="../../assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" />
+  <a class="logo-area" href="../../../">
+    <img src="../../../assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" />
     <div class="logo-text">
       <div class="logo-title">RCI Tutoring</div>
-      <div class="logo-sub">AI Tutor</div>
+      <div class="logo-sub">HHA AI Tutor</div>
     </div>
   </a>
   <div class="header-right">
@@ -448,21 +448,21 @@
 
 <div class="chat-area" id="chat-area">
   <div class="welcome" id="welcome-block">
-    <div class="welcome-icon">&#x1FA7A;</div>
-    <div class="welcome-title" id="welcome-title">Tu tutor clinico de hemodialisis</div>
-    <div class="welcome-sub" id="welcome-sub">Haz cualquier pregunta sobre conceptos renales, la maquina, seguridad clinica, o preparacion tipo examen.</div>
+    <div class="welcome-icon">&#x1F3E0;</div>
+    <div class="welcome-title" id="welcome-title">Tu tutor para el examen HHA</div>
+    <div class="welcome-sub" id="welcome-sub">Haz cualquier pregunta sobre cuidado en el hogar, seguridad del paciente, ADLs, o preparaci&oacute;n para el examen HHA.</div>
     <div class="suggestion-grid" id="suggestion-grid"></div>
   </div>
 </div>
 
 <div class="input-area">
   <div class="input-row">
-    <textarea id="user-input" rows="1" placeholder="Haz una pregunta clinica..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <textarea id="user-input" rows="1" placeholder="Haz una pregunta sobre HHA..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
     <button class="send-btn" id="send-btn" onclick="sendMessage()">
       <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
     </button>
   </div>
-  <div class="input-hint" id="input-hint">RCI Tutoring &middot; Contenido educativo — No reemplaza criterio clinico institucional</div>
+  <div class="input-hint" id="input-hint">RCI Tutoring &middot; Contenido educativo — No reemplaza criterio cl&iacute;nico institucional</div>
 </div>
 
 <script>
@@ -472,8 +472,7 @@
   let isLoading = false;
   const messages = [];
 
-  // Restore chat history from sessionStorage
-  const savedHistory = sessionStorage.getItem('rci_chat_history');
+  const savedHistory = sessionStorage.getItem('rci_hha_chat_history');
   if (savedHistory) {
     try {
       const parsed = JSON.parse(savedHistory);
@@ -485,36 +484,36 @@
     es: {
       status: 'En l\u00ednea',
       backText: 'Modalidades',
-      welcomeTitle: 'Tu tutor cl\u00ednico de hemodi\u00e1lisis',
-      welcomeSub: 'Haz cualquier pregunta sobre conceptos renales, la m\u00e1quina, seguridad cl\u00ednica, o preparaci\u00f3n tipo examen. Estoy aqu\u00ed para ayudarte a entender \u2014 no solo a memorizar.',
-      placeholder: 'Haz una pregunta cl\u00ednica...',
+      welcomeTitle: 'Tu tutor para el examen HHA',
+      welcomeSub: 'Haz cualquier pregunta sobre cuidado en el hogar, seguridad del paciente, ADLs, nutrici\u00f3n, o preparaci\u00f3n para el examen HHA. Estoy aqu\u00ed para ayudarte a entender \u2014 no solo a memorizar.',
+      placeholder: 'Haz una pregunta sobre HHA...',
       hint: 'RCI Tutoring \u00b7 Contenido educativo \u2014 No reemplaza criterio cl\u00ednico institucional',
-      topics: ['Principios de di\u00e1lisis','Acceso vascular','M\u00e1quina HD','Agua y concentrado','Seguridad del paciente','Electrolitos','Tipo examen CCHT'],
+      topics: ['Cuidado en el hogar','Seguridad','ADLs','Nutrici\u00f3n','Signos vitales','Emergencias','Comunicaci\u00f3n','Tipo examen HHA'],
       suggestions: [
-        { icon: '\uD83D\uDD2C', text: '\u00bfC\u00f3mo funciona la difusi\u00f3n en hemodi\u00e1lisis?' },
-        { icon: '\uD83E\uDEC0', text: '\u00bfCu\u00e1l es la diferencia entre una FAV y un cat\u00e9ter?' },
-        { icon: '\uD83D\uDCA7', text: 'Expl\u00edcame la conductividad del dializante' },
-        { icon: '\uD83D\uDCCB', text: '\u00bfQu\u00e9 eval\u00faa el examen CCHT?' },
+        { icon: '\uD83C\uDFE0', text: '\u00bfCu\u00e1les son las responsabilidades principales de un HHA?' },
+        { icon: '\uD83D\uDEE1\uFE0F', text: '\u00bfC\u00f3mo se mantiene la seguridad en el hogar del paciente?' },
+        { icon: '\uD83C\uDF5E', text: '\u00bfQu\u00e9 consideraciones nutricionales debe saber un HHA?' },
+        { icon: '\uD83D\uDCCB', text: '\u00bfQu\u00e9 temas cubre el examen HHA?' },
       ],
       you: 'T\u00da',
-      systemPrompt: 'Eres un tutor cl\u00ednico especializado en hemodi\u00e1lisis para RCI Tutoring. Tu misi\u00f3n es ense\u00f1ar conceptos de nefrolog\u00eda, m\u00e1quina de hemodi\u00e1lisis, acceso vascular, seguridad del paciente, agua y concentrado, y preparaci\u00f3n para el examen CCHT/CHT \u2014 de manera clara, profunda y con razonamiento cl\u00ednico real.\n\nResponde siempre en espa\u00f1ol a menos que el usuario escriba en ingl\u00e9s.\nUsa lenguaje accesible pero t\u00e9cnicamente preciso.\nCuando sea \u00fatil, estructura tu respuesta con puntos clave o pasos.\nAl final de respuestas largas, puedes agregar una pregunta de reflexi\u00f3n tipo examen.\nJam\u00e1s inventes informaci\u00f3n cl\u00ednica. Si algo requiere validaci\u00f3n institucional, dilo.\nMant\u00e9n un tono profesional, c\u00e1lido y pedag\u00f3gico \u2014 como un colega con 30 a\u00f1os de experiencia que genuinamente quiere que el estudiante entienda.'
+      systemPrompt: 'Eres un tutor cl\u00ednico especializado en la preparaci\u00f3n del examen HHA (Home Health Aide / Home Attendant) para RCI Tutoring. Tu misi\u00f3n es ense\u00f1ar conceptos de cuidado en el hogar, seguridad del paciente, actividades de la vida diaria, nutrici\u00f3n, signos vitales, comunicaci\u00f3n, y preparaci\u00f3n para el examen estatal HHA.\n\nDominios principales del examen HHA:\n1. Cuidado personal en el hogar: ba\u00f1o, vestido, higiene, cuidado oral, cuidado del cabello\n2. Seguridad en el hogar: prevenci\u00f3n de ca\u00eddas, manejo de emergencias, seguridad contra incendios, plan de evacuaci\u00f3n\n3. Nutrici\u00f3n y preparaci\u00f3n de alimentos: dietas especiales, hidrataci\u00f3n, alimentaci\u00f3n asistida, seguridad alimentaria\n4. Signos vitales y observaciones: temperatura, pulso, respiraci\u00f3n, presi\u00f3n arterial, reconocer cambios\n5. Control de infecciones en el hogar: lavado de manos, limpieza, desinfecci\u00f3n, precauciones universales\n6. Movilidad y transferencias: mec\u00e1nica corporal, uso de andador/silla de ruedas, prevenci\u00f3n de ca\u00eddas\n7. Manejo de medicamentos: recordatorios, almacenamiento, NO administrar (solo asistir)\n8. Comunicaci\u00f3n y documentaci\u00f3n: reporte al supervisor, registro de actividades, comunicaci\u00f3n con la familia\n9. Cuidado de condiciones cr\u00f3nicas: diabetes, demencia, enfermedades card\u00edacas, EPOC\n10. Apoyo emocional y social: compa\u00f1\u00eda, estimulaci\u00f3n, derechos del paciente, dignidad\n11. Tareas del hogar: limpieza ligera, lavander\u00eda, compras, organizaci\u00f3n\n\nResponde siempre en espa\u00f1ol a menos que el usuario escriba en ingl\u00e9s.\nUsa lenguaje accesible pero t\u00e9cnicamente preciso.\nCuando sea \u00fatil, estructura tu respuesta con puntos clave o pasos.\nAl final de respuestas largas, puedes agregar una pregunta de reflexi\u00f3n tipo examen.\nJam\u00e1s inventes informaci\u00f3n cl\u00ednica. Si algo requiere validaci\u00f3n institucional, dilo.\nMant\u00e9n un tono profesional, c\u00e1lido y pedag\u00f3gico \u2014 como un colega con experiencia que genuinamente quiere que el estudiante entienda.'
     },
     en: {
       status: 'Online',
       backText: 'Study Modes',
-      welcomeTitle: 'Your hemodialysis clinical tutor',
-      welcomeSub: "Ask anything about renal concepts, the machine, clinical safety, or exam prep. I'm here to help you truly understand \u2014 not just memorize.",
-      placeholder: 'Ask a clinical question...',
+      welcomeTitle: 'Your HHA exam tutor',
+      welcomeSub: "Ask anything about home care, patient safety, ADLs, nutrition, or HHA exam prep. I'm here to help you truly understand \u2014 not just memorize.",
+      placeholder: 'Ask an HHA question...',
       hint: 'RCI Tutoring \u00b7 Educational content \u2014 Does not replace institutional clinical judgment',
-      topics: ['Dialysis Principles','Vascular Access','HD Machine','Water & Concentrate','Patient Safety','Electrolytes','CCHT Exam Prep'],
+      topics: ['Home Care','Safety','ADLs','Nutrition','Vital Signs','Emergencies','Communication','HHA Exam Prep'],
       suggestions: [
-        { icon: '\uD83D\uDD2C', text: 'How does diffusion work in hemodialysis?' },
-        { icon: '\uD83E\uDEC0', text: "What's the difference between an AVF and a catheter?" },
-        { icon: '\uD83D\uDCA7', text: 'Explain dialysate conductivity to me' },
-        { icon: '\uD83D\uDCCB', text: 'What does the CCHT exam cover?' },
+        { icon: '\uD83C\uDFE0', text: 'What are the main responsibilities of an HHA?' },
+        { icon: '\uD83D\uDEE1\uFE0F', text: 'How do you maintain safety in the patient\'s home?' },
+        { icon: '\uD83C\uDF5E', text: 'What nutritional considerations should an HHA know?' },
+        { icon: '\uD83D\uDCCB', text: 'What topics does the HHA exam cover?' },
       ],
       you: 'YOU',
-      systemPrompt: 'You are a clinical tutor specialized in hemodialysis for RCI Tutoring. Your mission is to teach nephrology concepts, hemodialysis machine operation, vascular access, patient safety, water and concentrate, and CCHT/CHT exam preparation \u2014 clearly, deeply, and with real clinical reasoning.\n\nRespond in English by default. If the user writes in Spanish, respond in Spanish.\nUse accessible but technically precise language.\nWhen helpful, structure your response with key points or steps.\nAt the end of longer responses, you may add a reflection question in exam style.\nNever fabricate clinical information. If something requires institutional validation, say so.\nMaintain a professional, warm, and pedagogical tone \u2014 like a colleague with 30 years of experience who genuinely wants the student to understand.'
+      systemPrompt: 'You are a clinical tutor specialized in HHA (Home Health Aide / Home Attendant) exam preparation for RCI Tutoring. Your mission is to teach home care concepts, patient safety, activities of daily living, nutrition, vital signs, communication, and state HHA exam preparation.\n\nMain HHA exam domains:\n1. Personal care in the home: bathing, dressing, hygiene, oral care, hair care\n2. Home safety: fall prevention, emergency management, fire safety, evacuation plans\n3. Nutrition & meal preparation: special diets, hydration, assisted feeding, food safety\n4. Vital signs & observations: temperature, pulse, respiration, blood pressure, recognizing changes\n5. Infection control in the home: hand washing, cleaning, disinfection, universal precautions\n6. Mobility & transfers: body mechanics, walker/wheelchair use, fall prevention\n7. Medication management: reminders, storage, NOT administering (only assisting)\n8. Communication & documentation: reporting to supervisor, activity logs, family communication\n9. Chronic condition care: diabetes, dementia, heart disease, COPD\n10. Emotional & social support: companionship, stimulation, patient rights, dignity\n11. Homemaking tasks: light cleaning, laundry, shopping, organization\n\nRespond in English by default. If the user writes in Spanish, respond in Spanish.\nUse accessible but technically precise language.\nWhen helpful, structure your response with key points or steps.\nAt the end of longer responses, you may add a reflection question in exam style.\nNever fabricate clinical information. If something requires institutional validation, say so.\nMaintain a professional, warm, and pedagogical tone \u2014 like a colleague with experience who genuinely wants the student to understand.'
     }
   };
 
@@ -626,10 +625,9 @@
   }
 
   function saveChatHistory() {
-    sessionStorage.setItem('rci_chat_history', JSON.stringify(messages));
+    sessionStorage.setItem('rci_hha_chat_history', JSON.stringify(messages));
   }
 
-  // Restore previous messages on page load
   function restoreMessages() {
     if (messages.length > 0) {
       hideWelcome();
@@ -708,7 +706,7 @@
   setLang(lang);
   restoreMessages();
 </script>
-<script src="../../assets/auth-gate.js"></script>
-<script src="../../assets/cookie-banner.js"></script>
+<script src="../../../assets/auth-gate.js"></script>
+<script src="../../../assets/cookie-banner.js"></script>
 </body>
 </html>

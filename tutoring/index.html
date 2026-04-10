@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>RCI Tutoring | Elige tu modalidad</title>
+  <title>RCI Tutoring | Elige tu programa</title>
   <script>if(sessionStorage.getItem('rci_auth')!=='ok')document.documentElement.classList.add('auth-pending');</script>
   <style>.auth-pending body{display:none!important}</style>
   <style>
@@ -15,16 +15,18 @@
       --border: #2a3441;
       --accent: #4f8ef7;
       --accent2: #38bdf8;
-      --gold: #d4a843;
-      --gold-dim: rgba(212,168,67,0.15);
-      --gold-border: rgba(212,168,67,0.3);
+      --teal: #0d9488;
+      --teal-dim: rgba(13,148,136,0.12);
+      --teal-border: rgba(13,148,136,0.25);
+      --rose: #e11d48;
+      --rose-dim: rgba(225,29,72,0.12);
+      --rose-border: rgba(225,29,72,0.25);
+      --violet: #7c3aed;
+      --violet-dim: rgba(124,58,237,0.12);
+      --violet-border: rgba(124,58,237,0.25);
       --text: #e6edf3;
       --text-dim: #8b949e;
       --text-dimmer: #484f58;
-      --success: #3fb950;
-      --teal: #0d9488;
-      --teal-dim: rgba(13,148,136,0.15);
-      --teal-border: rgba(13,148,136,0.3);
       --radius: 16px;
     }
 
@@ -162,31 +164,53 @@
       transform: translateY(-4px);
     }
 
-    .card-ai {
-      border: 1px solid rgba(79,142,247,0.3);
-      box-shadow: 0 8px 32px rgba(79,142,247,0.08);
-    }
-
-    .card-ai:hover {
-      box-shadow: 0 16px 48px rgba(79,142,247,0.15);
-    }
-
-    .card-human {
-      border: 1px solid var(--gold-border);
-      box-shadow: 0 8px 32px rgba(212,168,67,0.06);
-    }
-
-    .card-human:hover {
-      box-shadow: 0 16px 48px rgba(212,168,67,0.12);
-    }
-
-    .card-prep {
+    .card-ccht {
       border: 1px solid var(--teal-border);
-      box-shadow: 0 8px 32px rgba(13,148,136,0.06);
+      box-shadow: 0 8px 32px rgba(13,148,136,0.08);
+    }
+    .card-ccht:hover {
+      box-shadow: 0 16px 48px rgba(13,148,136,0.15);
     }
 
-    .card-prep:hover {
-      box-shadow: 0 16px 48px rgba(13,148,136,0.12);
+    .card-cna {
+      border: 1px solid var(--rose-border);
+      box-shadow: 0 8px 32px rgba(225,29,72,0.08);
+    }
+    .card-cna:hover {
+      box-shadow: 0 16px 48px rgba(225,29,72,0.15);
+    }
+
+    .card-hha {
+      border: 1px solid var(--violet-border);
+      box-shadow: 0 8px 32px rgba(124,58,237,0.08);
+    }
+    .card-hha:hover {
+      box-shadow: 0 16px 48px rgba(124,58,237,0.15);
+    }
+
+    .card-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    .card-ccht .card-icon {
+      background: var(--teal-dim);
+      border: 1px solid var(--teal-border);
+    }
+
+    .card-cna .card-icon {
+      background: var(--rose-dim);
+      border: 1px solid var(--rose-border);
+    }
+
+    .card-hha .card-icon {
+      background: var(--violet-dim);
+      border: 1px solid var(--violet-border);
     }
 
     .card-badge {
@@ -201,113 +225,65 @@
       text-transform: uppercase;
     }
 
-    .badge-free {
-      background: rgba(56,189,248,0.12);
-      color: var(--accent2);
-      border: 1px solid rgba(56,189,248,0.25);
+    .badge-active {
+      background: rgba(63,185,80,0.12);
+      color: #3fb950;
+      border: 1px solid rgba(63,185,80,0.25);
     }
 
-    .badge-premium {
-      background: var(--gold-dim);
-      color: var(--gold);
-      border: 1px solid var(--gold-border);
+    .badge-new {
+      background: var(--rose-dim);
+      color: var(--rose);
+      border: 1px solid var(--rose-border);
     }
-
-    .badge-app {
-      background: var(--teal-dim);
-      color: var(--teal);
-      border: 1px solid var(--teal-border);
-    }
-
-    .card-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .card-ai .card-icon {
-      background: linear-gradient(135deg, rgba(79,142,247,0.15), rgba(56,189,248,0.1));
-      border: 1px solid rgba(79,142,247,0.2);
-    }
-
-    .card-human .card-icon {
-      background: linear-gradient(135deg, var(--gold-dim), rgba(212,168,67,0.08));
-      border: 1px solid var(--gold-border);
-    }
-
-    .card-prep .card-icon {
-      background: linear-gradient(135deg, var(--teal-dim), rgba(13,148,136,0.08));
-      border: 1px solid var(--teal-border);
-    }
-
-    .card-icon svg {
-      width: 28px;
-      height: 28px;
-    }
-
-    .card-ai .card-icon svg { stroke: var(--accent); fill: none; }
-    .card-human .card-icon svg { stroke: var(--gold); fill: none; }
-    .card-prep .card-icon svg { stroke: var(--teal); fill: none; }
 
     .card-title {
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       font-weight: 800;
       letter-spacing: -0.01em;
     }
 
-    .card-subtitle {
-      font-size: 13px;
+    .card-full-name {
+      font-size: 12px;
       color: var(--text-dim);
       margin-top: 2px;
     }
 
-    .card-features {
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .card-modes {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
+      margin-top: auto;
     }
 
-    .card-features li {
+    .card-modes li {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 13.5px;
+      gap: 8px;
+      font-size: 12.5px;
       color: var(--text-dim);
     }
 
-    .card-features li .check {
-      width: 18px;
-      height: 18px;
+    .mode-dot {
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       flex-shrink: 0;
     }
 
-    .card-ai .check {
-      background: rgba(79,142,247,0.12);
-      color: var(--accent);
-    }
-
-    .card-human .check {
-      background: var(--gold-dim);
-      color: var(--gold);
-    }
-
-    .card-prep .check {
-      background: var(--teal-dim);
-      color: var(--teal);
-    }
-
-    .check svg { width: 10px; height: 10px; }
+    .card-ccht .mode-dot { background: var(--teal); }
+    .card-cna .mode-dot { background: var(--rose); }
+    .card-hha .mode-dot { background: var(--violet); }
 
     .card-cta {
-      margin-top: auto;
+      margin-top: 8px;
       padding: 14px 20px;
       border-radius: 12px;
       font-weight: 800;
@@ -318,18 +294,18 @@
       cursor: pointer;
     }
 
-    .card-ai .card-cta {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+    .card-ccht .card-cta {
+      background: linear-gradient(135deg, var(--teal), #0f766e);
       color: #fff;
     }
 
-    .card-human .card-cta {
-      background: linear-gradient(135deg, var(--gold), #c4952e);
-      color: #0d1117;
+    .card-cna .card-cta {
+      background: linear-gradient(135deg, var(--rose), #be123c);
+      color: #fff;
     }
 
-    .card-prep .card-cta {
-      background: linear-gradient(135deg, var(--teal), #0f766e);
+    .card-hha .card-cta {
+      background: linear-gradient(135deg, var(--violet), #6d28d9);
       color: #fff;
     }
 
@@ -340,7 +316,7 @@
       font-size: 11px;
       color: var(--text-dimmer);
       text-align: center;
-      max-width: 500px;
+      max-width: 560px;
     }
 
     @media (max-width: 900px) {
@@ -367,7 +343,10 @@
     <img src="../assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" />
     <div class="logo-text">
       <div class="logo-title">RCI Tutoring</div>
-      <div class="logo-sub">Hemodialysis Education</div>
+      <div class="logo-sub">
+        <span class="lang active" data-lang="es">Programas de certificaci&oacute;n</span>
+        <span class="lang" data-lang="en">Certification Programs</span>
+      </div>
     </div>
   </a>
   <div class="header-right">
@@ -384,211 +363,147 @@
 
 <div class="main">
   <div class="page-title">
-    <span class="lang active" data-lang="es">Elige tu modalidad de estudio</span>
-    <span class="lang" data-lang="en">Choose your study mode</span>
+    <span class="lang active" data-lang="es">Elige tu programa de certificaci&oacute;n</span>
+    <span class="lang" data-lang="en">Choose your certification program</span>
   </div>
   <div class="page-sub">
-    <span class="lang active" data-lang="es">Tres caminos, un mismo objetivo: dominar la hemodi&aacute;lisis con confianza cl&iacute;nica.</span>
-    <span class="lang" data-lang="en">Three paths, one goal: master hemodialysis with clinical confidence.</span>
+    <span class="lang active" data-lang="es">Prep&aacute;rate para tu examen de certificaci&oacute;n con tutores IA y humanos. Tres programas, un mismo objetivo: aprobar con confianza.</span>
+    <span class="lang" data-lang="en">Prepare for your certification exam with AI and human tutors. Three programs, one goal: pass with confidence.</span>
   </div>
 
   <div class="cards">
-    <!-- AI TUTOR CARD -->
-    <a class="card card-ai" href="ai/">
-      <div class="card-badge badge-free">
-        <span class="lang active" data-lang="es">GRATIS</span>
-        <span class="lang" data-lang="en">FREE</span>
+    <!-- CCHT CARD -->
+    <a class="card card-ccht" href="ccht/">
+      <div class="card-badge badge-active">
+        <span class="lang active" data-lang="es">ACTIVO</span>
+        <span class="lang" data-lang="en">ACTIVE</span>
       </div>
 
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/>
-          <path d="M10 21h4"/>
-          <path d="M12 6v4"/>
-          <path d="M10 10h4"/>
-        </svg>
-      </div>
+      <div class="card-icon">&#x1F9EA;</div>
 
       <div>
-        <div class="card-title">
-          <span class="lang active" data-lang="es">Tutor IA</span>
-          <span class="lang" data-lang="en">AI Tutor</span>
-        </div>
-        <div class="card-subtitle">
-          <span class="lang active" data-lang="es">Disponible ahora &middot; 24/7</span>
-          <span class="lang" data-lang="en">Available now &middot; 24/7</span>
+        <div class="card-title">CCHT</div>
+        <div class="card-full-name">
+          <span class="lang active" data-lang="es">T&eacute;cnico Cl&iacute;nico de Hemodi&aacute;lisis</span>
+          <span class="lang" data-lang="en">Certified Clinical Hemodialysis Technician</span>
         </div>
       </div>
 
-      <ul class="card-features">
+      <div class="card-desc">
+        <span class="lang active" data-lang="es">Domina los conceptos de nefrolog&iacute;a, m&aacute;quina HD, acceso vascular, seguridad del paciente y preparaci&oacute;n para el examen CCHT/CHT.</span>
+        <span class="lang" data-lang="en">Master nephrology concepts, HD machine, vascular access, patient safety and CCHT/CHT exam preparation.</span>
+      </div>
+
+      <ul class="card-modes">
         <li class="lang active" data-lang="es">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Disponible 24/7, sin cita
-        </li>
-        <li class="lang active" data-lang="es">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Biling&uuml;e (ES/EN)
-        </li>
-        <li class="lang active" data-lang="es">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Preparaci&oacute;n tipo examen CCHT
+          <span class="mode-dot"></span> Tutor IA — Gratis 24/7
         </li>
         <li class="lang active" data-lang="es">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Respuestas instant&aacute;neas
+          <span class="mode-dot"></span> Tutor RN Humano — Premium
+        </li>
+        <li class="lang active" data-lang="es">
+          <span class="mode-dot"></span> CCHT Prep App — Pr&aacute;ctica
         </li>
         <li class="lang" data-lang="en">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Available 24/7, no appointment
+          <span class="mode-dot"></span> AI Tutor — Free 24/7
         </li>
         <li class="lang" data-lang="en">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Bilingual (ES/EN)
+          <span class="mode-dot"></span> Human RN Tutor — Premium
         </li>
         <li class="lang" data-lang="en">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          CCHT exam prep
-        </li>
-        <li class="lang" data-lang="en">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Instant responses
+          <span class="mode-dot"></span> CCHT Prep App — Practice
         </li>
       </ul>
 
       <div class="card-cta">
-        <span class="lang active" data-lang="es">Empezar ahora &rarr;</span>
-        <span class="lang" data-lang="en">Start now &rarr;</span>
+        <span class="lang active" data-lang="es">Entrar &rarr;</span>
+        <span class="lang" data-lang="en">Enter &rarr;</span>
       </div>
     </a>
 
-    <!-- HUMAN RN TUTOR CARD -->
-    <a class="card card-human" href="human/">
-      <div class="card-badge badge-premium">PREMIUM</div>
-
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0z"/>
-          <path d="M4.5 20.25a8.25 8.25 0 0 1 15 0"/>
-          <path d="M17.25 12l2.25 2.25L22.5 12"/>
-        </svg>
+    <!-- CNA CARD -->
+    <a class="card card-cna" href="cna/">
+      <div class="card-badge badge-new">
+        <span class="lang active" data-lang="es">NUEVO</span>
+        <span class="lang" data-lang="en">NEW</span>
       </div>
+
+      <div class="card-icon">&#x1F9D1;&#x200D;&#x2695;&#xFE0F;</div>
 
       <div>
-        <div class="card-title">
-          <span class="lang active" data-lang="es">Tutor RN Humano</span>
-          <span class="lang" data-lang="en">Human RN Tutor</span>
-        </div>
-        <div class="card-subtitle">
-          <span class="lang active" data-lang="es">Agenda tu sesi&oacute;n &middot; Disponibilidad limitada</span>
-          <span class="lang" data-lang="en">Book your session &middot; Limited availability</span>
+        <div class="card-title">CNA</div>
+        <div class="card-full-name">
+          <span class="lang active" data-lang="es">Asistente de Enfermer&iacute;a Certificado</span>
+          <span class="lang" data-lang="en">Certified Nursing Assistant</span>
         </div>
       </div>
 
-      <ul class="card-features">
+      <div class="card-desc">
+        <span class="lang active" data-lang="es">Prep&aacute;rate para el examen CNA: cuidado del paciente, ADLs, signos vitales, control de infecciones, y derechos del paciente.</span>
+        <span class="lang" data-lang="en">Prepare for the CNA exam: patient care, ADLs, vital signs, infection control, and patient rights.</span>
+      </div>
+
+      <ul class="card-modes">
         <li class="lang active" data-lang="es">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          RN licenciado en hemodi&aacute;lisis
-        </li>
-        <li class="lang active" data-lang="es">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Video en vivo 1:1
-        </li>
-        <li class="lang active" data-lang="es">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Tutor&iacute;a personalizada
+          <span class="mode-dot"></span> Tutor IA — Gratis 24/7
         </li>
         <li class="lang active" data-lang="es">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Compartir pantalla
+          <span class="mode-dot"></span> Tutor RN Humano — Premium
         </li>
         <li class="lang" data-lang="en">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Licensed hemodialysis RN
+          <span class="mode-dot"></span> AI Tutor — Free 24/7
         </li>
         <li class="lang" data-lang="en">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Live 1:1 video
-        </li>
-        <li class="lang" data-lang="en">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Personalized tutoring
-        </li>
-        <li class="lang" data-lang="en">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Screen sharing
+          <span class="mode-dot"></span> Human RN Tutor — Premium
         </li>
       </ul>
 
       <div class="card-cta">
-        <span class="lang active" data-lang="es">Agendar sesi&oacute;n &rarr;</span>
-        <span class="lang" data-lang="en">Book session &rarr;</span>
+        <span class="lang active" data-lang="es">Entrar &rarr;</span>
+        <span class="lang" data-lang="en">Enter &rarr;</span>
       </div>
     </a>
 
-    <!-- CCHT PREP CARD -->
-    <a class="card card-prep" href="https://rci-prep.pages.dev" target="_blank" rel="noopener">
-      <div class="card-badge badge-app">
-        <span class="lang active" data-lang="es">APP</span>
-        <span class="lang" data-lang="en">APP</span>
+    <!-- HHA CARD -->
+    <a class="card card-hha" href="hha/">
+      <div class="card-badge badge-new">
+        <span class="lang active" data-lang="es">NUEVO</span>
+        <span class="lang" data-lang="en">NEW</span>
       </div>
 
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-          <path d="M9 10l2 2 4-4"/>
-        </svg>
-      </div>
+      <div class="card-icon">&#x1F3E0;</div>
 
       <div>
-        <div class="card-title">
-          <span class="lang active" data-lang="es">CCHT Prep</span>
-          <span class="lang" data-lang="en">CCHT Prep</span>
-        </div>
-        <div class="card-subtitle">
-          <span class="lang active" data-lang="es">App instalable &middot; Biling&uuml;e</span>
-          <span class="lang" data-lang="en">Installable app &middot; Bilingual</span>
+        <div class="card-title">HHA</div>
+        <div class="card-full-name">
+          <span class="lang active" data-lang="es">Asistente de Salud en el Hogar</span>
+          <span class="lang" data-lang="en">Home Health Aide</span>
         </div>
       </div>
 
-      <ul class="card-features">
+      <div class="card-desc">
+        <span class="lang active" data-lang="es">Prep&aacute;rate para el examen HHA: cuidado en el hogar, seguridad, nutrici&oacute;n, signos vitales, y apoyo al paciente.</span>
+        <span class="lang" data-lang="en">Prepare for the HHA exam: home care, safety, nutrition, vital signs, and patient support.</span>
+      </div>
+
+      <ul class="card-modes">
         <li class="lang active" data-lang="es">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Preguntas de pr&aacute;ctica por dominio
-        </li>
-        <li class="lang active" data-lang="es">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Ex&aacute;menes simulados cronometrados
-        </li>
-        <li class="lang active" data-lang="es">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Tarjetas de estudio (flashcards)
+          <span class="mode-dot"></span> Tutor IA — Gratis 24/7
         </li>
         <li class="lang active" data-lang="es">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Instalable sin App Store
+          <span class="mode-dot"></span> Tutor RN Humano — Premium
         </li>
         <li class="lang" data-lang="en">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Practice questions by domain
+          <span class="mode-dot"></span> AI Tutor — Free 24/7
         </li>
         <li class="lang" data-lang="en">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Timed simulated exams
-        </li>
-        <li class="lang" data-lang="en">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Study flashcards
-        </li>
-        <li class="lang" data-lang="en">
-          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
-          Installable without App Store
+          <span class="mode-dot"></span> Human RN Tutor — Premium
         </li>
       </ul>
 
       <div class="card-cta">
-        <span class="lang active" data-lang="es">Abrir app &rarr;</span>
-        <span class="lang" data-lang="en">Open app &rarr;</span>
+        <span class="lang active" data-lang="es">Entrar &rarr;</span>
+        <span class="lang" data-lang="en">Enter &rarr;</span>
       </div>
     </a>
   </div>

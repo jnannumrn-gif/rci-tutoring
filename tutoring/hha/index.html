@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>RCI Tutoring | HHA — Modalidades de estudio</title>
+  <script>if(sessionStorage.getItem('rci_auth')!=='ok')document.documentElement.classList.add('auth-pending');</script>
+  <style>.auth-pending body{display:none!important}</style>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1c2330;
+      --border: #2a3441;
+      --accent: #4f8ef7;
+      --accent2: #38bdf8;
+      --gold: #d4a843;
+      --gold-dim: rgba(212,168,67,0.15);
+      --gold-border: rgba(212,168,67,0.3);
+      --violet: #7c3aed;
+      --violet-dim: rgba(124,58,237,0.12);
+      --violet-border: rgba(124,58,237,0.25);
+      --text: #e6edf3;
+      --text-dim: #8b949e;
+      --text-dimmer: #484f58;
+      --success: #3fb950;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .logo-area img {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      object-fit: contain;
+      background: #fff;
+      padding: 3px;
+    }
+
+    .logo-text { line-height: 1.2; }
+    .logo-title { font-weight: 800; font-size: 15px; }
+    .logo-sub { font-size: 11px; color: var(--text-dim); letter-spacing: 0.5px; }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lang-toggle {
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .lang-btn {
+      padding: 5px 12px;
+      cursor: pointer;
+      color: var(--text-dim);
+      border: none;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .back-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--text); }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+    }
+
+    .page-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .page-sub {
+      font-size: 15px;
+      color: var(--text-dim);
+      text-align: center;
+      margin-bottom: 48px;
+      max-width: 500px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      max-width: 740px;
+      width: 100%;
+    }
+
+    .card {
+      position: relative;
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card-ai {
+      border: 1px solid rgba(79,142,247,0.3);
+      box-shadow: 0 8px 32px rgba(79,142,247,0.08);
+    }
+
+    .card-ai:hover {
+      box-shadow: 0 16px 48px rgba(79,142,247,0.15);
+    }
+
+    .card-human {
+      border: 1px solid var(--gold-border);
+      box-shadow: 0 8px 32px rgba(212,168,67,0.06);
+    }
+
+    .card-human:hover {
+      box-shadow: 0 16px 48px rgba(212,168,67,0.12);
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .badge-free {
+      background: rgba(56,189,248,0.12);
+      color: var(--accent2);
+      border: 1px solid rgba(56,189,248,0.25);
+    }
+
+    .badge-premium {
+      background: var(--gold-dim);
+      color: var(--gold);
+      border: 1px solid var(--gold-border);
+    }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-ai .card-icon {
+      background: linear-gradient(135deg, rgba(79,142,247,0.15), rgba(56,189,248,0.1));
+      border: 1px solid rgba(79,142,247,0.2);
+    }
+
+    .card-human .card-icon {
+      background: linear-gradient(135deg, var(--gold-dim), rgba(212,168,67,0.08));
+      border: 1px solid var(--gold-border);
+    }
+
+    .card-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .card-ai .card-icon svg { stroke: var(--accent); fill: none; }
+    .card-human .card-icon svg { stroke: var(--gold); fill: none; }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .card-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-features li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13.5px;
+      color: var(--text-dim);
+    }
+
+    .card-features li .check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-ai .check {
+      background: rgba(79,142,247,0.12);
+      color: var(--accent);
+    }
+
+    .card-human .check {
+      background: var(--gold-dim);
+      color: var(--gold);
+    }
+
+    .check svg { width: 10px; height: 10px; }
+
+    .card-cta {
+      margin-top: auto;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 14px;
+      text-align: center;
+      transition: opacity 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .card-ai .card-cta {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+    }
+
+    .card-human .card-cta {
+      background: linear-gradient(135deg, var(--gold), #c4952e);
+      color: #0d1117;
+    }
+
+    .card-cta:hover { opacity: 0.9; }
+
+    .disclaimer {
+      margin-top: 48px;
+      font-size: 11px;
+      color: var(--text-dimmer);
+      text-align: center;
+      max-width: 500px;
+    }
+
+    @media (max-width: 700px) {
+      .cards {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+      }
+      .main { padding: 32px 16px; }
+      .page-sub { margin-bottom: 32px; }
+    }
+
+    .lang { display: none; }
+    .lang.active { display: block; }
+    span.lang { display: none; }
+    span.lang.active { display: inline; }
+    li.lang { display: none; }
+    li.lang.active { display: flex; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <a class="logo-area" href="../../">
+    <img src="../../assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" />
+    <div class="logo-text">
+      <div class="logo-title">RCI Tutoring</div>
+      <div class="logo-sub">HHA Program</div>
+    </div>
+  </a>
+  <div class="header-right">
+    <a class="back-link" href="../">
+      <span class="lang active" data-lang="es">&larr; Programas</span>
+      <span class="lang" data-lang="en">&larr; Programs</span>
+    </a>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-title">
+    <span class="lang active" data-lang="es">HHA &mdash; Elige tu modalidad de estudio</span>
+    <span class="lang" data-lang="en">HHA &mdash; Choose your study mode</span>
+  </div>
+  <div class="page-sub">
+    <span class="lang active" data-lang="es">Prep&aacute;rate para tu examen de Home Health Aide con confianza.</span>
+    <span class="lang" data-lang="en">Prepare for your Home Health Aide exam with confidence.</span>
+  </div>
+
+  <div class="cards">
+    <!-- AI TUTOR CARD -->
+    <a class="card card-ai" href="ai/">
+      <div class="card-badge badge-free">
+        <span class="lang active" data-lang="es">GRATIS</span>
+        <span class="lang" data-lang="en">FREE</span>
+      </div>
+
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/>
+          <path d="M10 21h4"/>
+          <path d="M12 6v4"/>
+          <path d="M10 10h4"/>
+        </svg>
+      </div>
+
+      <div>
+        <div class="card-title">
+          <span class="lang active" data-lang="es">Tutor IA — HHA</span>
+          <span class="lang" data-lang="en">AI Tutor — HHA</span>
+        </div>
+        <div class="card-subtitle">
+          <span class="lang active" data-lang="es">Disponible ahora &middot; 24/7</span>
+          <span class="lang" data-lang="en">Available now &middot; 24/7</span>
+        </div>
+      </div>
+
+      <ul class="card-features">
+        <li class="lang active" data-lang="es">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Disponible 24/7, sin cita
+        </li>
+        <li class="lang active" data-lang="es">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Biling&uuml;e (ES/EN)
+        </li>
+        <li class="lang active" data-lang="es">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Cuidado en el hogar, seguridad, nutrici&oacute;n
+        </li>
+        <li class="lang active" data-lang="es">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Preparaci&oacute;n tipo examen HHA
+        </li>
+        <li class="lang" data-lang="en">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Available 24/7, no appointment
+        </li>
+        <li class="lang" data-lang="en">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Bilingual (ES/EN)
+        </li>
+        <li class="lang" data-lang="en">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Home care, safety, nutrition
+        </li>
+        <li class="lang" data-lang="en">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          HHA exam prep
+        </li>
+      </ul>
+
+      <div class="card-cta">
+        <span class="lang active" data-lang="es">Empezar ahora &rarr;</span>
+        <span class="lang" data-lang="en">Start now &rarr;</span>
+      </div>
+    </a>
+
+    <!-- HUMAN RN TUTOR CARD -->
+    <a class="card card-human" href="human/">
+      <div class="card-badge badge-premium">PREMIUM</div>
+
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0z"/>
+          <path d="M4.5 20.25a8.25 8.25 0 0 1 15 0"/>
+          <path d="M17.25 12l2.25 2.25L22.5 12"/>
+        </svg>
+      </div>
+
+      <div>
+        <div class="card-title">
+          <span class="lang active" data-lang="es">Tutor RN Humano</span>
+          <span class="lang" data-lang="en">Human RN Tutor</span>
+        </div>
+        <div class="card-subtitle">
+          <span class="lang active" data-lang="es">Agenda tu sesi&oacute;n &middot; Disponibilidad limitada</span>
+          <span class="lang" data-lang="en">Book your session &middot; Limited availability</span>
+        </div>
+      </div>
+
+      <ul class="card-features">
+        <li class="lang active" data-lang="es">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          RN licenciado
+        </li>
+        <li class="lang active" data-lang="es">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Video en vivo 1:1
+        </li>
+        <li class="lang active" data-lang="es">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Tutor&iacute;a personalizada HHA
+        </li>
+        <li class="lang active" data-lang="es">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Compartir pantalla
+        </li>
+        <li class="lang" data-lang="en">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Licensed RN
+        </li>
+        <li class="lang" data-lang="en">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Live 1:1 video
+        </li>
+        <li class="lang" data-lang="en">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Personalized HHA tutoring
+        </li>
+        <li class="lang" data-lang="en">
+          <span class="check"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+          Screen sharing
+        </li>
+      </ul>
+
+      <div class="card-cta">
+        <span class="lang active" data-lang="es">Agendar sesi&oacute;n &rarr;</span>
+        <span class="lang" data-lang="en">Book session &rarr;</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="disclaimer">
+    <span class="lang active" data-lang="es">Contenido educativo. No sustituye criterio cl&iacute;nico institucional.</span>
+    <span class="lang" data-lang="en">Educational content. Does not replace institutional clinical judgment.</span>
+  </div>
+</div>
+
+<script>
+  let lang = localStorage.getItem('rci_lang') || 'es';
+
+  function setLang(l) {
+    lang = l;
+    localStorage.setItem('rci_lang', l);
+    document.querySelectorAll('.lang').forEach(el => {
+      el.classList.toggle('active', el.dataset.lang === l);
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent.trim() === l.toUpperCase());
+    });
+    document.documentElement.lang = l;
+  }
+
+  setLang(lang);
+</script>
+<script src="../../assets/auth-gate.js"></script>
+<script src="../../assets/cookie-banner.js"></script>
+</body>
+</html>
