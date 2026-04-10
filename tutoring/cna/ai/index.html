@@ -612,6 +612,12 @@
     if (t) t.remove();
   }
 
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
   function formatResponse(text) {
     text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
@@ -675,8 +681,8 @@
       if (data.error) {
         removeTyping();
         var errorMsg = lang === 'es'
-          ? '<p style="color:#f85149">Error: ' + (data.error.message || 'Servicio no disponible.') + '</p>'
-          : '<p style="color:#f85149">Error: ' + (data.error.message || 'Service unavailable.') + '</p>';
+          ? '<p style="color:#f85149">Error: ' + escapeHtml(data.error.message || 'Servicio no disponible.') + '</p>'
+          : '<p style="color:#f85149">Error: ' + escapeHtml(data.error.message || 'Service unavailable.') + '</p>';
         appendMessage('ai', errorMsg);
         messages.pop();
         saveChatHistory();
