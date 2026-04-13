@@ -63,7 +63,7 @@ export async function onRequestPost(context) {
   const { plan } = body;
   const priceId = getPriceMap()[plan];
   if (!priceId) {
-    return jsonResponse({ error: 'Invalid plan. Valid: monthly, monthly_latam, lifetime, lifetime_latam, human_session_deposit' }, 400);
+    return jsonResponse({ error: 'Invalid plan. Valid: monthly, monthly_latam, lifetime, lifetime_latam, human_session, human_session_deposit' }, 400);
   }
 
   // Determine mode based on price type

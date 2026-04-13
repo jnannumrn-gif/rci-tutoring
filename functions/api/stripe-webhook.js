@@ -152,15 +152,12 @@ export async function onRequestPost(context) {
 
           // Create deposit booking record in subscriptions table
           // tier = 'human_session_deposit', active = 0 (not yet fully paid)
-          const existingDeposit = await env.DB.prepare(
-            'SELECT id FROM subscriptions WHERE user_id = ? AND tier = ?'
-          ).bind(userId, 'human_session_deposit').first();
+          // Use payment_intent for idempotency (Stripe retries) while supporting multiple distinct deposits
+          const existingDepositByPI = await env.DB.prepare(
+            'SELECT id FROM subscriptions WHERE stripe_subscription_id = ? AND tier = ?'
+          ).bind(session.payment_intent, 'human_session_deposit').first();
 
-          if (existingDeposit) {
-            await env.DB.prepare(
-              'UPDATE subscriptions SET stripe_subscription_id = ?, start_date = ?, active = 0 WHERE id = ?'
-            ).bind(session.payment_intent, now, existingDeposit.id).run();
-          } else {
+          if (!existingDepositByPI) {
             await env.DB.prepare(
               'INSERT INTO subscriptions (user_id, stripe_subscription_id, tier, start_date, end_date, active) VALUES (?, ?, ?, ?, ?, 0)'
             ).bind(userId, session.payment_intent, 'human_session_deposit', now, null).run();
@@ -277,15 +274,12 @@ export async function onRequestPost(context) {
           }
 
           // Create deposit booking record (active = 0, not yet fully paid)
-          const asyncExistingDeposit = await env.DB.prepare(
-            'SELECT id FROM subscriptions WHERE user_id = ? AND tier = ?'
-          ).bind(asyncUserId, 'human_session_deposit').first();
+          // Use payment_intent for idempotency (Stripe retries) while supporting multiple distinct deposits
+          const asyncExistingDepositByPI = await env.DB.prepare(
+            'SELECT id FROM subscriptions WHERE stripe_subscription_id = ? AND tier = ?'
+          ).bind(asyncSession.payment_intent, 'human_session_deposit').first();
 
-          if (asyncExistingDeposit) {
-            await env.DB.prepare(
-              'UPDATE subscriptions SET stripe_subscription_id = ?, start_date = ?, active = 0 WHERE id = ?'
-            ).bind(asyncSession.payment_intent, asyncNow, asyncExistingDeposit.id).run();
-          } else {
+          if (!asyncExistingDepositByPI) {
             await env.DB.prepare(
               'INSERT INTO subscriptions (user_id, stripe_subscription_id, tier, start_date, end_date, active) VALUES (?, ?, ?, ?, ?, 0)'
             ).bind(asyncUserId, asyncSession.payment_intent, 'human_session_deposit', asyncNow, null).run();
