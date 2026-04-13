@@ -127,12 +127,23 @@ export async function onRequestPost(context) {
           const remainingAmount = parseInt(session.metadata?.remaining_amount || '2900', 10);
           const now = new Date().toISOString();
 
-          // Store billing country if available
+          // Billing address cross-check (fraud detection)
           const depositBillingCountry = session.customer_details?.address?.country || null;
+          let depositBillingFlag = 0;
           if (depositBillingCountry) {
+            const depositUserRow = await env.DB.prepare(
+              'SELECT pais FROM users WHERE id = ?'
+            ).bind(userId).first();
+            if (depositUserRow && depositUserRow.pais) {
+              const normalize = (c) => (c || '').toUpperCase() === 'PR' ? 'US' : (c || '').toUpperCase();
+              if (normalize(depositBillingCountry) !== normalize(depositUserRow.pais)) {
+                depositBillingFlag = 1;
+                console.log('[BILLING] Deposit country mismatch — declared:', depositUserRow.pais, 'billing:', depositBillingCountry, 'user:', userId);
+              }
+            }
             await env.DB.prepare(
-              'UPDATE users SET billing_country = ?, stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
-            ).bind(depositBillingCountry, customerId, now, userId).run();
+              'UPDATE users SET billing_country = ?, billing_flag = ?, stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
+            ).bind(depositBillingCountry, depositBillingFlag, customerId, now, userId).run();
           } else {
             await env.DB.prepare(
               'UPDATE users SET stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
@@ -201,15 +212,15 @@ export async function onRequestPost(context) {
           'UPDATE users SET status = ?, stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
         ).bind('active', customerId, now, userId).run();
 
-        // Create or update subscription record
+        // Create or update subscription record (exclude deposit records)
         const existingSub = await env.DB.prepare(
-          'SELECT id FROM subscriptions WHERE user_id = ?'
-        ).bind(userId).first();
+          'SELECT id FROM subscriptions WHERE user_id = ? AND tier != ?'
+        ).bind(userId, 'human_session_deposit').first();
 
         if (existingSub) {
           await env.DB.prepare(
-            'UPDATE subscriptions SET stripe_subscription_id = ?, tier = ?, start_date = ?, end_date = ?, active = 1 WHERE user_id = ?'
-          ).bind(session.subscription || session.payment_intent, tier, now, endDate, userId).run();
+            'UPDATE subscriptions SET stripe_subscription_id = ?, tier = ?, start_date = ?, end_date = ?, active = 1 WHERE id = ?'
+          ).bind(session.subscription || session.payment_intent, tier, now, endDate, existingSub.id).run();
         } else {
           await env.DB.prepare(
             'INSERT INTO subscriptions (user_id, stripe_subscription_id, tier, start_date, end_date, active) VALUES (?, ?, ?, ?, ?, 1)'
@@ -242,12 +253,23 @@ export async function onRequestPost(context) {
           const asyncDepositAmount = parseInt(asyncSession.metadata?.deposit_amount || '2000', 10);
           const asyncRemainingAmount = parseInt(asyncSession.metadata?.remaining_amount || '2900', 10);
 
-          // Store billing country if available
+          // Billing address cross-check (fraud detection)
           const asyncDepositBillingCountry = asyncSession.customer_details?.address?.country || null;
+          let asyncDepositBillingFlag = 0;
           if (asyncDepositBillingCountry) {
+            const asyncDepositUserRow = await env.DB.prepare(
+              'SELECT pais FROM users WHERE id = ?'
+            ).bind(asyncUserId).first();
+            if (asyncDepositUserRow && asyncDepositUserRow.pais) {
+              const normalize = (c) => (c || '').toUpperCase() === 'PR' ? 'US' : (c || '').toUpperCase();
+              if (normalize(asyncDepositBillingCountry) !== normalize(asyncDepositUserRow.pais)) {
+                asyncDepositBillingFlag = 1;
+                console.log('[BILLING] Async deposit country mismatch — declared:', asyncDepositUserRow.pais, 'billing:', asyncDepositBillingCountry, 'user:', asyncUserId);
+              }
+            }
             await env.DB.prepare(
-              'UPDATE users SET billing_country = ?, stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
-            ).bind(asyncDepositBillingCountry, asyncCustomerId, asyncNow, asyncUserId).run();
+              'UPDATE users SET billing_country = ?, billing_flag = ?, stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
+            ).bind(asyncDepositBillingCountry, asyncDepositBillingFlag, asyncCustomerId, asyncNow, asyncUserId).run();
           } else {
             await env.DB.prepare(
               'UPDATE users SET stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
@@ -288,13 +310,13 @@ export async function onRequestPost(context) {
         ).bind('active', asyncCustomerId, asyncNow, asyncUserId).run();
 
         const asyncExistingSub = await env.DB.prepare(
-          'SELECT id FROM subscriptions WHERE user_id = ?'
-        ).bind(asyncUserId).first();
+          'SELECT id FROM subscriptions WHERE user_id = ? AND tier != ?'
+        ).bind(asyncUserId, 'human_session_deposit').first();
 
         if (asyncExistingSub) {
           await env.DB.prepare(
-            'UPDATE subscriptions SET stripe_subscription_id = ?, tier = ?, start_date = ?, end_date = ?, active = 1 WHERE user_id = ?'
-          ).bind(asyncSession.subscription || asyncSession.payment_intent, asyncTier, asyncNow, asyncEndDate, asyncUserId).run();
+            'UPDATE subscriptions SET stripe_subscription_id = ?, tier = ?, start_date = ?, end_date = ?, active = 1 WHERE id = ?'
+          ).bind(asyncSession.subscription || asyncSession.payment_intent, asyncTier, asyncNow, asyncEndDate, asyncExistingSub.id).run();
         } else {
           await env.DB.prepare(
             'INSERT INTO subscriptions (user_id, stripe_subscription_id, tier, start_date, end_date, active) VALUES (?, ?, ?, ?, ?, 1)'
