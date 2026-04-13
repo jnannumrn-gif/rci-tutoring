@@ -234,12 +234,54 @@ export async function onRequestPost(context) {
 
         console.log('[WEBHOOK] Async payment succeeded for user:', asyncUserId, 'plan:', asyncPlan);
 
-        const asyncIsLifetime = asyncPlan && asyncPlan.startsWith('lifetime');
-        const asyncTier = asyncPlan || 'unknown';
         const asyncNow = new Date().toISOString();
+
+        // --- Handle deposit via async payment (SEPA, bank transfer, etc.) ---
+        const asyncPaymentType = asyncSession.metadata?.payment_type;
+        if (asyncPaymentType === 'deposit') {
+          const asyncDepositAmount = parseInt(asyncSession.metadata?.deposit_amount || '2000', 10);
+          const asyncRemainingAmount = parseInt(asyncSession.metadata?.remaining_amount || '2900', 10);
+
+          // Store billing country if available
+          const asyncDepositBillingCountry = asyncSession.customer_details?.address?.country || null;
+          if (asyncDepositBillingCountry) {
+            await env.DB.prepare(
+              'UPDATE users SET billing_country = ?, stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
+            ).bind(asyncDepositBillingCountry, asyncCustomerId, asyncNow, asyncUserId).run();
+          } else {
+            await env.DB.prepare(
+              'UPDATE users SET stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
+            ).bind(asyncCustomerId, asyncNow, asyncUserId).run();
+          }
+
+          // Create deposit booking record (active = 0, not yet fully paid)
+          const asyncExistingDeposit = await env.DB.prepare(
+            'SELECT id FROM subscriptions WHERE user_id = ? AND tier = ?'
+          ).bind(asyncUserId, 'human_session_deposit').first();
+
+          if (asyncExistingDeposit) {
+            await env.DB.prepare(
+              'UPDATE subscriptions SET stripe_subscription_id = ?, start_date = ?, active = 0 WHERE id = ?'
+            ).bind(asyncSession.payment_intent, asyncNow, asyncExistingDeposit.id).run();
+          } else {
+            await env.DB.prepare(
+              'INSERT INTO subscriptions (user_id, stripe_subscription_id, tier, start_date, end_date, active) VALUES (?, ?, ?, ?, ?, 0)'
+            ).bind(asyncUserId, asyncSession.payment_intent, 'human_session_deposit', asyncNow, null).run();
+          }
+
+          console.log('[WEBHOOK] Async deposit of $' + (asyncDepositAmount / 100) + ' recorded for user:', asyncUserId, 'remaining: $' + (asyncRemainingAmount / 100));
+          break;
+        }
+
+        // --- Regular async payment activation ---
+        const asyncIsLifetime = asyncPlan && asyncPlan.startsWith('lifetime');
+        const asyncIsHumanSession = asyncPlan === 'human_session';
+        const asyncTier = asyncPlan || 'unknown';
         const asyncEndDate = asyncIsLifetime
           ? '2099-12-31T23:59:59Z'
-          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+          : asyncIsHumanSession
+            ? new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString()
+            : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
         await env.DB.prepare(
           'UPDATE users SET status = ?, stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
