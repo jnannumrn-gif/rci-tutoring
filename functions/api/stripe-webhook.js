@@ -119,6 +119,46 @@ export async function onRequestPost(context) {
 
         console.log('[WEBHOOK] Checkout completed for user:', userId, 'plan:', plan);
 
+        // --- Handle Human RN Session Deposit ---
+        const paymentType = session.metadata?.payment_type;
+        if (paymentType === 'deposit') {
+          const depositAmount = parseInt(session.metadata?.deposit_amount || '2000', 10);
+          const totalAmount = parseInt(session.metadata?.total_amount || '4900', 10);
+          const remainingAmount = parseInt(session.metadata?.remaining_amount || '2900', 10);
+          const now = new Date().toISOString();
+
+          // Store billing country if available
+          const depositBillingCountry = session.customer_details?.address?.country || null;
+          if (depositBillingCountry) {
+            await env.DB.prepare(
+              'UPDATE users SET billing_country = ?, stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
+            ).bind(depositBillingCountry, customerId, now, userId).run();
+          } else {
+            await env.DB.prepare(
+              'UPDATE users SET stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
+            ).bind(customerId, now, userId).run();
+          }
+
+          // Create deposit booking record in subscriptions table
+          // tier = 'human_session_deposit', active = 0 (not yet fully paid)
+          const existingDeposit = await env.DB.prepare(
+            'SELECT id FROM subscriptions WHERE user_id = ? AND tier = ?'
+          ).bind(userId, 'human_session_deposit').first();
+
+          if (existingDeposit) {
+            await env.DB.prepare(
+              'UPDATE subscriptions SET stripe_subscription_id = ?, start_date = ?, active = 0 WHERE id = ?'
+            ).bind(session.payment_intent, now, existingDeposit.id).run();
+          } else {
+            await env.DB.prepare(
+              'INSERT INTO subscriptions (user_id, stripe_subscription_id, tier, start_date, end_date, active) VALUES (?, ?, ?, ?, ?, 0)'
+            ).bind(userId, session.payment_intent, 'human_session_deposit', now, null).run();
+          }
+
+          console.log('[WEBHOOK] Deposit of $' + (depositAmount / 100) + ' recorded for user:', userId, 'remaining: $' + (remainingAmount / 100));
+          break;
+        }
+
         // --- Billing address cross-check ---
         // Stripe provides customer_details.address.country on the checkout session
         const billingCountry = session.customer_details?.address?.country || null;
@@ -147,11 +187,14 @@ export async function onRequestPost(context) {
 
         // Determine tier and dates
         const isLifetime = plan && plan.startsWith('lifetime');
+        const isHumanSession = plan === 'human_session';
         const tier = plan || 'unknown';
         const now = new Date().toISOString();
         const endDate = isLifetime
           ? '2099-12-31T23:59:59Z'  // Lifetime = effectively never expires
-          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days for monthly
+          : isHumanSession
+            ? new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString() // 90 days for human sessions
+            : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days for monthly
 
         // Update user status to active
         await env.DB.prepare(
