@@ -282,14 +282,22 @@
     // Check for payment success redirect
     (function checkPaymentSuccess() {
       var params = new URLSearchParams(window.location.search);
-      if (params.get('payment') === 'success') {
+      var paymentStatus = params.get('payment');
+      if (paymentStatus === 'success' || paymentStatus === 'deposit_success') {
         var successBanner = document.createElement('div');
         successBanner.className = 'trial-banner green';
         successBanner.style.display = 'flex';
-        successBanner.innerHTML = '<span class="trial-banner-text">' +
-          '<span class="lang" data-lang="es">\u2705 \u00a1Pago exitoso! Tu cuenta ha sido activada. Disfruta tu acceso completo.</span>' +
-          '<span class="lang" data-lang="en">\u2705 Payment successful! Your account has been activated. Enjoy your full access.</span>' +
-          '</span>';
+        if (paymentStatus === 'deposit_success') {
+          successBanner.innerHTML = '<span class="trial-banner-text">' +
+            '<span class="lang" data-lang="es">\u2705 \u00a1Dep\u00f3sito recibido! Tu sesi\u00f3n ser\u00e1 confirmada pronto. Los $29 restantes se cobrar\u00e1n al confirmar la sesi\u00f3n.</span>' +
+            '<span class="lang" data-lang="en">\u2705 Deposit received! Your session will be confirmed shortly. Remaining $29 will be charged when session is confirmed.</span>' +
+            '</span>';
+        } else {
+          successBanner.innerHTML = '<span class="trial-banner-text">' +
+            '<span class="lang" data-lang="es">\u2705 \u00a1Pago exitoso! Tu cuenta ha sido activada. Disfruta tu acceso completo.</span>' +
+            '<span class="lang" data-lang="en">\u2705 Payment successful! Your account has been activated. Enjoy your full access.</span>' +
+            '</span>';
+        }
         var dashWrap = document.querySelector('.dashboard-page .wrap');
         dashWrap.insertBefore(successBanner, dashWrap.firstChild);
         langBlocks = document.querySelectorAll('.lang');
