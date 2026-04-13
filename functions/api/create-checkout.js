@@ -9,23 +9,23 @@
 
 import { verifyJWT, extractToken, jsonResponse, corsHeaders } from './_shared/auth.js';
 
-// Price IDs from Stripe Dashboard (test mode)
+// Price IDs from Stripe Dashboard (live mode)
 // Launch pricing (until June 30, 2026)
 const PRICE_MAP_LAUNCH = {
-  monthly:        'price_1THAsICPTBMEWNnkBreOkbJZ',   // $19.00/month
-  monthly_latam:  'price_1THB6TCPTBMEWNnkaiUJLEp5',   // $5.00/month
-  lifetime:       'price_1THrS6CPTBMEWNnkntqx8ZZ5',   // $99.00 one-time
-  lifetime_latam: 'price_1THrSNCPTBMEWNnkA3eLZ6Xh',   // $49.00 one-time
-  human_session:  'price_1THqmJCPTBMEWNnkrvEFolaP',   // $49.00 one-time per session
+  monthly:        'price_1TLt4a2IMKtbUPVgQ4dEYOH6',   // $19.00/month
+  monthly_latam:  'price_1TLt4b2IMKtbUPVgymVvnYK7',   // $5.00/month
+  lifetime:       'price_1TLt4j2IMKtbUPVgofdYgbFr',   // $99.00 one-time
+  lifetime_latam: 'price_1TLt4j2IMKtbUPVgCzw49WIT',   // $49.00 one-time
+  human_session:  'price_1TLt4p2IMKtbUPVgWcCppinY',   // $49.00 one-time per session
 };
 
 // Regular pricing (July 1, 2026 onwards)
 const PRICE_MAP_REGULAR = {
-  monthly:        'price_1THXL3CPTBMEWNnkF0aQ3ezS',   // $29.00/month
-  monthly_latam:  'price_1THXL9CPTBMEWNnkfUJPCd6y',   // $9.00/month
-  lifetime:       'price_1THrSCCPTBMEWNnkO7X0Z7Ck',   // $119.00 one-time
-  lifetime_latam: 'price_1THrT5CPTBMEWNnkp9sZalqB',   // $69.00 one-time
-  human_session:  'price_1THqmJCPTBMEWNnkrvEFolaP',   // $49.00 one-time per session
+  monthly:        'price_1TLt4x2IMKtbUPVgOz2MREpW',   // $29.00/month
+  monthly_latam:  'price_1TLt4x2IMKtbUPVgRJc4ZsCe',   // $9.00/month
+  lifetime:       'price_1TLt552IMKtbUPVg0cFXJbYU',   // $119.00 one-time
+  lifetime_latam: 'price_1TLt552IMKtbUPVg8xeUf1hd',   // $69.00 one-time
+  human_session:  'price_1TLt5C2IMKtbUPVgxqUWm9fZ',   // $49.00 one-time per session
 };
 
 // Cutover date: July 1, 2026 00:00 UTC
