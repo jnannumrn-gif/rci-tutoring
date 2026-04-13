@@ -4,13 +4,13 @@ compatibility_date = "2024-09-23"
 pages_build_output_dir = "."
 
 [vars]
-STRIPE_MODE = "test"
+STRIPE_MODE = "live"
 APP_URL = "https://rcitutoring.com"
 SUPPORT_EMAIL = "support@rcitutoring.com"
 
 # Secrets (set via Cloudflare Dashboard or wrangler secret put):
-# STRIPE_SECRET_KEY      — sk_test_XXXX (Phase 1) / sk_live_XXXX (Phase 2)
-# STRIPE_PUBLISHABLE_KEY — pk_test_XXXX (Phase 1) / pk_live_XXXX (Phase 2)
+# STRIPE_SECRET_KEY      — sk_live_XXXX
+# STRIPE_PUBLISHABLE_KEY — pk_live_XXXX
 # STRIPE_WEBHOOK_SECRET  — whsec_XXXX
 # JWT_SECRET             — random secure string (32+ chars)
 # RESEND_API_KEY         — re_XXXX
