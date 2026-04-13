@@ -2,7 +2,7 @@
  * POST /api/create-checkout
  *
  * Creates a Stripe Checkout Session for the authenticated user.
- * Expects JSON body: { plan: "monthly" | "monthly_latam" | "lifetime" | "lifetime_latam" | "human_session" }
+ * Expects JSON body: { plan: "monthly" | "monthly_latam" | "lifetime" | "lifetime_latam" | "human_session_deposit" }
  *
  * Returns: { url: "https://checkout.stripe.com/..." }
  */
@@ -12,20 +12,22 @@ import { verifyJWT, extractToken, jsonResponse, corsHeaders } from './_shared/au
 // Price IDs from Stripe Dashboard (live mode)
 // Launch pricing (until June 30, 2026)
 const PRICE_MAP_LAUNCH = {
-  monthly:        'price_1TLt4a2IMKtbUPVgQ4dEYOH6',   // $19.00/month
-  monthly_latam:  'price_1TLt4b2IMKtbUPVgymVvnYK7',   // $5.00/month
-  lifetime:       'price_1TLt4j2IMKtbUPVgofdYgbFr',   // $99.00 one-time
-  lifetime_latam: 'price_1TLt4j2IMKtbUPVgCzw49WIT',   // $49.00 one-time
-  human_session:  'price_1TLt4p2IMKtbUPVgWcCppinY',   // $49.00 one-time per session
+  monthly:               'price_1TLt4a2IMKtbUPVgQ4dEYOH6',   // $19.00/month
+  monthly_latam:         'price_1TLt4b2IMKtbUPVgymVvnYK7',   // $5.00/month
+  lifetime:              'price_1TLt4j2IMKtbUPVgofdYgbFr',   // $99.00 one-time
+  lifetime_latam:        'price_1TLt4j2IMKtbUPVgCzw49WIT',   // $49.00 one-time
+  human_session:         'price_1TLt4p2IMKtbUPVgWcCppinY',   // $49.00 one-time per session (full price)
+  human_session_deposit: 'price_1TLtU42IMKtbUPVgGr668rR4',   // $20.00 one-time deposit (deducted from $49 total)
 };
 
 // Regular pricing (July 1, 2026 onwards)
 const PRICE_MAP_REGULAR = {
-  monthly:        'price_1TLt4x2IMKtbUPVgOz2MREpW',   // $29.00/month
-  monthly_latam:  'price_1TLt4x2IMKtbUPVgRJc4ZsCe',   // $9.00/month
-  lifetime:       'price_1TLt552IMKtbUPVg0cFXJbYU',   // $119.00 one-time
-  lifetime_latam: 'price_1TLt552IMKtbUPVg8xeUf1hd',   // $69.00 one-time
-  human_session:  'price_1TLt5C2IMKtbUPVgxqUWm9fZ',   // $49.00 one-time per session
+  monthly:               'price_1TLt4x2IMKtbUPVgOz2MREpW',   // $29.00/month
+  monthly_latam:         'price_1TLt4x2IMKtbUPVgRJc4ZsCe',   // $9.00/month
+  lifetime:              'price_1TLt552IMKtbUPVg0cFXJbYU',   // $119.00 one-time
+  lifetime_latam:        'price_1TLt552IMKtbUPVg8xeUf1hd',   // $69.00 one-time
+  human_session:         'price_1TLt5C2IMKtbUPVgxqUWm9fZ',   // $49.00 one-time per session (full price)
+  human_session_deposit: 'price_1TLtU42IMKtbUPVgGr668rR4',   // $20.00 one-time deposit (deducted from $49 total)
 };
 
 // Cutover date: July 1, 2026 00:00 UTC
@@ -61,12 +63,12 @@ export async function onRequestPost(context) {
   const { plan } = body;
   const priceId = getPriceMap()[plan];
   if (!priceId) {
-    return jsonResponse({ error: 'Invalid plan. Valid: monthly, monthly_latam, lifetime, lifetime_latam, human_session' }, 400);
+    return jsonResponse({ error: 'Invalid plan. Valid: monthly, monthly_latam, lifetime, lifetime_latam, human_session, human_session_deposit' }, 400);
   }
 
   // Determine mode based on price type
   const isRecurring = plan.startsWith('monthly');
-  const isHumanSession = plan === 'human_session';
+  const isDeposit = plan === 'human_session_deposit';
   const mode = isRecurring ? 'subscription' : 'payment';
 
   // Get or create Stripe customer
@@ -117,17 +119,29 @@ export async function onRequestPost(context) {
 
   // Create Checkout Session
   const appUrl = env.APP_URL || 'https://rcitutoring.com';
+  const successUrl = isDeposit
+    ? `${appUrl}/dashboard.html?payment=deposit_success`
+    : `${appUrl}/dashboard.html?payment=success`;
+
   const params = new URLSearchParams({
     'customer': customerId,
     'line_items[0][price]': priceId,
     'line_items[0][quantity]': '1',
     'mode': mode,
     'billing_address_collection': 'required',
-    'success_url': `${appUrl}/dashboard.html?payment=success`,
+    'success_url': successUrl,
     'cancel_url': `${appUrl}/upgrade.html?payment=cancelled`,
     'metadata[rci_user_id]': user.id,
     'metadata[plan]': plan,
   });
+
+  // For deposits, add metadata to track the remaining balance
+  if (isDeposit) {
+    params.set('metadata[payment_type]', 'deposit');
+    params.set('metadata[deposit_amount]', '2000');    // $20.00 in cents
+    params.set('metadata[total_amount]', '4900');      // $49.00 in cents
+    params.set('metadata[remaining_amount]', '2900');  // $29.00 in cents
+  }
 
   const sessionRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
