@@ -12,9 +12,9 @@ const ALLOWED_ORIGINS = [
   'https://www.rcitutoring.com',
 ];
 
-// Cloudflare Pages previews (per-branch and per-deployment) plus local dev.
+// The Pages project URL, its per-branch/per-deployment previews, and local dev.
 const ALLOWED_ORIGIN_PATTERNS = [
-  /^https:\/\/[a-z0-9-]+\.rci-tutoring\.pages\.dev$/,
+  /^https:\/\/([a-z0-9-]+\.)?rci-tutoring\.pages\.dev$/,
   /^http:\/\/localhost(:\d+)?$/,
   /^http:\/\/127\.0\.0\.1(:\d+)?$/,
 ];
@@ -29,6 +29,7 @@ export default {
     const origin = request.headers.get('Origin');
 
     if (!isAllowedOrigin(origin)) {
+      // No Access-Control-Allow-Origin here: the browser must reject this.
       return new Response(JSON.stringify({ error: { message: 'Origin not allowed' } }), {
         status: 403,
         headers: { 'Content-Type': 'application/json', Vary: 'Origin' },
@@ -38,7 +39,7 @@ export default {
     // Handle CORS preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, {
-        headers: corsHeaders(request),
+        headers: corsHeaders(origin),
       });
     }
 
@@ -46,7 +47,7 @@ export default {
     if (request.method !== 'POST') {
       return new Response(JSON.stringify({ error: { message: 'Method not allowed' } }), {
         status: 405,
-        headers: { ...corsHeaders(request), 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders(origin), 'Content-Type': 'application/json' },
       });
     }
 
@@ -57,7 +58,7 @@ export default {
       if (!body.messages || !Array.isArray(body.messages) || body.messages.length === 0) {
         return new Response(JSON.stringify({ error: { message: 'Invalid request: messages required' } }), {
           status: 400,
-          headers: { ...corsHeaders(request), 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders(origin), 'Content-Type': 'application/json' },
         });
       }
 
@@ -83,12 +84,12 @@ export default {
 
       return new Response(JSON.stringify(data), {
         status: anthropicResponse.status,
-        headers: { ...corsHeaders(request), 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders(origin), 'Content-Type': 'application/json' },
       });
     } catch (err) {
       return new Response(JSON.stringify({ error: { message: 'Proxy error: ' + err.message } }), {
         status: 500,
-        headers: { ...corsHeaders(request), 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders(origin), 'Content-Type': 'application/json' },
       });
     }
   },
@@ -99,9 +100,10 @@ function isAllowedOrigin(origin) {
   return ALLOWED_ORIGINS.includes(origin) || ALLOWED_ORIGIN_PATTERNS.some((re) => re.test(origin));
 }
 
-function corsHeaders(request) {
+// Only ever called with an origin that already passed isAllowedOrigin().
+function corsHeaders(origin) {
   return {
-    'Access-Control-Allow-Origin': request.headers.get('Origin'),
+    'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Max-Age': '86400',
