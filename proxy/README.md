@@ -7,9 +7,9 @@ Deployed at: https://rci-tutor-proxy.jnannum-rn.workers.dev
 
 ## Model
 
-`DEFAULT_MODEL` in `src/worker.js` is the single source of truth. The tutor pages
-(`tutoring/{ccht,cna,hha}/ai/index.html`) omit `model` in their request body, so
-swapping models means editing this worker and redeploying it — no site deploy needed.
+`MODEL` in `src/worker.js` is the single source of truth. A client-supplied `model`
+is ignored, so swapping models means editing this worker and redeploying it — no site
+deploy needed, and stale/cached pages pinned to an old model keep working.
 
 ## Commands
 

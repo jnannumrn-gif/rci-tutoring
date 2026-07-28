@@ -5,9 +5,10 @@
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const ALLOWED_ORIGINS = ['*']; // In production, restrict to your domain
 
-// Single source of truth for the tutor model. Clients should omit `model` so a
-// model swap only requires redeploying this worker, not the whole site.
-const DEFAULT_MODEL = 'claude-sonnet-4-5-20250929';
+// Single source of truth for the tutor model. A client-supplied `model` is
+// ignored so that a model swap is a redeploy of this worker alone, and so cached
+// or stale pages pinned to a retired model keep working.
+const MODEL = 'claude-sonnet-4-5-20250929';
 
 export default {
   async fetch(request, env) {
@@ -48,7 +49,7 @@ export default {
           'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
-          model: body.model || DEFAULT_MODEL,
+          model: MODEL,
           max_tokens: maxTokens,
           system: body.system || '',
           messages: body.messages,
