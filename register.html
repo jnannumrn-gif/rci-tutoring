@@ -311,6 +311,9 @@
           return;
         }
 
+        // Email captured (magic link sent) — lead acquired
+        if (window.fbq) fbq('track', 'Lead');
+
         // Check if verification is needed
         if (data.needs_verification) {
           showVerificationPending(email);

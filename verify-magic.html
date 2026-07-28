@@ -201,6 +201,12 @@
             }
             showState('successState');
 
+            // First-time verification = completed registration + trial start
+            if (result.data.is_new_registration && window.fbq) {
+              fbq('track', 'CompleteRegistration');
+              fbq('track', 'StartTrial');
+            }
+
             // Determine redirect based on status
             var redirectUrl = '/dashboard.html';
             if (result.data.user && result.data.user.status === 'expired') {
