@@ -69,7 +69,8 @@ export async function onRequestGet(context) {
     }
 
     // If this was a new registration (first magic link click), reset trial dates to start now
-    if (user.email_verified === 0) {
+    var isNewRegistration = user.email_verified === 0;
+    if (isNewRegistration) {
       var trialStart = now;
       var trialEnd = new Date(now);
       trialEnd.setDate(trialEnd.getDate() + 7);
@@ -107,6 +108,7 @@ export async function onRequestGet(context) {
     return new Response(JSON.stringify({
       success: true,
       token: jwtToken,
+      is_new_registration: isNewRegistration,
       user: {
         id: user.id,
         nombre: user.nombre,

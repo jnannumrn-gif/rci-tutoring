@@ -64,6 +64,7 @@
 
   function closeBanner(choice) {
     localStorage.setItem(COOKIE_KEY, choice);
+    window.dispatchEvent(new CustomEvent('rci-cookie-consent', { detail: choice }));
     observer.disconnect();
     var banner = document.getElementById('cookie-banner');
     if (banner) {
