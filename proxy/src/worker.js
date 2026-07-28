@@ -3,7 +3,21 @@
 // without exposing the API key to the client.
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
-const ALLOWED_ORIGINS = ['*']; // In production, restrict to your domain
+
+// Origins allowed to spend this worker's Anthropic quota. The tutor pages are
+// always cross-origin to workers.dev, so a browser request always carries an
+// Origin; requests without one are rejected.
+const ALLOWED_ORIGINS = [
+  'https://rcitutoring.com',
+  'https://www.rcitutoring.com',
+];
+
+// Cloudflare Pages previews (per-branch and per-deployment) plus local dev.
+const ALLOWED_ORIGIN_PATTERNS = [
+  /^https:\/\/[a-z0-9-]+\.rci-tutoring\.pages\.dev$/,
+  /^http:\/\/localhost(:\d+)?$/,
+  /^http:\/\/127\.0\.0\.1(:\d+)?$/,
+];
 
 // Single source of truth for the tutor model. A client-supplied `model` is
 // ignored so that a model swap is a redeploy of this worker alone, and so cached
@@ -12,6 +26,15 @@ const MODEL = 'claude-sonnet-4-5-20250929';
 
 export default {
   async fetch(request, env) {
+    const origin = request.headers.get('Origin');
+
+    if (!isAllowedOrigin(origin)) {
+      return new Response(JSON.stringify({ error: { message: 'Origin not allowed' } }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json', Vary: 'Origin' },
+      });
+    }
+
     // Handle CORS preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, {
@@ -71,12 +94,17 @@ export default {
   },
 };
 
+function isAllowedOrigin(origin) {
+  if (!origin) return false;
+  return ALLOWED_ORIGINS.includes(origin) || ALLOWED_ORIGIN_PATTERNS.some((re) => re.test(origin));
+}
+
 function corsHeaders(request) {
-  const origin = request.headers.get('Origin') || '*';
   return {
-    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Origin': request.headers.get('Origin'),
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Max-Age': '86400',
+    Vary: 'Origin',
   };
 }
