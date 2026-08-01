@@ -254,11 +254,12 @@
 
     function trackLead(email) {
       var key = (email || '').toLowerCase();
+      if (!window.fbq) return;
       try {
         if (localStorage.getItem(LEAD_KEY) === key) return;
         localStorage.setItem(LEAD_KEY, key);
       } catch (e) {}
-      if (window.fbq) fbq('track', 'Lead', { content_name: 'AI Tutor free trial registration' });
+      fbq('track', 'Lead', { content_name: 'AI Tutor free trial registration' });
     }
 
     form.addEventListener('submit', async function(e) {
