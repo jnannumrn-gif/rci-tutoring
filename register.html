@@ -250,6 +250,17 @@
       alertBox.classList.remove('visible');
     }
 
+    var LEAD_KEY = 'rci_lead_tracked';
+
+    function trackLead(email) {
+      var key = (email || '').toLowerCase();
+      try {
+        if (localStorage.getItem(LEAD_KEY) === key) return;
+        localStorage.setItem(LEAD_KEY, key);
+      } catch (e) {}
+      if (window.fbq) fbq('track', 'Lead', { content_name: 'AI Tutor free trial registration' });
+    }
+
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
       clearErrors();
@@ -299,6 +310,7 @@
         if (!res.ok) {
           // Handle unverified existing user
           if (data.needs_verification && data.email) {
+            trackLead(data.email);
             showVerificationPending(data.email);
             return;
           }
@@ -314,7 +326,7 @@
         }
 
         // Email captured (magic link sent) — lead acquired
-        if (window.fbq) fbq('track', 'Lead');
+        trackLead(email);
 
         // Check if verification is needed
         if (data.needs_verification) {
