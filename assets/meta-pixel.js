@@ -1,5 +1,5 @@
 (function() {
-  var PIXEL_ID = '22328706637567894';
+  var PIXEL_ID = '2232870637567894';
   var COOKIE_KEY = 'rci_cookie_consent';
 
   function loadPixel() {
