@@ -87,12 +87,14 @@ export function nameLooksLikePhone(nombre) {
 
 /**
  * Hidden field no human ever sees, plus a minimum time spent on the form.
- * `form_ms` is how long the page was open before submitting.
+ * `form_ms` is how long the page was open before submitting; the registration
+ * form always sends it, so a missing or nonsensical value means the request
+ * did not come from the form.
  */
 export function looksAutomated(body) {
   if (body.website) return { bot: true, signal: 'honeypot' };
   const elapsed = Number(body.form_ms);
-  if (Number.isFinite(elapsed) && elapsed >= 0 && elapsed < MIN_FORM_FILL_MS) {
+  if (!Number.isFinite(elapsed) || elapsed < MIN_FORM_FILL_MS) {
     return { bot: true, signal: 'too_fast' };
   }
   return { bot: false };
