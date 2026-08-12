@@ -79,6 +79,45 @@ The auth gate uses SHA-256 password hashing. The password hash is stored in `aut
   POST that omits `form_ms` or sends a negative/non-numeric value passes the timing check.
 - Reset the IP cap between test batches with `DELETE FROM users` on the local D1.
 
+## Cloudflare Turnstile on /register
+
+- Client: `register.html` renders the widget explicitly into `#turnstileWidget` from
+  `var TURNSTILE_SITE_KEY = '0x...'`; `getTurnstileToken()` polls `turnstile.getResponse(id)` every 250 ms for up to
+  5 s and sends the result as `turnstile_token`. Server: `verifyTurnstile()` in `functions/api/_shared/antibot.js`
+  **skips entirely when `TURNSTILE_SECRET_KEY` is unset** (so local `pages dev` always passes) and returns
+  `400 {field:'turnstile'}` with "No pudimos verificar que eres humano..." otherwise.
+- **Always verify the site key string itself.** A one-character typo renders *nothing* (empty div, only a hidden
+  `cf-turnstile-response` input) and the page looks merely "a bit short" — easy to miss. Grab the client-side error
+  code with an explicit test render in the console:
+  ```js
+  const d=document.createElement('div');d.id='ts';document.body.appendChild(d);
+  turnstile.render('#ts',{sitekey:'<key>','error-callback':c=>console.log('ERR',c),callback:t=>console.log('TOKEN',t.length)});
+  ```
+  `400020` = invalid sitekey, `110200` = domain not authorized, `600010`/`300*` = challenge failed (bot detection).
+- List the account's real sitekeys/hostnames to compare against the code:
+  ```
+  curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+    "https://api.cloudflare.com/client/v4/accounts/<account_id>/challenges/widgets"
+  ```
+  (account id via `.../client/v4/accounts`). This is the fastest way to prove a sitekey typo.
+- Control test: render Cloudflare's always-passing test key `1x00000000000000000000AA` on the same page. If the
+  control shows "Success!" and the app key errors, the problem is the key/config, not the browser or extensions.
+- **This datacenter browser cannot solve a real Managed challenge** (interactive checkbox stays unchecked, error
+  `600010`). So an end-to-end signup that carries a genuine token usually cannot be completed from the test box —
+  plan to prove the client half (widget renders, token polled) and the server half (direct POST with missing/garbage
+  token → 400 `field:'turnstile'`) separately, and say so in the report.
+- Server-side enforcement in production is easy to prove with curl (no browser auth involved):
+  ```
+  curl -s -X POST https://rcitutoring.com/api/register -H 'Content-Type: application/json' \
+    -d '{"nombre":"T","email":"x@gmail.com","pais":"US","form_ms":9000,"website":"","turnstile_token":"garbage"}'
+  ```
+  → `400 {"field":"turnstile"}` means `TURNSTILE_SECRET_KEY` really is set in the Pages project (no skip path).
+  These rejected requests happen before any insert, so they do not consume the 3-signups-per-IP-per-24h budget.
+- Remember `rcitutoring.com/register.html` 308-redirects to `/register`.
+
+### Devin Secrets Needed
+- `CLOUDFLARE_API_TOKEN` — wrangler D1 queries and the Turnstile widgets API listing above.
+
 ## Meta Pixel / analytics verification
 
 - **The test browser profile ships with uBlock Origin enabled, and it blocks `connect.facebook.net/en_US/fbevents.js`
