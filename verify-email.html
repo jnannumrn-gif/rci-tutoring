@@ -13,6 +13,7 @@
   <script src="assets/meta-pixel.js"></script>
   <!-- Google Ads (gtag.js) -->
   <script src="assets/google-ads.js"></script>
+<script src="/assets/login-gate.js"></script>
 </head>
 <body>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2232870637567894&amp;ev=PageView&amp;noscript=1" alt="" /></noscript>
@@ -221,7 +222,7 @@
                 if (enEl) enEl.textContent = countdown;
                 if (countdown <= 0) {
                   clearInterval(interval);
-                  window.location.href = '/dashboard.html';
+                  window.location.href = window.RCIGate ? window.RCIGate.takeNext() : '/dashboard.html';
                 }
               }, 1000);
             }

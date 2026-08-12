@@ -13,6 +13,7 @@
   <script src="assets/meta-pixel.js"></script>
   <!-- Google Ads (gtag.js) -->
   <script src="assets/google-ads.js"></script>
+<script src="/assets/login-gate.js"></script>
 </head>
 <body>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2232870637567894&amp;ev=PageView&amp;noscript=1" alt="" /></noscript>
@@ -279,7 +280,7 @@
         if (data.user.status === 'expired') {
           window.location.href = '/upgrade.html';
         } else {
-          window.location.href = '/dashboard.html';
+          window.location.href = window.RCIGate ? window.RCIGate.takeNext() : '/dashboard.html';
         }
 
       } catch (err) {
@@ -392,7 +393,7 @@
 
     // If already logged in, redirect
     if (localStorage.getItem('rci_token')) {
-      window.location.href = '/dashboard.html';
+      window.location.href = window.RCIGate ? window.RCIGate.takeNext() : '/dashboard.html';
     }
 
     // Resend verification from login page

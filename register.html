@@ -13,6 +13,7 @@
   <script src="assets/meta-pixel.js"></script>
   <!-- Google Ads (gtag.js) -->
   <script src="assets/google-ads.js"></script>
+<script src="/assets/login-gate.js"></script>
 </head>
 <body>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2232870637567894&amp;ev=PageView&amp;noscript=1" alt="" /></noscript>
@@ -390,8 +391,8 @@
           localStorage.setItem('rci_user', JSON.stringify(data.user));
         }
 
-        // Redirect to dashboard
-        window.location.href = '/dashboard.html';
+        // Redirect to dashboard (or wherever the gate sent them from)
+        window.location.href = window.RCIGate ? window.RCIGate.takeNext() : '/dashboard.html';
 
       } catch (err) {
         alertBox.textContent = currentLang === 'en' ? 'Connection error. Please try again.' : 'Error de conexión. Intenta de nuevo.';
