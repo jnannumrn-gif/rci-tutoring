@@ -233,18 +233,36 @@
     });
 
     // Cloudflare Turnstile — public site key; widget stays hidden until it is set
-    var TURNSTILE_SITE_KEY = '';
+    var TURNSTILE_SITE_KEY = '0x4AAAAAAAEN-9RkVotWzXBB6';
     var turnstileWidgetId = null;
 
     if (TURNSTILE_SITE_KEY) {
       window.onTurnstileLoad = function() {
-        turnstileWidgetId = turnstile.render('#turnstileWidget', { sitekey: TURNSTILE_SITE_KEY });
+        turnstileWidgetId = turnstile.render('#turnstileWidget', {
+          sitekey: TURNSTILE_SITE_KEY,
+          language: savedLang,
+          'refresh-expired': 'auto'
+        });
       };
       var ts = document.createElement('script');
       ts.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad&render=explicit';
       ts.async = true;
       ts.defer = true;
       document.head.appendChild(ts);
+    }
+
+    // Managed mode can still be solving when the form is submitted, so give the
+    // widget a few seconds to produce a token before giving up on it
+    function getTurnstileToken() {
+      if (turnstileWidgetId === null) return Promise.resolve(null);
+      var deadline = Date.now() + 5000;
+      return new Promise(function(resolve) {
+        (function poll() {
+          var token = turnstile.getResponse(turnstileWidgetId);
+          if (token || Date.now() > deadline) return resolve(token || null);
+          setTimeout(poll, 250);
+        })();
+      });
     }
 
     // Time the form was rendered — submissions faster than a human are rejected
@@ -319,6 +337,8 @@
       submitBtn.textContent = currentLang === 'en' ? 'Creating account...' : 'Creando cuenta...';
 
       try {
+        var turnstileToken = await getTurnstileToken();
+
         var res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -331,7 +351,7 @@
             idioma: currentLang,
             website: document.getElementById('website').value,
             form_ms: Date.now() - formRenderedAt,
-            turnstile_token: turnstileWidgetId !== null ? turnstile.getResponse(turnstileWidgetId) : null
+            turnstile_token: turnstileToken
           })
         });
 
