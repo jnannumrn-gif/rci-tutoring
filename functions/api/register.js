@@ -1,4 +1,12 @@
 import { jsonResponse, corsHeaders } from './_shared/auth.js';
+import {
+  validateEmailFormat,
+  domainAcceptsEmail,
+  nameLooksLikePhone,
+  looksAutomated,
+  ipOverSignupLimit,
+  verifyTurnstile
+} from './_shared/antibot.js';
 
 export async function onRequestOptions() {
   return new Response(null, { headers: corsHeaders() });
@@ -104,15 +112,74 @@ export async function onRequestPost(context) {
     const body = await context.request.json();
     const { nombre, email, pais, telefono, codigo_pais, rol, idioma } = body;
 
+    const clientIp = context.request.headers.get('CF-Connecting-IP')
+      || context.request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim()
+      || null;
+
+    // Silent bot signals — respond like a success so bots don't adapt
+    const automated = looksAutomated(body);
+    if (automated.bot) {
+      console.log('[ANTIBOT] Rejected automated submission:', automated.signal, 'ip:', clientIp);
+      return jsonResponse({
+        success: true,
+        needs_verification: true,
+        email_sent: true,
+        message: 'Cuenta creada. Revisa tu email para acceder a tu cuenta.',
+        message_en: 'Account created. Check your email to access your account.'
+      }, 201);
+    }
+
+    const turnstile = await verifyTurnstile(env, body.turnstile_token, clientIp);
+    if (!turnstile.ok) {
+      return jsonResponse({
+        error: 'No pudimos verificar que eres humano. Recarga la página e inténtalo de nuevo.',
+        error_en: 'We could not verify you are human. Reload the page and try again.',
+        field: 'turnstile'
+      }, 400);
+    }
+
     // Validate required fields
     if (!nombre || nombre.trim().length < 2) {
       return jsonResponse({ error: 'Nombre es requerido (mín. 2 caracteres)', field: 'nombre' }, 400);
     }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return jsonResponse({ error: 'Email inválido', field: 'email' }, 400);
+    if (nameLooksLikePhone(nombre)) {
+      return jsonResponse({
+        error: 'Escribe tu nombre real, no un número de teléfono',
+        error_en: 'Enter your real name, not a phone number',
+        field: 'nombre'
+      }, 400);
     }
+
+    const emailCheck = validateEmailFormat(email);
+    if (!emailCheck.ok) {
+      return jsonResponse({
+        error: emailCheck.reason === 'typo'
+          ? '¿Quisiste decir ' + emailCheck.suggestion + '?'
+          : 'Email inválido',
+        error_en: emailCheck.reason === 'typo'
+          ? 'Did you mean ' + emailCheck.suggestion + '?'
+          : 'Invalid email',
+        field: 'email'
+      }, 400);
+    }
+    if (!(await domainAcceptsEmail(emailCheck.domain))) {
+      return jsonResponse({
+        error: 'El dominio de ese email no puede recibir correos. Revisa la dirección.',
+        error_en: 'That email domain cannot receive mail. Please check the address.',
+        field: 'email'
+      }, 400);
+    }
+
     if (!pais) {
       return jsonResponse({ error: 'País es requerido', field: 'pais' }, 400);
+    }
+
+    if (await ipOverSignupLimit(env.DB, clientIp)) {
+      console.log('[ANTIBOT] IP signup limit reached:', clientIp);
+      return jsonResponse({
+        error: 'Demasiados registros desde esta conexión. Inténtalo de nuevo mañana.',
+        error_en: 'Too many signups from this connection. Please try again tomorrow.'
+      }, 429);
     }
 
     // Check email uniqueness
@@ -135,9 +202,6 @@ export async function onRequestPost(context) {
     }
 
     // IP geolocation check via ipapi.co
-    const clientIp = context.request.headers.get('CF-Connecting-IP')
-      || context.request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim()
-      || null;
     const geo = await lookupIpCountry(clientIp);
     const ipCountry = geo.country; // e.g. "US", "HN", etc.
 

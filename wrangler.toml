@@ -16,6 +16,8 @@ SUPPORT_EMAIL = "support@rcitutoring.com"
 # RESEND_API_KEY         — re_XXXX
 # EMAIL_FROM             — 'RCI Tutoring <noreply@rcitutoring.com>' (requires verified domain in Resend)
 # CRON_SECRET            — random secure string for /api/cron-emails auth
+# TURNSTILE_SECRET_KEY   — 0x_XXXX (optional; when unset the Turnstile check is skipped.
+#                          The matching public site key goes in TURNSTILE_SITE_KEY in register.html)
 
 [[d1_databases]]
 binding = "DB"
