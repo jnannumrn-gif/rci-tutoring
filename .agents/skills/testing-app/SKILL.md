@@ -48,6 +48,37 @@ The auth gate uses SHA-256 password hashing. The password hash is stored in `aut
 - Registrations insert rows into the users table; use `devin-...+<timestamp>@example.com` addresses and mention created
   rows in the report so they can be cleaned up.
 
+## Local Cloudflare Pages + D1 dev server (needed for anti-bot / register testing)
+
+- `npm install -g wrangler` fails (root-owned `/usr/lib/node_modules`). Use `npx --yes wrangler@3` (3.114.17 works).
+- Seed the local D1 **before** starting the dev server, with the default persist dir and no `--d1` override,
+  otherwise the API returns `D1_ERROR: no such table: users`:
+  ```
+  npx --yes wrangler@3 d1 execute rci-tutoring-db --local --file schema.sql
+  npx --yes wrangler@3 d1 execute rci-tutoring-db --local --file migrations/001_add_fraud_prevention_columns.sql
+  npx --yes wrangler@3 d1 execute rci-tutoring-db --local --file migrations/002_add_magic_token_columns.sql
+  npx --yes wrangler@3 pages dev . --port 8790
+  ```
+- If two `pages dev` processes race for the same port you get `SQLITE_CANTOPEN` and every `/api/*` call 500s.
+  `pkill -f wrangler; pkill -f workerd` and start exactly one server.
+- Inspect rows: `npx --yes wrangler@3 d1 execute rci-tutoring-db --local --command "SELECT id,nombre,email,registration_ip FROM users ORDER BY created_at DESC"`.
+- Locally `CF-Connecting-IP` is absent; `registration_ip` comes out as `::1` from the browser and `127.0.0.1` from
+  curl — they are **different IPs** for the 3-signups-per-IP cap, so keep one client type per rate-limit test.
+
+## Anti-bot layer on /api/register (functions/api/_shared/antibot.js)
+
+- Honeypot `#website` (offscreen, `tabindex=-1`) and `form_ms < 2500` produce a **fake HTTP 201 success**: the UI shows
+  the normal "¡Revisa tu email!" screen but no row is inserted. Always verify these cases in the DB, never by the UI.
+  Server logs `[ANTIBOT] Rejected automated submission: honeypot|too_fast`.
+- To exercise a sub-2.5s submit from a page that has been open a while, inject a same-origin `<iframe src="/register">`
+  and fill + `dispatchEvent(new Event('submit'))` in its `onload` — the iframe's `formRenderedAt` is fresh.
+- The MX check uses DoH against cloudflare-dns.com and needs outbound network. Verify a domain's real MX before
+  calling a rejection a false positive: `curl -s -H 'accept: application/dns-json' "https://cloudflare-dns.com/dns-query?type=MX&name=<domain>"`
+  (e.g. `johns-hopkins.edu` is NXDOMAIN; the real domain is `jhu.edu`).
+- Known gap to re-check after changes: `looksAutomated()` only rejects a **finite, non-negative** `form_ms`, so a direct
+  POST that omits `form_ms` or sends a negative/non-numeric value passes the timing check.
+- Reset the IP cap between test batches with `DELETE FROM users` on the local D1.
+
 ## Meta Pixel / analytics verification
 
 - **The test browser profile ships with uBlock Origin enabled, and it blocks `connect.facebook.net/en_US/fbevents.js`
