@@ -78,6 +78,12 @@
       </div>
 
       <form id="registerForm" novalidate>
+        <!-- Honeypot: hidden from humans, bots fill it in -->
+        <div style="position:absolute;left:-9999px;" aria-hidden="true">
+          <label for="website">Website</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+
         <div class="form-group">
           <label for="nombre">
             <span class="lang active" data-lang="es">Nombre completo *</span>
@@ -157,6 +163,8 @@
           </select>
         </div>
 
+        <div id="turnstileWidget" style="margin-bottom:16px;"></div>
+
         <button type="submit" class="btn-submit" id="submitBtn">
           <span class="lang active" data-lang="es">Crear cuenta gratuita</span>
           <span class="lang" data-lang="en">Create free account</span>
@@ -223,6 +231,24 @@
     buttons.forEach(function(btn) {
       btn.addEventListener('click', function() { localStorage.setItem('rci_lang', btn.dataset.langBtn); });
     });
+
+    // Cloudflare Turnstile — public site key; widget stays hidden until it is set
+    var TURNSTILE_SITE_KEY = '';
+    var turnstileWidgetId = null;
+
+    if (TURNSTILE_SITE_KEY) {
+      window.onTurnstileLoad = function() {
+        turnstileWidgetId = turnstile.render('#turnstileWidget', { sitekey: TURNSTILE_SITE_KEY });
+      };
+      var ts = document.createElement('script');
+      ts.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad&render=explicit';
+      ts.async = true;
+      ts.defer = true;
+      document.head.appendChild(ts);
+    }
+
+    // Time the form was rendered — submissions faster than a human are rejected
+    var formRenderedAt = Date.now();
 
     // Form validation and submission
     var form = document.getElementById('registerForm');
@@ -302,7 +328,10 @@
             pais: pais,
             telefono: telefono || null,
             rol: rol || null,
-            idioma: currentLang
+            idioma: currentLang,
+            website: document.getElementById('website').value,
+            form_ms: Date.now() - formRenderedAt,
+            turnstile_token: turnstileWidgetId !== null ? turnstile.getResponse(turnstileWidgetId) : null
           })
         });
 
@@ -315,12 +344,12 @@
             showVerificationPending(data.email);
             return;
           }
-          if (data.field) {
-            var msgEs = data.error;
-            var msgEn = data.error;
-            showError(data.field, msgEs, msgEn);
+          if (turnstileWidgetId !== null) turnstile.reset(turnstileWidgetId);
+          if (data.field && document.getElementById(data.field + '-error')) {
+            showError(data.field, data.error, data.error_en || data.error);
           } else {
-            alertBox.textContent = data.error || (currentLang === 'en' ? 'Registration error' : 'Error al registrar');
+            alertBox.textContent = (currentLang === 'en' ? (data.error_en || data.error) : data.error)
+              || (currentLang === 'en' ? 'Registration error' : 'Error al registrar');
             alertBox.classList.add('visible');
           }
           return;
