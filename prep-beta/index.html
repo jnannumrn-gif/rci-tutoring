@@ -378,18 +378,23 @@
     function scoreSummary() {
       var byDomain = {};
       var correct = 0;
+      var attempted = 0;
       state.questions.forEach(function (q, i) {
         var picked = state.answers[i];
         var ok = picked === q.correct_option;
         if (ok) correct++;
-        var d = byDomain[q.domain] || (byDomain[q.domain] = { correct: 0, total: 0 });
+        var d = byDomain[q.domain] || (byDomain[q.domain] = { correct: 0, total: 0, attempted: 0 });
         d.total++;
         if (ok) d.correct++;
+        // Untouched questions still count against the score, but they are not
+        // "questions answered" in the lifetime stats.
+        if (picked) { attempted++; d.attempted++; }
       });
       var total = state.questions.length;
       return {
         correct: correct,
         total: total,
+        attempted: attempted,
         pct: total ? Math.round((correct / total) * 100) : 0,
         byDomain: byDomain,
         seconds: Math.round(((state.endedAt || Date.now()) - state.startedAt) / 1000)
@@ -415,6 +420,7 @@
         exam_type: state.examType,
         correct: s.correct,
         total: s.total,
+        attempted: s.attempted,
         seconds: s.seconds,
         byDomain: perDomain
       });
@@ -425,12 +431,13 @@
       var sessions = readStats().sessions;
       var answered = 0, correct = 0, byDomain = {};
       sessions.forEach(function (s) {
-        answered += s.total;
+        answered += typeof s.attempted === 'number' ? s.attempted : s.total;
         correct += s.correct;
         Object.keys(s.byDomain || {}).forEach(function (k) {
+          var sd = s.byDomain[k];
           var d = byDomain[k] || (byDomain[k] = { correct: 0, total: 0 });
-          d.correct += s.byDomain[k].correct;
-          d.total += s.byDomain[k].total;
+          d.correct += sd.correct;
+          d.total += typeof sd.attempted === 'number' ? sd.attempted : sd.total;
         });
       });
       return { sessions: sessions, answered: answered, correct: correct, byDomain: byDomain };
@@ -453,8 +460,9 @@
           return '<option value="' + k + '"' + (state.domain === k ? ' selected' : '') + '>' + esc(domName(k)) + '</option>';
         })).join('');
 
-      var domainRows = Object.keys(stats.byDomain).length
-        ? Object.keys(stats.byDomain).map(function (k) {
+      var domainKeys = Object.keys(stats.byDomain).filter(function (k) { return stats.byDomain[k].total > 0; });
+      var domainRows = domainKeys.length
+        ? domainKeys.map(function (k) {
             var d = stats.byDomain[k];
             var pct = Math.round((d.correct / d.total) * 100);
             return '<div class="dom-row"><div class="dom-head"><span>' + esc(domName(k)) + '</span>' +
@@ -649,7 +657,9 @@
             var q = item.q;
             var picked = state.answers[item.i];
             var ok = picked === q.correct_option;
-            var pickedText = picked ? picked + '. ' + q['option_' + picked.toLowerCase()] : L('sin responder', 'not answered');
+            var pickedText = picked === 'skip'
+              ? L('la dejaste en blanco', 'you skipped it')
+              : (picked ? picked + '. ' + q['option_' + picked.toLowerCase()] : L('sin responder', 'not answered'));
             return '<div class="review-item">' +
               '<div class="q-meta">' + (item.i + 1) + ' &middot; ' + esc(domName(q.domain)) + '</div>' +
               '<div class="review-q">' + esc(q.question_text) + '</div>' +
