@@ -43,6 +43,12 @@ export async function onRequestGet(context) {
       }
     }
 
+    // Human RN session booking is gated on a paid $20 deposit (recorded by the
+    // Stripe webhook as tier 'human_session_deposit') or a full-price session
+    const bookingRow = await env.DB.prepare(
+      "SELECT tier FROM subscriptions WHERE user_id = ? AND (tier = 'human_session_deposit' OR (tier = 'human_session' AND active = 1)) LIMIT 1"
+    ).bind(user.id).first();
+
     return jsonResponse({
       user: {
         id: user.id,
@@ -57,6 +63,7 @@ export async function onRequestGet(context) {
         trial_end: user.trial_end_date,
         days_left: daysLeft,
         email_verified: user.email_verified === 1,
+        human_session_deposit_paid: !!bookingRow,
         created_at: user.created_at
       }
     });
