@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>RCI Admin | Revisión de preguntas</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1c2330;
+      --border: #2a3441;
+      --accent: #4f8ef7;
+      --gold: #d4a843;
+      --text: #e6edf3;
+      --text-dim: #8b949e;
+      --success: #3fb950;
+      --danger: #f85149;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 16px 24px;
+      border-bottom: 1px solid var(--border); background: var(--surface);
+    }
+    .header h1 { font-size: 16px; font-weight: 800; }
+    .header .who { font-size: 12px; color: var(--text-dim); }
+    .main { max-width: 960px; margin: 0 auto; padding: 24px 16px 64px; }
+    .panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; margin-bottom: 20px;
+    }
+    .panel h2 { font-size: 14px; margin-bottom: 12px; color: var(--gold); letter-spacing: 0.3px; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+    input, select, textarea, button {
+      font-family: inherit; font-size: 13px; color: var(--text);
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 10px;
+    }
+    textarea { width: 100%; resize: vertical; line-height: 1.5; }
+    button { cursor: pointer; background: var(--surface2); }
+    button:hover { border-color: var(--accent); }
+    button:disabled { opacity: 0.5; cursor: default; }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+    .btn-approve { border-color: var(--success); color: var(--success); }
+    .btn-reject { border-color: var(--danger); color: var(--danger); }
+    .counts { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--text-dim); margin-top: 12px; }
+    .counts b { color: var(--text); }
+    .q-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; margin-bottom: 16px;
+    }
+    .q-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .tag {
+      font-size: 11px; padding: 3px 8px; border-radius: 999px;
+      background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim);
+    }
+    .q-text { font-size: 15px; line-height: 1.5; margin-bottom: 12px; white-space: pre-wrap; }
+    .opt {
+      display: flex; gap: 8px; padding: 8px 10px; margin-bottom: 6px;
+      border: 1px solid var(--border); border-radius: 8px; background: var(--bg); font-size: 13px;
+    }
+    .opt.correct { border-color: var(--success); background: rgba(63,185,80,0.08); }
+    .opt .letter { font-weight: 700; color: var(--text-dim); min-width: 18px; }
+    .opt.correct .letter { color: var(--success); }
+    .rationale {
+      margin: 12px 0; padding: 10px 12px; font-size: 13px; line-height: 1.5;
+      background: var(--surface2); border-left: 3px solid var(--gold); border-radius: 6px;
+      white-space: pre-wrap;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+    .actions input[type=text] { flex: 1; min-width: 180px; }
+    .edit-form { display: none; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+    .edit-form.open { display: block; }
+    .edit-form .field { margin-bottom: 10px; }
+    .status-msg { font-size: 13px; color: var(--text-dim); padding: 8px 0; min-height: 20px; }
+    .status-msg.error { color: var(--danger); }
+    .status-msg.ok { color: var(--success); }
+    .empty { color: var(--text-dim); font-size: 14px; padding: 24px; text-align: center; }
+  </style>
+</head>
+<body>
+<div class="header">
+  <h1>RCI Admin &mdash; Revisi&oacute;n de preguntas (CCHT Prep)</h1>
+  <div class="who">Solo aprobadas se muestran a los estudiantes</div>
+</div>
+
+<div class="main">
+  <div class="panel">
+    <h2>Acceso</h2>
+    <div class="row">
+      <div class="field">
+        <label for="admin-password">Admin password</label>
+        <input id="admin-password" type="password" autocomplete="current-password" />
+      </div>
+      <div class="field">
+        <label for="reviewer">Revisor</label>
+        <input id="reviewer" type="text" value="pablo" />
+      </div>
+      <button id="btn-save-pass" class="btn-primary">Guardar</button>
+    </div>
+    <div id="auth-msg" class="status-msg"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Generar lote con IA</h2>
+    <div class="row">
+      <div class="field">
+        <label for="gen-exam">Examen</label>
+        <select id="gen-exam"></select>
+      </div>
+      <div class="field">
+        <label for="gen-domain">Dominio</label>
+        <select id="gen-domain"></select>
+      </div>
+      <div class="field">
+        <label for="gen-count">Cantidad (1-20)</label>
+        <input id="gen-count" type="number" min="1" max="20" value="10" />
+      </div>
+      <div class="field">
+        <label for="gen-cognitive">Nivel cognitivo</label>
+        <select id="gen-cognitive">
+          <option value="">(por defecto)</option>
+          <option value="knowledge">knowledge</option>
+          <option value="comprehension">comprehension</option>
+          <option value="application">application</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="gen-difficulty">Mezcla de dificultad</label>
+        <input id="gen-difficulty" type="text" placeholder="mostly medium, some easy and hard" />
+      </div>
+      <button id="btn-generate" class="btn-primary">Generar</button>
+    </div>
+    <div id="gen-msg" class="status-msg"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Cola de revisi&oacute;n</h2>
+    <div class="row">
+      <div class="field">
+        <label for="filter-exam">Examen</label>
+        <select id="filter-exam"></select>
+      </div>
+      <div class="field">
+        <label for="filter-domain">Dominio</label>
+        <select id="filter-domain"></select>
+      </div>
+      <div class="field">
+        <label for="filter-status">Estado</label>
+        <select id="filter-status">
+          <option value="pending_review">pending_review</option>
+          <option value="needs_edit">needs_edit</option>
+          <option value="approved">approved</option>
+          <option value="rejected">rejected</option>
+        </select>
+      </div>
+      <button id="btn-load">Cargar</button>
+    </div>
+    <div id="list-msg" class="status-msg"></div>
+    <div id="counts" class="counts"></div>
+  </div>
+
+  <div id="questions"></div>
+</div>
+
+<script>
+  const DOMAINS = {
+    BONENT_CHT: {
+      patient_care: 'Patient Care (45%)',
+      machine_technology: 'Machine Technology (12%)',
+      water_treatment: 'Water Treatment (15%)',
+      infection_control: 'Infection Control (18%)',
+      education_professional_dev: 'Education & Professional Dev (10%)'
+    },
+    NNCC_CCHT: {
+      clinical: 'Clinical (48-52%)',
+      technical: 'Technical (21-25%)',
+      environment: 'Environment (13-17%)',
+      role_responsibilities: 'Role Responsibilities (10-14%)'
+    }
+  };
+  const LETTERS = ['A', 'B', 'C', 'D'];
+
+  const $ = (id) => document.getElementById(id);
+  let adminPassword = sessionStorage.getItem('rci_admin_password') || '';
+  let reviewer = localStorage.getItem('rci_admin_reviewer') || 'pablo';
+
+  function fillExamSelect(select) {
+    select.innerHTML = Object.keys(DOMAINS).map(e => `<option value="${e}">${e}</option>`).join('');
+  }
+  function fillDomainSelect(select, examType, withAll) {
+    const opts = Object.entries(DOMAINS[examType]).map(([k, label]) => `<option value="${k}">${label}</option>`);
+    select.innerHTML = (withAll ? '<option value="">(todos)</option>' : '') + opts.join('');
+  }
+
+  function setMsg(el, text, kind) {
+    el.textContent = text;
+    el.className = 'status-msg' + (kind ? ' ' + kind : '');
+  }
+
+  async function api(path, options = {}) {
+    const res = await fetch(path, {
+      ...options,
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword, ...(options.headers || {}) }
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    return data;
+  }
+
+  function escapeHtml(text) {
+    return String(text ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function renderQuestion(q) {
+    const options = LETTERS.map(letter => {
+      const value = q['option_' + letter.toLowerCase()];
+      const correct = q.correct_option === letter ? ' correct' : '';
+      return `<div class="opt${correct}"><span class="letter">${letter}</span><span>${escapeHtml(value)}</span></div>`;
+    }).join('');
+
+    const tags = [q.exam_type, q.domain, q.subdomain, q.cognitive_level, q.difficulty, q.status, q.model_used]
+      .filter(Boolean)
+      .map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+
+    const editFields = LETTERS.map(letter => {
+      const key = 'option_' + letter.toLowerCase();
+      return `<div class="field"><label>Opci&oacute;n ${letter}</label><input type="text" data-edit="${key}" value="${escapeHtml(q[key])}" /></div>`;
+    }).join('');
+
+    return `
+      <div class="q-card" data-id="${q.id}">
+        <div class="q-meta">${tags}</div>
+        <div class="q-text">${escapeHtml(q.question_text)}</div>
+        ${options}
+        <div class="rationale">${escapeHtml(q.rationale)}</div>
+        ${q.reviewer_notes ? `<div class="rationale">Notas: ${escapeHtml(q.reviewer_notes)}</div>` : ''}
+        <div class="actions">
+          <button class="btn-approve" data-action="approved">Aprobar</button>
+          <button class="btn-reject" data-action="rejected">Rechazar</button>
+          <button data-action="needs_edit">Necesita edici&oacute;n</button>
+          <button data-action="toggle-edit">Editar</button>
+          <input type="text" data-notes placeholder="Notas del revisor (opcional)" />
+        </div>
+        <div class="edit-form">
+          <div class="field"><label>Pregunta</label><textarea rows="3" data-edit="question_text">${escapeHtml(q.question_text)}</textarea></div>
+          ${editFields}
+          <div class="field"><label>Respuesta correcta</label>
+            <select data-edit="correct_option">
+              ${LETTERS.map(l => `<option value="${l}"${q.correct_option === l ? ' selected' : ''}>${l}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field"><label>Justificaci&oacute;n</label><textarea rows="3" data-edit="rationale">${escapeHtml(q.rationale)}</textarea></div>
+          <div class="field"><label>Dificultad</label>
+            <select data-edit="difficulty">
+              ${['easy', 'medium', 'hard'].map(d => `<option value="${d}"${q.difficulty === d ? ' selected' : ''}>${d}</option>`).join('')}
+            </select>
+          </div>
+          <div class="actions">
+            <button class="btn-primary" data-action="save-edit">Guardar cambios</button>
+            <button class="btn-approve" data-action="save-and-approve">Guardar y aprobar</button>
+          </div>
+        </div>
+        <div class="status-msg" data-card-msg></div>
+      </div>`;
+  }
+
+  function collectEdits(card) {
+    const payload = {};
+    card.querySelectorAll('[data-edit]').forEach(el => { payload[el.dataset.edit] = el.value; });
+    return payload;
+  }
+
+  async function loadQuestions() {
+    if (!adminPassword) { setMsg($('list-msg'), 'Introduce la contrase\u00f1a admin primero.', 'error'); return; }
+    const examType = $('filter-exam').value;
+    const params = new URLSearchParams({ exam_type: examType, status: $('filter-status').value, limit: '25' });
+    if ($('filter-domain').value) params.set('domain', $('filter-domain').value);
+
+    setMsg($('list-msg'), 'Cargando\u2026');
+    try {
+      const data = await api('/api/admin/questions?' + params.toString());
+      $('questions').innerHTML = data.questions.length
+        ? data.questions.map(renderQuestion).join('')
+        : '<div class="empty">No hay preguntas con esos filtros.</div>';
+      $('counts').innerHTML = Object.entries(data.counts)
+        .map(([k, v]) => `<span>${k}: <b>${v}</b></span>`).join('');
+      setMsg($('list-msg'), `${data.questions.length} pregunta(s) mostradas.`, 'ok');
+    } catch (err) {
+      setMsg($('list-msg'), err.message, 'error');
+    }
+  }
+
+  async function patchQuestion(card, body) {
+    const msg = card.querySelector('[data-card-msg]');
+    const buttons = card.querySelectorAll('button');
+    buttons.forEach(b => { b.disabled = true; });
+    setMsg(msg, 'Guardando\u2026');
+    try {
+      await api('/api/admin/questions/' + card.dataset.id, { method: 'PATCH', body: JSON.stringify(body) });
+      if (body.status && body.status !== $('filter-status').value) {
+        card.remove();
+        await refreshCounts();
+      } else {
+        setMsg(msg, 'Guardado.', 'ok');
+      }
+    } catch (err) {
+      setMsg(msg, err.message, 'error');
+    } finally {
+      buttons.forEach(b => { b.disabled = false; });
+    }
+  }
+
+  async function refreshCounts() {
+    try {
+      const params = new URLSearchParams({ exam_type: $('filter-exam').value, status: $('filter-status').value, limit: '1' });
+      const data = await api('/api/admin/questions?' + params.toString());
+      $('counts').innerHTML = Object.entries(data.counts)
+        .map(([k, v]) => `<span>${k}: <b>${v}</b></span>`).join('');
+    } catch { /* counts are cosmetic */ }
+  }
+
+  $('questions').addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+    const card = button.closest('.q-card');
+    const action = button.dataset.action;
+    const notes = card.querySelector('[data-notes]').value.trim();
+
+    if (action === 'toggle-edit') {
+      card.querySelector('.edit-form').classList.toggle('open');
+      return;
+    }
+    if (action === 'save-edit' || action === 'save-and-approve') {
+      const payload = { ...collectEdits(card), reviewed_by: reviewer };
+      if (notes) payload.reviewer_notes = notes;
+      if (action === 'save-and-approve') payload.status = 'approved';
+      patchQuestion(card, payload);
+      return;
+    }
+    const payload = { status: action, reviewed_by: reviewer };
+    if (notes) payload.reviewer_notes = notes;
+    patchQuestion(card, payload);
+  });
+
+  $('btn-save-pass').addEventListener('click', () => {
+    adminPassword = $('admin-password').value;
+    reviewer = $('reviewer').value.trim() || 'pablo';
+    sessionStorage.setItem('rci_admin_password', adminPassword);
+    localStorage.setItem('rci_admin_reviewer', reviewer);
+    setMsg($('auth-msg'), adminPassword ? 'Contrase\u00f1a guardada para esta sesi\u00f3n.' : 'Contrase\u00f1a vac\u00eda.', adminPassword ? 'ok' : 'error');
+    if (adminPassword) loadQuestions();
+  });
+
+  $('btn-generate').addEventListener('click', async () => {
+    if (!adminPassword) { setMsg($('gen-msg'), 'Introduce la contrase\u00f1a admin primero.', 'error'); return; }
+    const body = {
+      exam_type: $('gen-exam').value,
+      domain: $('gen-domain').value,
+      count: Number($('gen-count').value),
+      triggered_by: reviewer + '_manual'
+    };
+    if ($('gen-cognitive').value) body.cognitive_level = $('gen-cognitive').value;
+    if ($('gen-difficulty').value.trim()) body.difficulty_mix = $('gen-difficulty').value.trim();
+
+    $('btn-generate').disabled = true;
+    setMsg($('gen-msg'), 'Generando (puede tardar 1-2 minutos)\u2026');
+    try {
+      const data = await api('/api/admin/generate-questions', { method: 'POST', body: JSON.stringify(body) });
+      const skipped = data.skipped.length ? ` (${data.skipped.length} descartadas)` : '';
+      setMsg($('gen-msg'), `${data.inserted_count} pregunta(s) en revisi\u00f3n${skipped}. Lote ${data.batch_id}.`, 'ok');
+      $('filter-exam').value = body.exam_type;
+      fillDomainSelect($('filter-domain'), body.exam_type, true);
+      $('filter-domain').value = body.domain;
+      $('filter-status').value = 'pending_review';
+      await loadQuestions();
+    } catch (err) {
+      setMsg($('gen-msg'), err.message, 'error');
+    } finally {
+      $('btn-generate').disabled = false;
+    }
+  });
+
+  $('btn-load').addEventListener('click', loadQuestions);
+  $('gen-exam').addEventListener('change', () => fillDomainSelect($('gen-domain'), $('gen-exam').value, false));
+  $('filter-exam').addEventListener('change', () => fillDomainSelect($('filter-domain'), $('filter-exam').value, true));
+
+  fillExamSelect($('gen-exam'));
+  fillExamSelect($('filter-exam'));
+  fillDomainSelect($('gen-domain'), $('gen-exam').value, false);
+  fillDomainSelect($('filter-domain'), $('filter-exam').value, true);
+  $('admin-password').value = adminPassword;
+  $('reviewer').value = reviewer;
+  if (adminPassword) loadQuestions();
+</script>
+</body>
+</html>
