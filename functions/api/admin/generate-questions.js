@@ -5,7 +5,8 @@
 // Nothing generated here is ever visible to students until Pablo approves it in
 // /admin/question-review.html.
 //
-// Body: { exam_type, domain, count, cognitive_level?, difficulty_mix?, triggered_by? }
+// Body: { exam_type, domain, count, cognitive_level?, difficulty_mix?,
+//         subdomain_focus?, triggered_by? }
 
 import { requireAdmin, adminJson } from '../_shared/admin.js';
 import {
@@ -25,6 +26,13 @@ const MODEL = 'claude-sonnet-4-5-20250929';
 // Larger batches make the model truncate its JSON array mid-question.
 const MAX_COUNT = 20;
 const TOKENS_PER_QUESTION = 1000;
+const MAX_FOCUS_LENGTH = 500;
+
+// How many existing stems from the same exam+domain are shown to the model so it
+// writes something new. Enough to steer away from repeats without bloating the
+// prompt once the bank holds hundreds of questions.
+const AVOID_STEMS = 60;
+const AVOID_STEM_LENGTH = 140;
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -48,6 +56,7 @@ export async function onRequestPost(context) {
   const count = Number(body.count);
   const cognitiveLevel = body.cognitive_level || null;
   const difficultyMix = body.difficulty_mix || null;
+  const subdomainFocus = body.subdomain_focus ? String(body.subdomain_focus).trim() : null;
   const triggeredBy = body.triggered_by || 'pablo_manual';
 
   if (!EXAM_TYPES.includes(examType)) {
@@ -65,8 +74,21 @@ export async function onRequestPost(context) {
   if (cognitiveLevel && !COGNITIVE_LEVELS.includes(cognitiveLevel)) {
     return adminJson({ error: `cognitive_level must be one of ${COGNITIVE_LEVELS.join(', ')}` }, 400);
   }
+  if (subdomainFocus && subdomainFocus.length > MAX_FOCUS_LENGTH) {
+    return adminJson({ error: `subdomain_focus must be under ${MAX_FOCUS_LENGTH} characters` }, 400);
+  }
 
-  const systemPrompt = buildSystemPrompt({ examType, domain, count, cognitiveLevel, difficultyMix });
+  const systemPrompt = buildSystemPrompt({
+    examType,
+    domain,
+    count,
+    cognitiveLevel,
+    difficultyMix,
+    subdomainFocus,
+  });
+
+  const existing = await existingQuestions(env.DB, examType);
+  const seen = new Set(existing.map((row) => normalizeText(row.question_text)));
 
   let generated;
   try {
@@ -74,13 +96,16 @@ export async function onRequestPost(context) {
       apiKey: env.ANTHROPIC_API_KEY,
       systemPrompt,
       count,
+      avoidStems: existing
+        .filter((row) => row.domain === domain)
+        .slice(-AVOID_STEMS)
+        .map((row) => row.question_text.trim().slice(0, AVOID_STEM_LENGTH)),
     });
   } catch (err) {
     console.error('Question generation error:', err);
     return adminJson({ error: `Generation failed: ${err.message}` }, 502);
   }
 
-  const seen = await existingQuestionTexts(env.DB, examType);
   const rows = [];
   const skipped = [];
 
@@ -161,7 +186,13 @@ export async function onRequestPost(context) {
   });
 }
 
-async function generateQuestions({ apiKey, systemPrompt, count }) {
+async function generateQuestions({ apiKey, systemPrompt, count, avoidStems = [] }) {
+  const avoidBlock = avoidStems.length
+    ? `\n\nThe question bank already contains these items for this domain. Write ` +
+      `questions that test different scenarios and different specific points; do ` +
+      `not paraphrase any of them:\n${avoidStems.map((s) => `- ${s}`).join('\n')}`
+    : '';
+
   const response = await fetch(ANTHROPIC_API_URL, {
     method: 'POST',
     headers: {
@@ -176,7 +207,7 @@ async function generateQuestions({ apiKey, systemPrompt, count }) {
       messages: [
         {
           role: 'user',
-          content: `Generate ${count} question(s) now. Respond with the JSON array only.`,
+          content: `Generate ${count} question(s) now. Respond with the JSON array only.${avoidBlock}`,
         },
       ],
     }),
@@ -241,10 +272,12 @@ function normalizeText(text) {
   return text.trim().toLowerCase().replace(/\s+/g, ' ');
 }
 
-async function existingQuestionTexts(db, examType) {
+async function existingQuestions(db, examType) {
   const { results } = await db
-    .prepare('SELECT question_text FROM question_bank WHERE exam_type = ?')
+    .prepare(
+      'SELECT question_text, domain FROM question_bank WHERE exam_type = ? ORDER BY created_at ASC'
+    )
     .bind(examType)
     .all();
-  return new Set((results || []).map((row) => normalizeText(row.question_text)));
+  return results || [];
 }

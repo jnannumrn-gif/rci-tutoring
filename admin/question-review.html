@@ -140,6 +140,10 @@
         <label for="gen-difficulty">Mezcla de dificultad</label>
         <input id="gen-difficulty" type="text" placeholder="mostly medium, some easy and hard" />
       </div>
+      <div class="field">
+        <label for="gen-focus">Subtemas (opcional)</label>
+        <input id="gen-focus" type="text" placeholder="ej: cannulation, hypotension, access recirculation" />
+      </div>
       <button id="btn-generate" class="btn-primary">Generar</button>
     </div>
     <div id="gen-msg" class="status-msg"></div>
@@ -388,6 +392,7 @@
     };
     if ($('gen-cognitive').value) body.cognitive_level = $('gen-cognitive').value;
     if ($('gen-difficulty').value.trim()) body.difficulty_mix = $('gen-difficulty').value.trim();
+    if ($('gen-focus').value.trim()) body.subdomain_focus = $('gen-focus').value.trim();
 
     $('btn-generate').disabled = true;
     setMsg($('gen-msg'), 'Generando (puede tardar 1-2 minutos)\u2026');

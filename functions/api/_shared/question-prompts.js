@@ -5,7 +5,7 @@
 // These live in a module (not a prompts/ folder at the project root) because
 // anything at the root of a Pages project is served publicly as a static asset.
 
-export const PROMPT_VERSION = 'v1';
+export const PROMPT_VERSION = 'v2';
 
 export const EXAM_TYPES = ['BONENT_CHT', 'NNCC_CCHT'];
 
@@ -69,6 +69,10 @@ Technologist/Technician (CHT) exam, which covers these 5 domains
 Generate questions for domain: {DOMAIN}
 Number of questions requested: {COUNT}
 Difficulty mix: {DIFFICULTY_MIX}
+Subtopics to cover in this batch: {SUBDOMAIN_FOCUS}
+Spread the batch across those subtopics instead of asking the same idea
+repeatedly, and vary the clinical scenario (patient, access type, alarm,
+lab value, stage of treatment) in every item.
 
 Return a JSON array where each item has:
 {
@@ -110,6 +114,10 @@ Generate questions for domain: {DOMAIN}
 Number of questions requested: {COUNT}
 Cognitive level target: {COGNITIVE_LEVEL}
 Difficulty mix: {DIFFICULTY_MIX}
+Subtopics to cover in this batch: {SUBDOMAIN_FOCUS}
+Spread the batch across those subtopics instead of asking the same idea
+repeatedly, and vary the clinical scenario (patient, access type, alarm,
+lab value, stage of treatment) in every item.
 
 Return a JSON array where each item has:
 {
@@ -130,12 +138,20 @@ const ADDENDA = {
 
 // Builds the system prompt for one batch: shared base + exam-specific addendum
 // with the batch parameters substituted in.
-export function buildSystemPrompt({ examType, domain, count, cognitiveLevel, difficultyMix }) {
+export function buildSystemPrompt({
+  examType,
+  domain,
+  count,
+  cognitiveLevel,
+  difficultyMix,
+  subdomainFocus,
+}) {
   const addendum = ADDENDA[examType]
     .replaceAll('{DOMAIN}', domain)
     .replaceAll('{COUNT}', String(count))
     .replaceAll('{COGNITIVE_LEVEL}', cognitiveLevel || 'application')
-    .replaceAll('{DIFFICULTY_MIX}', difficultyMix || 'mostly medium, some easy and hard');
+    .replaceAll('{DIFFICULTY_MIX}', difficultyMix || 'mostly medium, some easy and hard')
+    .replaceAll('{SUBDOMAIN_FOCUS}', subdomainFocus || 'any subtopic of this domain');
 
   return `${BASE_INSTRUCTIONS}\n\n${addendum}`;
 }
