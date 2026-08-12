@@ -18,6 +18,11 @@ SUPPORT_EMAIL = "support@rcitutoring.com"
 # CRON_SECRET            — random secure string for /api/cron-emails auth
 # TURNSTILE_SECRET_KEY   — 0x_XXXX (when unset the server-side Turnstile check is skipped.
 #                          Matching public site key: TURNSTILE_SITE_KEY in register.html)
+# ADMIN_PASSWORD         — shared secret for /api/admin/* (X-Admin-Password header).
+#                          When unset those routes return 503 instead of failing open.
+# ANTHROPIC_API_KEY      — used by /api/admin/generate-questions for the question bank.
+#                          Same key as the tutor proxy worker; the proxy is not reused
+#                          because it caps max_tokens and only allows browser origins.
 
 [[d1_databases]]
 binding = "DB"
