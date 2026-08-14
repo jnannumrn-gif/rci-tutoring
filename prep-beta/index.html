@@ -403,9 +403,9 @@
         var d = byDomain[q.domain] || (byDomain[q.domain] = { correct: 0, total: 0, attempted: 0 });
         d.total++;
         if (ok) d.correct++;
-        // Untouched questions still count against the score, but they are not
-        // "questions answered" in the lifetime stats.
-        if (picked) { attempted++; d.attempted++; }
+        // A submitted mock exam counts every question in the lifetime stats;
+        // in practice only the questions actually answered count.
+        if (picked || state.mode === 'exam') { attempted++; d.attempted++; }
       });
       var total = state.questions.length;
       return {
