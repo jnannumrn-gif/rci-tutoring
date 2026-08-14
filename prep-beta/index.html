@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="es" data-require-login>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RCI Tutoring | CCHT / BONENT Prep (beta)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/shared-styles.css">
+  <style>
+    .prep-page { padding: 32px 0 64px; min-height: calc(100vh - 72px); }
+    .beta-tag {
+      display: inline-block; padding: 4px 12px; border-radius: 999px;
+      background: rgba(217,119,6,0.12); color: var(--warning);
+      font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .prep-card {
+      background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 24px; box-shadow: var(--shadow-sm); margin-bottom: 20px;
+    }
+    .prep-card h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 4px; }
+    .prep-card .card-note { color: var(--muted); font-size: 0.88rem; margin-bottom: 16px; }
+    .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .mode-grid.three { grid-template-columns: repeat(3, 1fr); }
+    .mode-btn {
+      text-align: left; background: var(--bg); border: 1.5px solid var(--line);
+      border-radius: 14px; padding: 18px; cursor: pointer; font-family: inherit;
+      transition: all 0.2s; color: var(--text);
+    }
+    .mode-btn:hover { border-color: var(--brand-light); transform: translateY(-2px); }
+    .mode-btn.selected { border-color: var(--brand); background: rgba(59,130,246,0.06); }
+    .mode-btn strong { display: block; font-size: 1rem; font-weight: 800; margin-bottom: 4px; }
+    .mode-btn span { font-size: 0.85rem; color: var(--muted); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .stat-box { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: center; }
+    .stat-box .stat-val { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em; }
+    .stat-box .stat-lbl { font-size: 0.75rem; color: var(--muted); font-weight: 600; }
+    .bar { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; }
+    .bar > i { display: block; height: 100%; background: var(--brand-light); }
+    .bar > i.good { background: var(--success); }
+    .bar > i.mid { background: var(--warning); }
+    .bar > i.bad { background: var(--danger); }
+    .dom-row { margin-bottom: 12px; }
+    .dom-row .dom-head { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+    .dom-row .dom-head span:last-child { color: var(--muted); font-weight: 600; }
+
+    .quiz-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .quiz-bar .qb-left { font-size: 0.9rem; font-weight: 700; }
+    .quiz-bar .qb-left small { display: block; color: var(--muted); font-weight: 600; }
+    .timer { font-size: 1.1rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+    .timer.low { color: var(--danger); }
+    .q-text { font-size: 1.05rem; font-weight: 700; line-height: 1.6; margin-bottom: 16px; }
+    .q-meta { font-size: 0.75rem; color: var(--dim); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
+    .opts { display: flex; flex-direction: column; gap: 10px; }
+    .opt {
+      display: flex; gap: 12px; align-items: flex-start; text-align: left;
+      background: #fff; border: 1.5px solid var(--line); border-radius: 12px;
+      padding: 14px 16px; cursor: pointer; font-family: inherit; font-size: 0.95rem;
+      color: var(--text); transition: all 0.15s; width: 100%; line-height: 1.5;
+    }
+    .opt:hover:not(:disabled) { border-color: var(--brand-light); background: rgba(59,130,246,0.04); }
+    .opt .opt-key {
+      flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px;
+      background: var(--bg); border: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 800;
+    }
+    .opt.picked { border-color: var(--brand); background: rgba(59,130,246,0.08); }
+    .opt.picked .opt-key { background: var(--brand); color: #fff; border-color: var(--brand); }
+    .opt.right { border-color: var(--success); background: rgba(5,150,105,0.08); }
+    .opt.right .opt-key { background: var(--success); color: #fff; border-color: var(--success); }
+    .opt.wrong { border-color: var(--danger); background: rgba(220,38,38,0.07); }
+    .opt.wrong .opt-key { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .opt:disabled { cursor: default; }
+    .feedback { margin-top: 16px; border-radius: 12px; padding: 16px; font-size: 0.9rem; line-height: 1.65; }
+    .feedback.ok { background: rgba(5,150,105,0.08); border: 1px solid rgba(5,150,105,0.2); }
+    .feedback.no { background: rgba(220,38,38,0.07); border: 1px solid rgba(220,38,38,0.2); }
+    .feedback .fb-title { font-weight: 800; margin-bottom: 6px; }
+    .feedback.ok .fb-title { color: var(--success); }
+    .feedback.no .fb-title { color: var(--danger); }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+    .btn {
+      padding: 12px 22px; border-radius: 12px; border: none; cursor: pointer;
+      font-family: inherit; font-size: 0.9rem; font-weight: 800; transition: all 0.2s;
+    }
+    .btn-primary { background: var(--gradient); color: #fff; box-shadow: 0 8px 24px rgba(30,64,175,0.25); }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-ghost { background: #fff; color: var(--text); border: 1.5px solid var(--line); }
+    .btn-ghost:hover { border-color: var(--brand-light); color: var(--brand); }
+    .btn-ghost.on { border-color: var(--warning); color: var(--warning); background: rgba(217,119,6,0.08); }
+    .btn-danger { background: #fff; color: var(--danger); border: 1.5px solid rgba(220,38,38,0.3); }
+    .btn-danger.on { background: rgba(220,38,38,0.08); border-color: var(--danger); }
+    .btn-ghost.good { border-color: var(--success); color: var(--success); background: rgba(5,150,105,0.08); }
+    .grid-nav { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .grid-nav button {
+      width: 36px; height: 32px; border-radius: 8px; border: 1px solid var(--line);
+      background: #fff; font-family: inherit; font-size: 0.75rem; font-weight: 700;
+      cursor: pointer; color: var(--muted);
+    }
+    .grid-nav button.done { background: rgba(59,130,246,0.12); border-color: var(--brand-light); color: var(--brand); }
+    .grid-nav button.flag { border-color: var(--warning); color: var(--warning); }
+    .grid-nav button.here { outline: 2px solid var(--brand); outline-offset: 1px; }
+    .score-hero { text-align: center; padding: 8px 0 20px; }
+    .score-hero .score-pct { font-size: 3.2rem; font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; }
+    .score-hero .verdict { font-size: 1.05rem; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; }
+    .score-hero .verdict.pass { color: var(--success); }
+    .score-hero .verdict.fail { color: var(--danger); }
+    .review-item { border-top: 1px solid var(--line); padding: 18px 0; }
+    .review-item:first-child { border-top: none; }
+    .review-q { font-weight: 700; font-size: 0.95rem; line-height: 1.55; margin-bottom: 10px; }
+    .review-line { font-size: 0.88rem; margin-bottom: 4px; }
+    .review-line b.bad { color: var(--danger); }
+    .review-line b.good { color: var(--success); }
+    .review-why { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin-top: 8px; }
+    .loading, .empty { text-align: center; color: var(--muted); padding: 40px 0; font-weight: 600; }
+    .card-flip {
+      background: var(--bg); border: 1.5px solid var(--line); border-radius: 16px;
+      padding: 28px 24px; min-height: 200px; display: flex; flex-direction: column;
+      justify-content: center; cursor: pointer;
+    }
+    .card-flip:hover { border-color: var(--brand-light); }
+    .card-flip .card-face { font-size: 1.05rem; font-weight: 700; line-height: 1.6; }
+    .card-flip .card-hint { color: var(--dim); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 18px; }
+    .card-flip .card-answer { color: var(--success); font-weight: 800; margin-top: 16px; font-size: 1rem; line-height: 1.55; }
+    .card-flip .card-why { color: var(--muted); font-size: 0.9rem; line-height: 1.65; margin-top: 12px; font-weight: 500; }
+    @media (max-width: 768px) {
+      .mode-grid, .mode-grid.three, .field-row { grid-template-columns: 1fr; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <nav class="nav">
+        <a href="/" class="brand">
+          <img src="/logo.png" alt="RCI Tutoring" />
+          <div>
+            <div class="brand-title">RCI Tutoring</div>
+            <div class="brand-sub">Hemodialysis Education</div>
+          </div>
+        </a>
+        <div class="nav-right">
+          <a href="/dashboard.html" class="nav-link">
+            <span class="lang active" data-lang="es">Panel</span>
+            <span class="lang" data-lang="en">Dashboard</span>
+          </a>
+          <div class="lang-pill">
+            <button data-lang-btn="es" class="active">ES</button>
+            <button data-lang-btn="en">EN</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="prep-page">
+    <div class="wrap" id="app"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-inner">
+        <div>
+          <div class="brand">
+            <img src="/logo.png" alt="RCI Tutoring" />
+            <div>
+              <div class="brand-title">RCI Tutoring</div>
+              <div class="brand-sub">Hemodialysis Education</div>
+            </div>
+          </div>
+          <div class="lang active" data-lang="es">
+            <p class="footer-note">Banco de preguntas revisado por un RN. Material educativo; no est&aacute; afiliado a NNCC ni a BONENT.</p>
+          </div>
+          <div class="lang" data-lang="en">
+            <p class="footer-note">Question bank reviewed by an RN. Educational material; not affiliated with NNCC or BONENT.</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4><span class="lang active" data-lang="es">Legal</span><span class="lang" data-lang="en">Legal</span></h4>
+          <a href="/legal.html"><span class="lang active" data-lang="es">Aviso Legal</span><span class="lang" data-lang="en">Legal Disclaimer</span></a>
+          <a href="/privacy.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Privacidad</span><span class="lang" data-lang="en">Privacy Policy</span></a>
+          <a href="/cookies.html"><span class="lang active" data-lang="es">Pol&iacute;tica de Cookies</span><span class="lang" data-lang="en">Cookies Policy</span></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // ---------- exam blueprints (percentages match the official content outlines) ----------
+    var EXAMS = {
+      NNCC_CCHT: {
+        name: 'CCHT (NNCC)',
+        total: 150,
+        minutes: 180,
+        domains: { clinical: 50, technical: 23, environment: 15, role_responsibilities: 12 }
+      },
+      BONENT_CHT: {
+        name: 'CHT (BONENT)',
+        total: 150,
+        minutes: 180,
+        domains: {
+          patient_care: 45, machine_technology: 12, water_treatment: 15,
+          infection_control: 18, education_professional_dev: 10
+        }
+      }
+    };
+
+    var DOMAIN_LABELS = {
+      clinical: ['Cl\u00ednico', 'Clinical'],
+      technical: ['T\u00e9cnico', 'Technical'],
+      environment: ['Ambiente / agua', 'Environment / water'],
+      role_responsibilities: ['Rol y responsabilidades', 'Role & responsibilities'],
+      patient_care: ['Cuidado del paciente', 'Patient care'],
+      machine_technology: ['M\u00e1quina y tecnolog\u00eda', 'Machine & technology'],
+      water_treatment: ['Tratamiento de agua', 'Water treatment'],
+      infection_control: ['Control de infecciones', 'Infection control'],
+      education_professional_dev: ['Educaci\u00f3n y desarrollo', 'Education & development']
+    };
+
+    var PASS_SCORE = 70;
+    var STATS_KEY = 'rci_prep_beta_stats';
+    var LETTERS = ['A', 'B', 'C', 'D'];
+
+    // ---------- language ----------
+    var lang = localStorage.getItem('rci_lang') || 'es';
+    function L(es, en) { return lang === 'es' ? es : en; }
+    function domName(key) {
+      var pair = DOMAIN_LABELS[key];
+      if (!pair) return key;
+      return lang === 'es' ? pair[0] : pair[1];
+    }
+    function applyLanguage(next) {
+      lang = next;
+      document.documentElement.lang = next;
+      document.querySelectorAll('.lang').forEach(function (el) {
+        el.classList.toggle('active', el.dataset.lang === next);
+      });
+      document.querySelectorAll('[data-lang-btn]').forEach(function (btn) {
+        btn.classList.toggle('active', btn.dataset.langBtn === next);
+      });
+    }
+    document.querySelectorAll('[data-lang-btn]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        applyLanguage(btn.dataset.langBtn);
+        localStorage.setItem('rci_lang', btn.dataset.langBtn);
+        render();
+      });
+    });
+    applyLanguage(lang);
+
+    // ---------- state ----------
+    var state = {
+      view: 'setup',       // setup | quiz | results
+      mode: 'practice',    // practice | exam
+      examType: 'NNCC_CCHT',
+      domain: '',
+      count: 25,
+      loading: false,
+      error: '',
+      questions: [],
+      answers: {},         // index -> 'A' | 'B' | 'C' | 'D' | 'skip'
+      flags: {},           // index -> true
+      revealed: {},        // practice / flashcards: index -> true
+      known: {},           // flashcards only: index -> true (knew it) | false (missed it)
+      index: 0,
+      startedAt: 0,
+      endedAt: 0,
+      secondsLeft: 0,
+      showAllInReview: false
+    };
+    var timerId = null;
+    var app = document.getElementById('app');
+
+    // ---------- helpers ----------
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+    function shuffle(arr) {
+      for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+      }
+      return arr;
+    }
+    function mmss(total) {
+      var m = Math.floor(Math.max(total, 0) / 60), s = Math.max(total, 0) % 60;
+      return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+    function hhmmss(total) {
+      var h = Math.floor(Math.max(total, 0) / 3600);
+      return h > 0 ? h + ':' + mmss(Math.max(total, 0) - h * 3600) : mmss(total);
+    }
+    function barClass(pct) { return pct >= 80 ? 'good' : pct >= PASS_SCORE ? 'mid' : 'bad'; }
+
+    // ---------- question loading ----------
+    async function fetchPool(examType, domain, limit) {
+      var url = '/api/questions?exam_type=' + encodeURIComponent(examType) + '&limit=' + limit;
+      if (domain) url += '&domain=' + encodeURIComponent(domain);
+      var res = await fetch(url);
+      var data = await res.json().catch(function () { return {}; });
+      if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
+      return data.questions || [];
+    }
+
+    // A mock exam mirrors the real blueprint: every domain contributes its own
+    // share of the items, so each domain is requested separately.
+    async function loadExam(examType) {
+      var blueprint = EXAMS[examType];
+      var keys = Object.keys(blueprint.domains);
+      var picked = [];
+      for (var i = 0; i < keys.length; i++) {
+        var want = Math.round((blueprint.domains[keys[i]] / 100) * blueprint.total);
+        if (want > 0) picked = picked.concat(await fetchPool(examType, keys[i], want));
+      }
+      return shuffle(picked).slice(0, blueprint.total);
+    }
+
+    async function start() {
+      state.loading = true;
+      state.error = '';
+      render();
+      try {
+        var questions = state.mode === 'exam'
+          ? await loadExam(state.examType)
+          : shuffle(await fetchPool(state.examType, state.domain, state.count));
+        if (!questions.length) {
+          state.error = L('No hay preguntas aprobadas para esa selecci\u00f3n.',
+                          'There are no approved questions for that selection.');
+          state.loading = false;
+          return render();
+        }
+        state.questions = questions;
+        state.answers = {};
+        state.flags = {};
+        state.revealed = {};
+        state.known = {};
+        state.index = 0;
+        state.showAllInReview = false;
+        state.startedAt = Date.now();
+        state.endedAt = 0;
+        state.view = state.mode === 'cards' ? 'cards' : 'quiz';
+        if (state.mode === 'exam') {
+          state.secondsLeft = EXAMS[state.examType].minutes * 60;
+          startTimer();
+        }
+      } catch (err) {
+        state.error = L('No pudimos cargar las preguntas. Intenta de nuevo.',
+                        'We could not load the questions. Please try again.') + ' (' + err.message + ')';
+      }
+      state.loading = false;
+      render();
+    }
+
+    function startTimer() {
+      stopTimer();
+      timerId = setInterval(function () {
+        state.secondsLeft -= 1;
+        if (state.secondsLeft <= 0) {
+          state.secondsLeft = 0;
+          finish();
+          return;
+        }
+        var el = document.getElementById('timer');
+        if (el) {
+          el.textContent = hhmmss(state.secondsLeft);
+          el.classList.toggle('low', state.secondsLeft <= 300);
+        }
+      }, 1000);
+    }
+    function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+
+    function finish() {
+      stopTimer();
+      state.endedAt = Date.now();
+      state.view = state.mode === 'cards' ? 'cards-results' : 'results';
+      if (state.mode === 'cards') {
+        if (cardSummary().reviewed) saveCardSession();
+      } else saveSession();
+      render();
+      window.scrollTo(0, 0);
+    }
+
+    // ---------- scoring ----------
+    function scoreSummary() {
+      var byDomain = {};
+      var correct = 0;
+      var attempted = 0;
+      state.questions.forEach(function (q, i) {
+        var picked = state.answers[i];
+        var ok = picked === q.correct_option;
+        if (ok) correct++;
+        var d = byDomain[q.domain] || (byDomain[q.domain] = { correct: 0, total: 0, attempted: 0 });
+        d.total++;
+        if (ok) d.correct++;
+        // A submitted mock exam counts every question in the lifetime stats;
+        // in practice only the questions actually answered count.
+        if (picked || state.mode === 'exam') { attempted++; d.attempted++; }
+      });
+      var total = state.questions.length;
+      return {
+        correct: correct,
+        total: total,
+        attempted: attempted,
+        pct: total ? Math.round((correct / total) * 100) : 0,
+        byDomain: byDomain,
+        seconds: Math.round(((state.endedAt || Date.now()) - state.startedAt) / 1000)
+      };
+    }
+
+    function cardSummary() {
+      var byDomain = {};
+      var known = 0, reviewed = 0;
+      state.questions.forEach(function (q, i) {
+        var mark = state.known[i];
+        if (mark === undefined) return;
+        reviewed++;
+        if (mark) known++;
+        var d = byDomain[q.domain] || (byDomain[q.domain] = { correct: 0, total: 0 });
+        d.total++;
+        if (mark) d.correct++;
+      });
+      return {
+        known: known,
+        reviewed: reviewed,
+        total: state.questions.length,
+        pct: reviewed ? Math.round((known / reviewed) * 100) : 0,
+        byDomain: byDomain,
+        seconds: Math.round(((state.endedAt || Date.now()) - state.startedAt) / 1000)
+      };
+    }
+
+    // ---------- local progress ----------
+    function readStats() {
+      try {
+        var raw = JSON.parse(localStorage.getItem(STATS_KEY));
+        if (raw && Array.isArray(raw.sessions)) return raw;
+      } catch (e) {}
+      return { sessions: [] };
+    }
+    function saveSession() {
+      var s = scoreSummary();
+      var stats = readStats();
+      var perDomain = {};
+      Object.keys(s.byDomain).forEach(function (k) { perDomain[k] = s.byDomain[k]; });
+      stats.sessions.unshift({
+        at: new Date().toISOString(),
+        mode: state.mode,
+        exam_type: state.examType,
+        correct: s.correct,
+        total: s.total,
+        attempted: s.attempted,
+        seconds: s.seconds,
+        byDomain: perDomain
+      });
+      stats.sessions = stats.sessions.slice(0, 50);
+      try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch (e) {}
+    }
+    // Flashcards are self-graded, so they are kept out of the exam accuracy
+    // numbers and reported on their own.
+    function saveCardSession() {
+      var s = cardSummary();
+      var stats = readStats();
+      stats.sessions.unshift({
+        at: new Date().toISOString(),
+        mode: 'cards',
+        exam_type: state.examType,
+        known: s.known,
+        reviewed: s.reviewed,
+        seconds: s.seconds
+      });
+      stats.sessions = stats.sessions.slice(0, 50);
+      try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch (e) {}
+    }
+    function aggregateStats() {
+      var sessions = readStats().sessions;
+      var answered = 0, correct = 0, byDomain = {};
+      var cardsReviewed = 0, cardsKnown = 0;
+      sessions.forEach(function (s) {
+        if (s.mode === 'cards') {
+          cardsReviewed += s.reviewed || 0;
+          cardsKnown += s.known || 0;
+          return;
+        }
+        answered += typeof s.attempted === 'number' ? s.attempted : s.total;
+        correct += s.correct;
+        Object.keys(s.byDomain || {}).forEach(function (k) {
+          var sd = s.byDomain[k];
+          var d = byDomain[k] || (byDomain[k] = { correct: 0, total: 0 });
+          d.correct += sd.correct;
+          d.total += typeof sd.attempted === 'number' ? sd.attempted : sd.total;
+        });
+      });
+      return {
+        sessions: sessions, answered: answered, correct: correct, byDomain: byDomain,
+        cardsReviewed: cardsReviewed, cardsKnown: cardsKnown
+      };
+    }
+
+    // ---------- views ----------
+    function render() {
+      if (state.view === 'setup') app.innerHTML = setupView();
+      else if (state.view === 'quiz') app.innerHTML = quizView();
+      else if (state.view === 'cards') app.innerHTML = cardsView();
+      else if (state.view === 'cards-results') app.innerHTML = cardsResultsView();
+      else app.innerHTML = resultsView();
+      wire();
+    }
+
+    function setupView() {
+      var stats = aggregateStats();
+      var overall = stats.answered ? Math.round((stats.correct / stats.answered) * 100) : 0;
+      var blueprint = EXAMS[state.examType];
+      var domainOptions = ['<option value="">' + esc(L('Todos los dominios', 'All domains')) + '</option>']
+        .concat(Object.keys(blueprint.domains).map(function (k) {
+          return '<option value="' + k + '"' + (state.domain === k ? ' selected' : '') + '>' + esc(domName(k)) + '</option>';
+        })).join('');
+
+      var domainKeys = Object.keys(stats.byDomain).filter(function (k) { return stats.byDomain[k].total > 0; });
+      var domainRows = domainKeys.length
+        ? domainKeys.map(function (k) {
+            var d = stats.byDomain[k];
+            var pct = Math.round((d.correct / d.total) * 100);
+            return '<div class="dom-row"><div class="dom-head"><span>' + esc(domName(k)) + '</span>' +
+              '<span>' + pct + '% &middot; ' + d.correct + '/' + d.total + '</span></div>' +
+              '<div class="bar"><i class="' + barClass(pct) + '" style="width:' + pct + '%"></i></div></div>';
+          }).join('')
+        : '<p class="card-note">' + esc(L('A\u00fan no hay datos. Haz una pr\u00e1ctica para ver tus estad\u00edsticas.',
+                                          'No data yet. Run a practice session to see your stats.')) + '</p>';
+
+      return '' +
+        '<span class="beta-tag">' + esc(L('Prueba interna \u2014 no publicado', 'Internal preview \u2014 not published')) + '</span>' +
+        '<h1 style="font-size:1.8rem;font-weight:900;margin-bottom:6px;">CCHT / BONENT Prep</h1>' +
+        '<p style="color:var(--muted);margin-bottom:28px;">' +
+          esc(L('Banco de preguntas nuevo, revisado y aprobado por un RN. Examen simulado cronometrado, pr\u00e1ctica por dominio o tarjetas de estudio.',
+                'New question bank, reviewed and approved by an RN. Timed mock exam, practice by domain or flashcards.')) +
+        '</p>' +
+
+        (state.error ? '<div class="alert alert-error visible">' + esc(state.error) + '</div>' : '') +
+
+        '<div class="prep-card">' +
+          '<h2>' + esc(L('1. Elige tu examen', '1. Choose your exam')) + '</h2>' +
+          '<p class="card-note">' + esc(L('Cada examen usa su propio banco y su propia distribuci\u00f3n por dominio.',
+                                          'Each exam uses its own bank and its own domain distribution.')) + '</p>' +
+          '<div class="mode-grid">' +
+            Object.keys(EXAMS).map(function (k) {
+              return '<button class="mode-btn' + (state.examType === k ? ' selected' : '') + '" data-exam="' + k + '">' +
+                '<strong>' + esc(EXAMS[k].name) + '</strong><span>' +
+                esc(k === 'NNCC_CCHT'
+                  ? L('Certified Clinical Hemodialysis Technician', 'Certified Clinical Hemodialysis Technician')
+                  : L('Certified Hemodialysis Technologist/Technician', 'Certified Hemodialysis Technologist/Technician')) +
+                '</span></button>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+
+        '<div class="prep-card">' +
+          '<h2>' + esc(L('2. Elige el modo', '2. Choose the mode')) + '</h2>' +
+          '<p class="card-note">' + esc(L('En pr\u00e1ctica ves la explicaci\u00f3n al instante; en el simulado, al final; con tarjetas repasas a tu ritmo.',
+                                          'Practice shows the explanation right away; the mock exam shows it at the end; flashcards let you review at your own pace.')) + '</p>' +
+          '<div class="mode-grid three">' +
+            '<button class="mode-btn' + (state.mode === 'practice' ? ' selected' : '') + '" data-mode="practice">' +
+              '<strong>' + esc(L('Modo pr\u00e1ctica', 'Practice mode')) + '</strong><span>' +
+              esc(L('Sin reloj, con explicaci\u00f3n despu\u00e9s de cada pregunta.',
+                    'No clock, with an explanation after every question.')) + '</span></button>' +
+            '<button class="mode-btn' + (state.mode === 'exam' ? ' selected' : '') + '" data-mode="exam">' +
+              '<strong>' + esc(L('Examen simulado', 'Mock exam')) + '</strong><span>' +
+              esc(L('150 preguntas, 3 horas, aprobado con 70%.', '150 questions, 3 hours, 70% to pass.')) +
+              '</span></button>' +
+            '<button class="mode-btn' + (state.mode === 'cards' ? ' selected' : '') + '" data-mode="cards">' +
+              '<strong>' + esc(L('Tarjetas de estudio', 'Flashcards')) + '</strong><span>' +
+              esc(L('Voltea la tarjeta y di si la sab\u00edas o no.',
+                    'Flip the card and tell us whether you knew it.')) + '</span></button>' +
+          '</div>' +
+          (state.mode !== 'exam'
+            ? '<div class="field-row" style="margin-top:18px;">' +
+                '<div class="form-group" style="margin-bottom:0;"><label>' + esc(L('Dominio', 'Domain')) + '</label>' +
+                  '<select id="domain-select">' + domainOptions + '</select></div>' +
+                '<div class="form-group" style="margin-bottom:0;"><label>' + esc(L('N\u00famero de preguntas', 'Number of questions')) + '</label>' +
+                  '<select id="count-select">' +
+                    [10, 25, 50, 100].map(function (n) {
+                      return '<option value="' + n + '"' + (state.count === n ? ' selected' : '') + '>' + n + '</option>';
+                    }).join('') +
+                  '</select></div>' +
+              '</div>'
+            : '') +
+          '<div class="btn-row">' +
+            '<button class="btn btn-primary" id="start-btn"' + (state.loading ? ' disabled' : '') + '>' +
+              esc(state.loading ? L('Cargando\u2026', 'Loading\u2026')
+                                : state.mode === 'exam' ? L('Comenzar examen', 'Begin exam')
+                                : state.mode === 'cards' ? L('Comenzar tarjetas', 'Start flashcards')
+                                                        : L('Comenzar pr\u00e1ctica', 'Start practice')) +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="prep-card">' +
+          '<h2>' + esc(L('Mis estad\u00edsticas', 'My statistics')) + '</h2>' +
+          '<p class="card-note">' + esc(L('Guardadas en este navegador.', 'Stored in this browser.')) + '</p>' +
+          '<div class="stat-grid" style="margin-bottom:20px;">' +
+            '<div class="stat-box"><div class="stat-val">' + overall + '%</div><div class="stat-lbl">' +
+              esc(L('Precisi\u00f3n general', 'Overall accuracy')) + '</div></div>' +
+            '<div class="stat-box"><div class="stat-val">' + stats.answered + '</div><div class="stat-lbl">' +
+              esc(L('Preguntas respondidas', 'Questions answered')) + '</div></div>' +
+            '<div class="stat-box"><div class="stat-val">' + stats.sessions.length + '</div><div class="stat-lbl">' +
+              esc(L('Sesiones', 'Sessions')) + '</div></div>' +
+            '<div class="stat-box"><div class="stat-val">' + stats.correct + '</div><div class="stat-lbl">' +
+              esc(L('Respuestas correctas', 'Correct answers')) + '</div></div>' +
+            '<div class="stat-box"><div class="stat-val">' + stats.cardsKnown + '/' + stats.cardsReviewed + '</div><div class="stat-lbl">' +
+              esc(L('Tarjetas: sab\u00eda / repasadas', 'Flashcards: knew / reviewed')) + '</div></div>' +
+          '</div>' +
+          domainRows +
+          (stats.sessions.length ? '<div class="btn-row"><button class="btn btn-danger" id="reset-stats">' +
+            esc(L('Borrar mis estad\u00edsticas', 'Clear my statistics')) + '</button></div>' : '') +
+        '</div>';
+    }
+
+    function quizView() {
+      var q = state.questions[state.index];
+      var total = state.questions.length;
+      var picked = state.answers[state.index];
+      var revealed = state.mode === 'practice' && state.revealed[state.index];
+      var answeredCount = Object.keys(state.answers).length;
+
+      var options = LETTERS.map(function (letter) {
+        var text = q['option_' + letter.toLowerCase()];
+        var cls = 'opt';
+        if (revealed) {
+          if (letter === q.correct_option) cls += ' right';
+          else if (letter === picked) cls += ' wrong';
+        } else if (letter === picked) cls += ' picked';
+        return '<button class="' + cls + '" data-pick="' + letter + '"' + (revealed ? ' disabled' : '') + '>' +
+          '<span class="opt-key">' + letter + '</span><span>' + esc(text) + '</span></button>';
+      }).join('');
+
+      var feedback = '';
+      if (revealed) {
+        var ok = picked === q.correct_option;
+        feedback = '<div class="feedback ' + (ok ? 'ok' : 'no') + '">' +
+          '<div class="fb-title">' + esc(ok ? L('\u00a1Correcto!', 'Correct!')
+            : L('Incorrecto \u2014 la respuesta es ' + q.correct_option, 'Incorrect \u2014 the answer is ' + q.correct_option)) + '</div>' +
+          esc(q.rationale) + '</div>';
+      }
+
+      var gridNav = state.mode === 'exam'
+        ? '<div class="prep-card"><h2>' + esc(L('Mapa del examen', 'Exam map')) + '</h2>' +
+            '<p class="card-note">' + esc(L('Azul = respondida, naranja = marcada para revisar.',
+                                            'Blue = answered, orange = flagged for review.')) + '</p>' +
+            '<div class="grid-nav">' +
+              state.questions.map(function (_, i) {
+                var cls = [];
+                if (state.answers[i]) cls.push('done');
+                if (state.flags[i]) cls.push('flag');
+                if (i === state.index) cls.push('here');
+                return '<button class="' + cls.join(' ') + '" data-goto="' + i + '">' + (i + 1) + '</button>';
+              }).join('') +
+            '</div></div>'
+        : '';
+
+      return '' +
+        '<div class="quiz-bar">' +
+          '<div class="qb-left">' +
+            esc(L('Pregunta', 'Question')) + ' ' + (state.index + 1) + ' / ' + total +
+            '<small>' + esc(EXAMS[state.examType].name + ' \u00b7 ' +
+              (state.mode === 'exam' ? L('Examen simulado', 'Mock exam') : L('Modo pr\u00e1ctica', 'Practice mode'))) +
+              ' \u00b7 ' + esc(L('respondidas', 'answered')) + ': ' + answeredCount + '</small>' +
+          '</div>' +
+          (state.mode === 'exam'
+            ? '<div class="timer' + (state.secondsLeft <= 300 ? ' low' : '') + '" id="timer">' + hhmmss(state.secondsLeft) + '</div>'
+            : '') +
+          '<button class="btn btn-ghost" id="quit-btn">' + esc(L('Salir', 'Exit')) + '</button>' +
+        '</div>' +
+
+        '<div class="bar" style="margin-bottom:20px;"><i style="width:' +
+          Math.round(((state.index + 1) / total) * 100) + '%"></i></div>' +
+
+        '<div class="prep-card">' +
+          '<div class="q-meta">' + esc(domName(q.domain) + (q.subdomain ? ' \u00b7 ' + q.subdomain : '')) + '</div>' +
+          '<div class="q-text">' + esc(q.question_text) + '</div>' +
+          '<div class="opts">' + options + '</div>' +
+          feedback +
+          '<div class="btn-row">' +
+            (state.index > 0 ? '<button class="btn btn-ghost" id="prev-btn">' + esc(L('Anterior', 'Previous')) + '</button>' : '') +
+            (state.mode === 'practice' && !revealed
+              ? '<button class="btn btn-ghost" id="dontknow-btn">' + esc(L('No lo s\u00e9', "I don't know")) + '</button>'
+              : '') +
+            '<button class="btn btn-ghost' + (state.flags[state.index] ? ' on' : '') + '" id="flag-btn">' +
+              esc(state.flags[state.index] ? L('Quitar marca', 'Remove flag') : L('Marcar para revisar', 'Flag for review')) + '</button>' +
+            (state.index < total - 1
+              ? '<button class="btn btn-primary" id="next-btn">' + esc(L('Siguiente', 'Next')) + '</button>'
+              : '<button class="btn btn-primary" id="submit-btn">' +
+                  esc(state.mode === 'exam' ? L('Entregar examen', 'Submit exam') : L('Ver resultados', 'See results')) + '</button>') +
+            (state.mode === 'exam' && state.index < total - 1
+              ? '<button class="btn btn-danger" id="submit-btn">' + esc(L('Entregar examen', 'Submit exam')) + '</button>'
+              : '') +
+          '</div>' +
+        '</div>' + gridNav;
+    }
+
+    function cardsView() {
+      var q = state.questions[state.index];
+      var total = state.questions.length;
+      var flipped = state.revealed[state.index];
+      var mark = state.known[state.index];
+      var reviewed = Object.keys(state.known).length;
+
+      var face = flipped
+        ? '<div class="card-face">' + esc(q.question_text) + '</div>' +
+          '<div class="card-answer">' + esc(q.correct_option + '. ' + q['option_' + q.correct_option.toLowerCase()]) + '</div>' +
+          '<div class="card-why">' + esc(q.rationale) + '</div>'
+        : '<div class="card-face">' + esc(q.question_text) + '</div>' +
+          '<div class="card-hint">' + esc(L('Toca la tarjeta para ver la respuesta', 'Tap the card to see the answer')) + '</div>';
+
+      return '' +
+        '<div class="quiz-bar">' +
+          '<div class="qb-left">' +
+            esc(L('Tarjeta', 'Card')) + ' ' + (state.index + 1) + ' / ' + total +
+            '<small>' + esc(EXAMS[state.examType].name + ' \u00b7 ' + L('Tarjetas de estudio', 'Flashcards')) +
+              ' \u00b7 ' + esc(L('repasadas', 'reviewed')) + ': ' + reviewed + '</small>' +
+          '</div>' +
+          '<button class="btn btn-ghost" id="quit-btn">' + esc(L('Salir', 'Exit')) + '</button>' +
+        '</div>' +
+
+        '<div class="bar" style="margin-bottom:20px;"><i style="width:' +
+          Math.round(((state.index + 1) / total) * 100) + '%"></i></div>' +
+
+        '<div class="prep-card">' +
+          '<div class="q-meta">' + esc(domName(q.domain) + (q.subdomain ? ' \u00b7 ' + q.subdomain : '')) + '</div>' +
+          '<div class="card-flip" id="flip-card">' + face + '</div>' +
+          (flipped
+            ? '<div class="btn-row">' +
+                '<button class="btn btn-ghost' + (mark === true ? ' good' : '') + '" id="knew-btn">' +
+                  esc(L('La sab\u00eda', 'I knew it')) + '</button>' +
+                '<button class="btn btn-danger' + (mark === false ? ' on' : '') + '" id="missed-btn">' +
+                  esc(L('No la sab\u00eda', "I didn't know it")) + '</button>' +
+              '</div>'
+            : '<div class="btn-row"><button class="btn btn-primary" id="flip-btn">' +
+                esc(L('Ver respuesta', 'Show answer')) + '</button></div>') +
+          '<div class="btn-row">' +
+            (state.index > 0 ? '<button class="btn btn-ghost" id="prev-btn">' + esc(L('Anterior', 'Previous')) + '</button>' : '') +
+            (state.index < total - 1
+              ? '<button class="btn btn-ghost" id="next-btn">' + esc(L('Siguiente', 'Next')) + '</button>'
+              : '') +
+            '<button class="btn btn-ghost" id="submit-btn">' + esc(L('Terminar repaso', 'Finish review')) + '</button>' +
+          '</div>' +
+        '</div>';
+    }
+
+    function cardsResultsView() {
+      var s = cardSummary();
+      var domainRows = Object.keys(s.byDomain).map(function (k) {
+        var d = s.byDomain[k];
+        var pct = Math.round((d.correct / d.total) * 100);
+        return '<div class="dom-row"><div class="dom-head"><span>' + esc(domName(k)) + '</span>' +
+          '<span>' + pct + '% &middot; ' + d.correct + '/' + d.total + '</span></div>' +
+          '<div class="bar"><i class="' + barClass(pct) + '" style="width:' + pct + '%"></i></div></div>';
+      }).join('');
+
+      var missed = state.questions.map(function (q, i) { return { q: q, i: i }; })
+        .filter(function (item) { return state.known[item.i] === false; });
+
+      var missedItems = missed.length
+        ? missed.map(function (item) {
+            var q = item.q;
+            return '<div class="review-item">' +
+              '<div class="q-meta">' + (item.i + 1) + ' &middot; ' + esc(domName(q.domain)) + '</div>' +
+              '<div class="review-q">' + esc(q.question_text) + '</div>' +
+              '<div class="review-line">' + esc(L('Respuesta correcta', 'Correct answer')) + ': <b class="good">' +
+                esc(q.correct_option + '. ' + q['option_' + q.correct_option.toLowerCase()]) + '</b></div>' +
+              '<div class="review-why">' + esc(q.rationale) + '</div>' +
+            '</div>';
+          }).join('')
+        : '<p class="card-note">' + esc(L('No marcaste ninguna como desconocida. \u00a1Excelente!',
+                                          'You did not mark any as unknown. Excellent!')) + '</p>';
+
+      return '' +
+        '<div class="prep-card">' +
+          '<div class="score-hero">' +
+            (s.reviewed
+              ? '<div class="score-pct">' + s.pct + '%</div>' +
+                '<div class="verdict">' + esc(L('Repaso completado', 'Review complete')) + '</div>' +
+                '<p style="color:var(--muted);margin-top:8px;">' +
+                  esc(L('Sab\u00edas', 'You knew')) + ' ' + s.known + ' ' + esc(L('de', 'of')) + ' ' + s.reviewed + ' ' +
+                  esc(L('tarjetas repasadas', 'cards reviewed')) +
+                  ' \u00b7 ' + esc(L('tiempo usado', 'time taken')) + ': ' + hhmmss(s.seconds) +
+                '</p>'
+              : '<div class="verdict">' + esc(L('Repaso sin tarjetas marcadas', 'No cards graded')) + '</div>' +
+                '<p style="color:var(--muted);margin-top:8px;">' +
+                  esc(L('No marcaste ninguna tarjeta, as\u00ed que no guardamos este repaso.',
+                        'You did not grade any card, so this review was not saved.')) +
+                '</p>') +
+          '</div>' +
+          '<div class="btn-row" style="justify-content:center;">' +
+            '<button class="btn btn-primary" id="again-btn">' + esc(L('Repasar otra vez', 'Review again')) + '</button>' +
+            '<button class="btn btn-ghost" id="home-btn">' + esc(L('Volver al inicio', 'Back to start')) + '</button>' +
+          '</div>' +
+        '</div>' +
+
+        (s.reviewed && domainRows
+          ? '<div class="prep-card">' +
+              '<h2>' + esc(L('Dominio de las tarjetas', 'Flashcard mastery by domain')) + '</h2>' +
+              '<p class="card-note">' + esc(L('Seg\u00fan lo que t\u00fa marcaste.', 'Based on what you marked yourself.')) + '</p>' +
+              domainRows +
+            '</div>'
+          : '') +
+
+        (s.reviewed
+          ? '<div class="prep-card">' +
+              '<h2>' + esc(L('Tarjetas que no sab\u00edas', 'Cards you did not know')) + '</h2>' +
+              missedItems +
+            '</div>'
+          : '');
+    }
+
+    function resultsView() {
+      var s = scoreSummary();
+      var passed = s.pct >= PASS_SCORE;
+      var isExam = state.mode === 'exam';
+
+      var domainRows = Object.keys(s.byDomain).map(function (k) {
+        var d = s.byDomain[k];
+        var pct = Math.round((d.correct / d.total) * 100);
+        return '<div class="dom-row"><div class="dom-head"><span>' + esc(domName(k)) + '</span>' +
+          '<span>' + pct + '% &middot; ' + d.correct + '/' + d.total + '</span></div>' +
+          '<div class="bar"><i class="' + barClass(pct) + '" style="width:' + pct + '%"></i></div></div>';
+      }).join('');
+
+      var reviewSet = state.questions.map(function (q, i) { return { q: q, i: i }; })
+        .filter(function (item) {
+          return state.showAllInReview || state.answers[item.i] !== item.q.correct_option;
+        });
+
+      var reviewItems = reviewSet.length
+        ? reviewSet.map(function (item) {
+            var q = item.q;
+            var picked = state.answers[item.i];
+            var ok = picked === q.correct_option;
+            var pickedText = picked === 'skip'
+              ? L('la dejaste en blanco', 'you skipped it')
+              : (picked ? picked + '. ' + q['option_' + picked.toLowerCase()] : L('sin responder', 'not answered'));
+            return '<div class="review-item">' +
+              '<div class="q-meta">' + (item.i + 1) + ' &middot; ' + esc(domName(q.domain)) + '</div>' +
+              '<div class="review-q">' + esc(q.question_text) + '</div>' +
+              '<div class="review-line">' + esc(L('Tu respuesta', 'Your answer')) + ': <b class="' + (ok ? 'good' : 'bad') + '">' +
+                esc(pickedText) + '</b></div>' +
+              '<div class="review-line">' + esc(L('Respuesta correcta', 'Correct answer')) + ': <b class="good">' +
+                esc(q.correct_option + '. ' + q['option_' + q.correct_option.toLowerCase()]) + '</b></div>' +
+              '<div class="review-why">' + esc(q.rationale) + '</div>' +
+            '</div>';
+          }).join('')
+        : '<p class="card-note">' + esc(L('No fallaste ninguna. \u00a1Excelente!', 'You did not miss any. Excellent!')) + '</p>';
+
+      return '' +
+        '<div class="prep-card">' +
+          '<div class="score-hero">' +
+            '<div class="score-pct">' + s.pct + '%</div>' +
+            (isExam
+              ? '<div class="verdict ' + (passed ? 'pass' : 'fail') + '">' +
+                  esc(passed ? L('APROBADO', 'PASSED') : L('NO APROBADO', 'DID NOT PASS')) + '</div>'
+              : '<div class="verdict">' + esc(L('Pr\u00e1ctica completada', 'Practice complete')) + '</div>') +
+            '<p style="color:var(--muted);margin-top:8px;">' +
+              s.correct + ' / ' + s.total + ' ' + esc(L('correctas', 'correct')) +
+              ' \u00b7 ' + esc(L('tiempo usado', 'time taken')) + ': ' + hhmmss(s.seconds) +
+              (isExam ? ' \u00b7 ' + esc(L('para aprobar', 'to pass')) + ': ' + PASS_SCORE + '%' : '') +
+            '</p>' +
+          '</div>' +
+          '<div class="btn-row" style="justify-content:center;">' +
+            '<button class="btn btn-primary" id="again-btn">' + esc(L('Hacer otra vez', 'Do it again')) + '</button>' +
+            '<button class="btn btn-ghost" id="home-btn">' + esc(L('Volver al inicio', 'Back to start')) + '</button>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="prep-card">' +
+          '<h2>' + esc(L('Puntaje por dominio', 'Score by domain')) + '</h2>' +
+          '<p class="card-note">' + esc(L('Ah\u00ed ves en qu\u00e9 est\u00e1s flojo.', 'This is where you see your weak spots.')) + '</p>' +
+          domainRows +
+        '</div>' +
+
+        '<div class="prep-card">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">' +
+            '<h2 style="margin:0;">' + esc(state.showAllInReview
+              ? L('Todas las respuestas', 'All answers')
+              : L('Revisar respuestas incorrectas', 'Review incorrect answers')) + '</h2>' +
+            '<button class="btn btn-ghost" id="toggle-review">' +
+              esc(state.showAllInReview ? L('Ver solo incorrectas', 'Show only incorrect')
+                                        : L('Ver todas', 'Show all')) + '</button>' +
+          '</div>' +
+          reviewItems +
+        '</div>';
+    }
+
+    // ---------- events ----------
+    function wire() {
+      var byId = function (id) { return document.getElementById(id); };
+
+      document.querySelectorAll('[data-exam]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          state.examType = btn.dataset.exam;
+          state.domain = '';
+          render();
+        });
+      });
+      document.querySelectorAll('[data-mode]').forEach(function (btn) {
+        btn.addEventListener('click', function () { state.mode = btn.dataset.mode; render(); });
+      });
+      if (byId('domain-select')) {
+        byId('domain-select').addEventListener('change', function (e) { state.domain = e.target.value; });
+      }
+      if (byId('count-select')) {
+        byId('count-select').addEventListener('change', function (e) { state.count = Number(e.target.value); });
+      }
+      if (byId('start-btn')) byId('start-btn').addEventListener('click', start);
+      if (byId('reset-stats')) {
+        byId('reset-stats').addEventListener('click', function () {
+          if (!confirm(L('\u00bfBorrar tus estad\u00edsticas de este navegador?', 'Clear your statistics in this browser?'))) return;
+          localStorage.removeItem(STATS_KEY);
+          render();
+        });
+      }
+
+      document.querySelectorAll('[data-pick]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          state.answers[state.index] = btn.dataset.pick;
+          if (state.mode === 'practice') state.revealed[state.index] = true;
+          render();
+        });
+      });
+      if (byId('flip-card')) {
+        byId('flip-card').addEventListener('click', function () {
+          state.revealed[state.index] = true;
+          render();
+        });
+      }
+      if (byId('flip-btn')) {
+        byId('flip-btn').addEventListener('click', function () {
+          state.revealed[state.index] = true;
+          render();
+        });
+      }
+      [['knew-btn', true], ['missed-btn', false]].forEach(function (pair) {
+        if (!byId(pair[0])) return;
+        byId(pair[0]).addEventListener('click', function () {
+          state.known[state.index] = pair[1];
+          if (state.index < state.questions.length - 1) {
+            state.index++;
+            render();
+            window.scrollTo(0, 0);
+          } else {
+            finish();
+          }
+        });
+      });
+      if (byId('dontknow-btn')) {
+        byId('dontknow-btn').addEventListener('click', function () {
+          state.answers[state.index] = 'skip';
+          state.revealed[state.index] = true;
+          render();
+        });
+      }
+      if (byId('flag-btn')) {
+        byId('flag-btn').addEventListener('click', function () {
+          if (state.flags[state.index]) delete state.flags[state.index];
+          else state.flags[state.index] = true;
+          render();
+        });
+      }
+      if (byId('prev-btn')) {
+        byId('prev-btn').addEventListener('click', function () { state.index--; render(); window.scrollTo(0, 0); });
+      }
+      if (byId('next-btn')) {
+        byId('next-btn').addEventListener('click', function () { state.index++; render(); window.scrollTo(0, 0); });
+      }
+      document.querySelectorAll('[data-goto]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          state.index = Number(btn.dataset.goto);
+          render();
+          window.scrollTo(0, 0);
+        });
+      });
+      if (byId('submit-btn')) {
+        byId('submit-btn').addEventListener('click', function () {
+          var left = state.questions.length - Object.keys(state.answers).length;
+          if (state.mode === 'exam' && left > 0 &&
+              !confirm(L('Te quedan ' + left + ' pregunta(s) sin responder. \u00bfEntregar de todas formas?',
+                         'You have ' + left + ' unanswered question(s). Submit anyway?'))) return;
+          finish();
+        });
+      }
+      if (byId('quit-btn')) {
+        byId('quit-btn').addEventListener('click', function () {
+          if (!confirm(L('\u00bfSalir sin terminar? Se pierde este intento.', 'Exit without finishing? This attempt is lost.'))) return;
+          stopTimer();
+          state.view = 'setup';
+          render();
+        });
+      }
+
+      if (byId('again-btn')) byId('again-btn').addEventListener('click', start);
+      if (byId('home-btn')) {
+        byId('home-btn').addEventListener('click', function () { state.view = 'setup'; render(); window.scrollTo(0, 0); });
+      }
+      if (byId('toggle-review')) {
+        byId('toggle-review').addEventListener('click', function () {
+          state.showAllInReview = !state.showAllInReview;
+          render();
+        });
+      }
+    }
+
+    render();
+  })();
+  </script>
+  <script src="/assets/cookie-banner.js"></script>
+  <script src="/assets/login-gate.js"></script>
+</body>
+</html>
