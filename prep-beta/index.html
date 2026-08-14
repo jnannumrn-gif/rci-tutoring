@@ -384,7 +384,9 @@
       stopTimer();
       state.endedAt = Date.now();
       state.view = state.mode === 'cards' ? 'cards-results' : 'results';
-      if (state.mode === 'cards') saveCardSession(); else saveSession();
+      if (state.mode === 'cards') {
+        if (cardSummary().reviewed) saveCardSession();
+      } else saveSession();
       render();
       window.scrollTo(0, 0);
     }
@@ -784,13 +786,19 @@
       return '' +
         '<div class="prep-card">' +
           '<div class="score-hero">' +
-            '<div class="score-pct">' + s.pct + '%</div>' +
-            '<div class="verdict">' + esc(L('Repaso completado', 'Review complete')) + '</div>' +
-            '<p style="color:var(--muted);margin-top:8px;">' +
-              esc(L('Sab\u00edas', 'You knew')) + ' ' + s.known + ' ' + esc(L('de', 'of')) + ' ' + s.reviewed + ' ' +
-              esc(L('tarjetas repasadas', 'cards reviewed')) +
-              ' \u00b7 ' + esc(L('tiempo usado', 'time taken')) + ': ' + hhmmss(s.seconds) +
-            '</p>' +
+            (s.reviewed
+              ? '<div class="score-pct">' + s.pct + '%</div>' +
+                '<div class="verdict">' + esc(L('Repaso completado', 'Review complete')) + '</div>' +
+                '<p style="color:var(--muted);margin-top:8px;">' +
+                  esc(L('Sab\u00edas', 'You knew')) + ' ' + s.known + ' ' + esc(L('de', 'of')) + ' ' + s.reviewed + ' ' +
+                  esc(L('tarjetas repasadas', 'cards reviewed')) +
+                  ' \u00b7 ' + esc(L('tiempo usado', 'time taken')) + ': ' + hhmmss(s.seconds) +
+                '</p>'
+              : '<div class="verdict">' + esc(L('Repaso sin tarjetas marcadas', 'No cards graded')) + '</div>' +
+                '<p style="color:var(--muted);margin-top:8px;">' +
+                  esc(L('No marcaste ninguna tarjeta, as\u00ed que no guardamos este repaso.',
+                        'You did not grade any card, so this review was not saved.')) +
+                '</p>') +
           '</div>' +
           '<div class="btn-row" style="justify-content:center;">' +
             '<button class="btn btn-primary" id="again-btn">' + esc(L('Repasar otra vez', 'Review again')) + '</button>' +
@@ -798,7 +806,7 @@
           '</div>' +
         '</div>' +
 
-        (domainRows
+        (s.reviewed && domainRows
           ? '<div class="prep-card">' +
               '<h2>' + esc(L('Dominio de las tarjetas', 'Flashcard mastery by domain')) + '</h2>' +
               '<p class="card-note">' + esc(L('Seg\u00fan lo que t\u00fa marcaste.', 'Based on what you marked yourself.')) + '</p>' +
@@ -806,10 +814,12 @@
             '</div>'
           : '') +
 
-        '<div class="prep-card">' +
-          '<h2>' + esc(L('Tarjetas que no sab\u00edas', 'Cards you did not know')) + '</h2>' +
-          missedItems +
-        '</div>';
+        (s.reviewed
+          ? '<div class="prep-card">' +
+              '<h2>' + esc(L('Tarjetas que no sab\u00edas', 'Cards you did not know')) + '</h2>' +
+              missedItems +
+            '</div>'
+          : '');
     }
 
     function resultsView() {
