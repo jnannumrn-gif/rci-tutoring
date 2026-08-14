@@ -13,6 +13,7 @@
   <script src="assets/meta-pixel.js"></script>
   <!-- Google Ads (gtag.js) -->
   <script src="assets/google-ads.js"></script>
+<script src="/assets/login-gate.js"></script>
 </head>
 <body>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2232870637567894&amp;ev=PageView&amp;noscript=1" alt="" /></noscript>
@@ -146,9 +147,11 @@
           </div>
           <div class="lang active" data-lang="es">
             <p class="footer-note">RCI Tutoring es una marca educativa orientada a tutor&iacute;a y refuerzo acad&eacute;mico en hemodi&aacute;lisis.</p>
+            <p class="footer-legal">CCHT&#174; es una marca registrada de la Nephrology Nursing Certification Commission (NNCC) y CHT&#174; del Board of Nephrology Examiners Nursing and Technology (BONENT). RCI Tutoring no est&#225; afiliado, autorizado ni respaldado por NNCC ni BONENT.</p>
           </div>
           <div class="lang" data-lang="en">
             <p class="footer-note">RCI Tutoring is an educational brand focused on tutoring and academic reinforcement in hemodialysis.</p>
+            <p class="footer-legal">CCHT&#174; is a registered trademark of the Nephrology Nursing Certification Commission (NNCC) and CHT&#174; of the Board of Nephrology Examiners Nursing and Technology (BONENT). RCI Tutoring is not affiliated with, authorized by, or endorsed by NNCC or BONENT.</p>
           </div>
         </div>
         <div class="footer-links">
@@ -221,7 +224,7 @@
                 if (enEl) enEl.textContent = countdown;
                 if (countdown <= 0) {
                   clearInterval(interval);
-                  window.location.href = '/dashboard.html';
+                  window.location.href = window.RCIGate ? window.RCIGate.takeNext() : '/dashboard.html';
                 }
               }, 1000);
             }
