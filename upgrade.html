@@ -364,6 +364,11 @@
       .then(function(data) {
         if (data.url) {
           window.location.href = data.url;
+        } else if (data.error === 'already_subscribed') {
+          alert(currentLang === 'en'
+            ? 'You already have an active subscription. Cancel it or wait until it ends before switching plans.'
+            : data.message);
+          window.location.href = '/dashboard.html';
         } else {
           var errMsg = currentLang === 'en'
             ? 'Could not start checkout: ' + (data.error || 'Unknown error')
