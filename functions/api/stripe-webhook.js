@@ -194,15 +194,13 @@ export async function onRequestPost(context) {
         }
 
         // Determine tier and dates
-        const isLifetime = plan && plan.startsWith('lifetime');
+        const isQuarterly = plan === 'quarterly';
         const isHumanSession = plan === 'human_session';
         const tier = plan || 'unknown';
         const now = new Date().toISOString();
-        const endDate = isLifetime
-          ? '2099-12-31T23:59:59Z'  // Lifetime = effectively never expires
-          : isHumanSession
-            ? new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString() // 90 days for human sessions
-            : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days for monthly
+        const endDate = isQuarterly || isHumanSession
+          ? new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString() // 90 days for quarterly and human sessions
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days for monthly
 
         // Update user status to active
         await env.DB.prepare(
@@ -290,14 +288,12 @@ export async function onRequestPost(context) {
         }
 
         // --- Regular async payment activation ---
-        const asyncIsLifetime = asyncPlan && asyncPlan.startsWith('lifetime');
+        const asyncIsQuarterly = asyncPlan === 'quarterly';
         const asyncIsHumanSession = asyncPlan === 'human_session';
         const asyncTier = asyncPlan || 'unknown';
-        const asyncEndDate = asyncIsLifetime
-          ? '2099-12-31T23:59:59Z'
-          : asyncIsHumanSession
-            ? new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString()
-            : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+        const asyncEndDate = asyncIsQuarterly || asyncIsHumanSession
+          ? new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString()
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
         await env.DB.prepare(
           'UPDATE users SET status = ?, stripe_customer_id = ?, updated_at = datetime(?) WHERE id = ?'
