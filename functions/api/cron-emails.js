@@ -166,8 +166,8 @@ function getEmailTemplate(step, user) {
           <p>Tu acceso gratuito de 7 días a RCI Tutoring ha finalizado. Tu cuenta ha sido bloqueada.</p>
           <p>Pero no te preocupes — puedes recuperar tu acceso inmediatamente eligiendo un plan:</p>
           <ul>
-            <li><strong>Plan Mensual</strong> — Flexibilidad total</li>
-            <li><strong>Plan Vitalicio</strong> — Un solo pago, acceso para siempre</li>
+            <li><strong>Plan Mensual</strong> — $19/mes, flexibilidad total</li>
+            <li><strong>Plan Trimestral</strong> — $45 cada 3 meses, ahorras $12</li>
           </ul>
           <p><a href="{{APP_URL}}/upgrade.html" style="background-color:#1e40af;color:#ffffff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:800;text-decoration:none;">Recuperar mi acceso</a></p>
           <p style="color:#64748b;font-size:0.85rem;">¿Preguntas? Escríbenos a info@rcitutoring.com</p>
@@ -180,8 +180,8 @@ function getEmailTemplate(step, user) {
           <p>Your 7-day free access to RCI Tutoring has ended. Your account has been blocked.</p>
           <p>But don't worry — you can recover access immediately by choosing a plan:</p>
           <ul>
-            <li><strong>Monthly Plan</strong> — Total flexibility</li>
-            <li><strong>Lifetime Plan</strong> — One payment, access forever</li>
+            <li><strong>Monthly Plan</strong> — $19/mo, total flexibility</li>
+            <li><strong>Quarterly Plan</strong> — $45 every 3 months, save $12</li>
           </ul>
           <p><a href="{{APP_URL}}/upgrade.html" style="background-color:#1e40af;color:#ffffff;padding:14px 28px;border-radius:12px;display:inline-block;font-weight:800;text-decoration:none;">Recover my access</a></p>
           <p style="color:#64748b;font-size:0.85rem;">Questions? Contact us at info@rcitutoring.com</p>

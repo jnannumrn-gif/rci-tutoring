@@ -2,40 +2,23 @@
  * POST /api/create-checkout
  *
  * Creates a Stripe Checkout Session for the authenticated user.
- * Expects JSON body: { plan: "monthly" | "monthly_latam" | "lifetime" | "lifetime_latam" | "human_session_deposit" }
+ * Expects JSON body: { plan: "monthly" | "quarterly" | "human_session" | "human_session_deposit" }
  *
  * Returns: { url: "https://checkout.stripe.com/..." }
  */
 
 import { verifyJWT, extractToken, jsonResponse, corsHeaders } from './_shared/auth.js';
 
-// Price IDs from Stripe Dashboard (live mode)
-// Launch pricing (until June 30, 2026)
-const PRICE_MAP_LAUNCH = {
+// Price IDs from Stripe Dashboard (live mode).
+// One global price per plan — no regional tiers, no date-based cutover.
+const PRICE_MAP = {
   monthly:               'price_1TLt4a2IMKtbUPVgQ4dEYOH6',   // $19.00/month
-  monthly_latam:         'price_1TLt4b2IMKtbUPVgymVvnYK7',   // $5.00/month
-  lifetime:              'price_1TLt4j2IMKtbUPVgofdYgbFr',   // $99.00 one-time
-  lifetime_latam:        'price_1TLt4j2IMKtbUPVgCzw49WIT',   // $49.00 one-time
+  quarterly:             'price_1U5uqw2IMKtbUPVgRF0OPoHc',   // $45.00 every 3 months
   human_session:         'price_1TLt4p2IMKtbUPVgWcCppinY',   // $49.00 one-time per session (full price)
   human_session_deposit: 'price_1TLtU42IMKtbUPVgGr668rR4',   // $20.00 one-time deposit (deducted from $49 total)
 };
 
-// Regular pricing (July 1, 2026 onwards)
-const PRICE_MAP_REGULAR = {
-  monthly:               'price_1TLt4x2IMKtbUPVgOz2MREpW',   // $29.00/month
-  monthly_latam:         'price_1TLt4x2IMKtbUPVgRJc4ZsCe',   // $9.00/month
-  lifetime:              'price_1TLt552IMKtbUPVg0cFXJbYU',   // $119.00 one-time
-  lifetime_latam:        'price_1TLt552IMKtbUPVg8xeUf1hd',   // $69.00 one-time
-  human_session:         'price_1TLt5C2IMKtbUPVgxqUWm9fZ',   // $49.00 one-time per session (full price)
-  human_session_deposit: 'price_1TLtU42IMKtbUPVgGr668rR4',   // $20.00 one-time deposit (deducted from $49 total)
-};
-
-// Cutover date: July 1, 2026 00:00 UTC
-const REGULAR_PRICING_DATE = new Date('2026-07-01T00:00:00Z');
-
-function getPriceMap() {
-  return new Date() >= REGULAR_PRICING_DATE ? PRICE_MAP_REGULAR : PRICE_MAP_LAUNCH;
-}
+const RECURRING_PLANS = ['monthly', 'quarterly'];
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -61,13 +44,13 @@ export async function onRequestPost(context) {
   }
 
   const { plan } = body;
-  const priceId = getPriceMap()[plan];
+  const priceId = PRICE_MAP[plan];
   if (!priceId) {
-    return jsonResponse({ error: 'Invalid plan. Valid: monthly, monthly_latam, lifetime, lifetime_latam, human_session, human_session_deposit' }, 400);
+    return jsonResponse({ error: 'Invalid plan. Valid: monthly, quarterly, human_session, human_session_deposit' }, 400);
   }
 
   // Determine mode based on price type
-  const isRecurring = plan.startsWith('monthly');
+  const isRecurring = RECURRING_PLANS.includes(plan);
   const isDeposit = plan === 'human_session_deposit';
   const mode = isRecurring ? 'subscription' : 'payment';
 

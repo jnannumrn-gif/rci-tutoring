@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-require-login>
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -226,6 +226,11 @@
       education_professional_dev: ['Educaci\u00f3n y desarrollo', 'Education & development']
     };
 
+    // Visitors without an account get a no-card sample: practice mode only,
+    // DEMO_COUNT questions, and a prompt to sign up for the rest.
+    var DEMO_COUNT = 10;
+    var isMember = !!localStorage.getItem('rci_token');
+
     var PASS_SCORE = 70;
     var STATS_KEY = 'rci_prep_stats';
     var LEGACY_STATS_KEY = 'rci_prep_beta_stats';
@@ -264,7 +269,7 @@
       mode: 'practice',    // practice | exam
       examType: 'NNCC_CCHT',
       domain: '',
-      count: 25,
+      count: isMember ? 25 : DEMO_COUNT,
       loading: false,
       error: '',
       questions: [],
@@ -306,6 +311,7 @@
 
     // ---------- question loading ----------
     async function fetchPool(examType, domain, limit) {
+      if (!isMember) limit = Math.min(limit, DEMO_COUNT);
       var url = '/api/questions?exam_type=' + encodeURIComponent(examType) + '&limit=' + limit;
       if (domain) url += '&domain=' + encodeURIComponent(domain);
       var res = await fetch(url);
@@ -328,6 +334,7 @@
     }
 
     async function start() {
+      if (!isMember && state.mode !== 'practice') return goToRegister();
       state.loading = true;
       state.error = '';
       render();
@@ -518,6 +525,26 @@
       wire();
     }
 
+    function goToRegister() {
+      // login-gate.js reads rci_next after the magic-link round trip, which
+      // never carries our query string.
+      try { localStorage.setItem('rci_next', JSON.stringify({ p: '/prep/', t: Date.now() })); } catch (e) {}
+      window.location.href = '/register.html?next=%2Fprep%2F';
+    }
+
+    function demoCard(heading, body) {
+      return '<div class="prep-card" style="border-color:var(--brand);background:rgba(59,130,246,0.05);">' +
+        '<h2>' + esc(heading) + '</h2>' +
+        '<p class="card-note">' + esc(body) + '</p>' +
+        '<div class="btn-row">' +
+          '<button class="btn btn-primary" id="demo-register">' +
+            esc(L('Crear cuenta gratis', 'Create free account')) + '</button>' +
+          '<a class="btn btn-ghost" href="/upgrade.html">' +
+            esc(L('Ver planes ($19/mes)', 'See plans ($19/mo)')) + '</a>' +
+        '</div>' +
+      '</div>';
+    }
+
     function setupView() {
       var stats = aggregateStats();
       var overall = stats.answered ? Math.round((stats.correct / stats.answered) * 100) : 0;
@@ -548,6 +575,11 @@
 
         (state.error ? '<div class="alert alert-error visible">' + esc(state.error) + '</div>' : '') +
 
+        (isMember ? '' : demoCard(
+          L('Prueba gratis, sin tarjeta', 'Free trial, no card'),
+          L('Est\u00e1s en la muestra gratis: ' + DEMO_COUNT + ' preguntas en modo pr\u00e1ctica con la explicaci\u00f3n de cada respuesta. Con una cuenta gratis desbloqueas el examen simulado de 150 preguntas, las tarjetas de estudio y el banco completo.',
+            'You are on the free sample: ' + DEMO_COUNT + ' practice questions with the explanation for every answer. A free account unlocks the 150-question mock exam, the flashcards and the full bank.'))) +
+
         '<div class="prep-card">' +
           '<h2>' + esc(L('1. Elige tu examen', '1. Choose your exam')) + '</h2>' +
           '<p class="card-note">' + esc(L('Cada examen usa su propio banco y su propia distribuci\u00f3n por dominio.',
@@ -574,11 +606,11 @@
               esc(L('Sin reloj, con explicaci\u00f3n despu\u00e9s de cada pregunta.',
                     'No clock, with an explanation after every question.')) + '</span></button>' +
             '<button class="mode-btn' + (state.mode === 'exam' ? ' selected' : '') + '" data-mode="exam">' +
-              '<strong>' + esc(L('Examen simulado', 'Mock exam')) + '</strong><span>' +
+              '<strong>' + esc(L('Examen simulado', 'Mock exam')) + (isMember ? '' : ' \uD83D\uDD12') + '</strong><span>' +
               esc(L('150 preguntas, 3 horas, aprobado con 70%.', '150 questions, 3 hours, 70% to pass.')) +
               '</span></button>' +
             '<button class="mode-btn' + (state.mode === 'cards' ? ' selected' : '') + '" data-mode="cards">' +
-              '<strong>' + esc(L('Tarjetas de estudio', 'Flashcards')) + '</strong><span>' +
+              '<strong>' + esc(L('Tarjetas de estudio', 'Flashcards')) + (isMember ? '' : ' \uD83D\uDD12') + '</strong><span>' +
               esc(L('Voltea la tarjeta y di si la sab\u00edas o no.',
                     'Flip the card and tell us whether you knew it.')) + '</span></button>' +
           '</div>' +
@@ -587,11 +619,14 @@
                 '<div class="form-group" style="margin-bottom:0;"><label>' + esc(L('Dominio', 'Domain')) + '</label>' +
                   '<select id="domain-select">' + domainOptions + '</select></div>' +
                 '<div class="form-group" style="margin-bottom:0;"><label>' + esc(L('N\u00famero de preguntas', 'Number of questions')) + '</label>' +
-                  '<select id="count-select">' +
-                    [10, 25, 50, 100].map(function (n) {
-                      return '<option value="' + n + '"' + (state.count === n ? ' selected' : '') + '>' + n + '</option>';
-                    }).join('') +
-                  '</select></div>' +
+                  (isMember
+                    ? '<select id="count-select">' +
+                        [10, 25, 50, 100].map(function (n) {
+                          return '<option value="' + n + '"' + (state.count === n ? ' selected' : '') + '>' + n + '</option>';
+                        }).join('') +
+                      '</select>'
+                    : '<select disabled><option>' + DEMO_COUNT + ' (' + esc(L('muestra gratis', 'free sample')) + ')</option></select>') +
+                  '</div>' +
               '</div>'
             : '') +
           '<div class="btn-row">' +
@@ -861,6 +896,10 @@
         : '<p class="card-note">' + esc(L('No fallaste ninguna. \u00a1Excelente!', 'You did not miss any. Excellent!')) + '</p>';
 
       return '' +
+        (isMember ? '' : demoCard(
+          L('Esto fue solo la muestra', 'That was just the sample'),
+          L('Ya viste c\u00f3mo funciona con ' + s.total + ' preguntas. El banco completo tiene m\u00e1s de 680 preguntas aprobadas por un RN, con examen simulado cronometrado y tarjetas de estudio.',
+            'You just saw how it works with ' + s.total + ' questions. The full bank has more than 680 RN-approved questions, plus the timed mock exam and the flashcards.'))) +
         '<div class="prep-card">' +
           '<div class="score-hero">' +
             '<div class="score-pct">' + s.pct + '%</div>' +
@@ -911,8 +950,15 @@
         });
       });
       document.querySelectorAll('[data-mode]').forEach(function (btn) {
-        btn.addEventListener('click', function () { state.mode = btn.dataset.mode; render(); });
+        btn.addEventListener('click', function () {
+          // The mock exam and the flashcards are members-only; the free sample
+          // is practice mode.
+          if (!isMember && btn.dataset.mode !== 'practice') return goToRegister();
+          state.mode = btn.dataset.mode;
+          render();
+        });
       });
+      if (byId('demo-register')) byId('demo-register').addEventListener('click', goToRegister);
       if (byId('domain-select')) {
         byId('domain-select').addEventListener('change', function (e) { state.domain = e.target.value; });
       }
