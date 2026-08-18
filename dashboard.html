@@ -136,6 +136,10 @@
             <span class="lang active" data-lang="es">Ver mi plan &rarr;</span>
             <span class="lang" data-lang="en">View my plan &rarr;</span>
           </a>
+          <a href="#" class="dash-link" id="billingPortalLink">
+            <span class="lang active" data-lang="es">Cambiar de plan o cancelar &rarr;</span>
+            <span class="lang" data-lang="en">Change plan or cancel &rarr;</span>
+          </a>
         </div>
       </div>
     </div>
@@ -200,6 +204,32 @@
     if (!token) {
       window.location.href = '/login.html';
     }
+
+    // Stripe billing portal: plan changes, card updates and cancellation
+    document.getElementById('billingPortalLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      fetch('/api/billing-portal', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token }
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.url) {
+          window.location.href = data.url;
+        } else if (data.error === 'no_billing_account') {
+          window.location.href = '/upgrade.html';
+        } else {
+          alert(currentLang === 'en'
+            ? 'Could not open the billing portal. Please try again.'
+            : 'No se pudo abrir el portal de facturaci\u00f3n. Por favor intenta de nuevo.');
+        }
+      })
+      .catch(function() {
+        alert(currentLang === 'en'
+          ? 'Connection error. Please try again.'
+          : 'Error de conexi\u00f3n. Por favor intenta de nuevo.');
+      });
+    });
 
     // Load user data
     var user = null;

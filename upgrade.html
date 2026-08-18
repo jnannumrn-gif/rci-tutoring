@@ -340,6 +340,35 @@
       }
     })();
 
+    // Stripe billing portal: plan changes, card updates and cancellation
+    function openBillingPortal() {
+      if (!token) {
+        window.location.href = '/login.html';
+        return;
+      }
+
+      fetch('/api/billing-portal', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token }
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert(currentLang === 'en'
+            ? 'Could not open the billing portal. Please try again.'
+            : 'No se pudo abrir el portal de facturaci\u00f3n. Por favor intenta de nuevo.');
+          window.location.reload();
+        }
+      })
+      .catch(function() {
+        alert(currentLang === 'en'
+          ? 'Connection error. Please try again.'
+          : 'Error de conexi\u00f3n. Por favor intenta de nuevo.');
+      });
+    }
+
     // Stripe checkout handler
     function handleSubscribe(plan) {
       if (!token) {
@@ -366,9 +395,9 @@
           window.location.href = data.url;
         } else if (data.error === 'already_subscribed') {
           alert(currentLang === 'en'
-            ? 'You already have an active subscription. Cancel it or wait until it ends before switching plans.'
-            : data.message);
-          window.location.href = '/dashboard.html';
+            ? 'You already have an active subscription. We are taking you to the billing portal, where you can switch plans or cancel.'
+            : 'Ya tienes una suscripci\u00f3n activa. Te llevamos al portal de facturaci\u00f3n, donde puedes cambiar de plan o cancelar.');
+          openBillingPortal();
         } else {
           var errMsg = currentLang === 'en'
             ? 'Could not start checkout: ' + (data.error || 'Unknown error')
