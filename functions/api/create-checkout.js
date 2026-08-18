@@ -100,6 +100,29 @@ export async function onRequestPost(context) {
       .run();
   }
 
+  // Refuse a second subscription for a customer who already pays: Checkout
+  // happily charges twice otherwise.
+  if (isRecurring) {
+    const subsRes = await fetch(
+      `https://api.stripe.com/v1/subscriptions?customer=${encodeURIComponent(customerId)}&status=active&limit=1`,
+      { headers: { 'Authorization': `Bearer ${stripeKey}` } }
+    );
+
+    if (!subsRes.ok) {
+      const err = await subsRes.text();
+      console.error('[STRIPE] Subscription lookup error:', err);
+      return jsonResponse({ error: 'Failed to check existing subscription' }, 500);
+    }
+
+    const subs = await subsRes.json();
+    if (subs.data && subs.data.length > 0) {
+      return jsonResponse({
+        error: 'already_subscribed',
+        message: 'Ya tienes una suscripcion activa. Cancelala o espera a que termine antes de cambiar de plan.',
+      }, 409);
+    }
+  }
+
   // Create Checkout Session
   const appUrl = env.APP_URL || 'https://rcitutoring.com';
   const successUrl = isDeposit
