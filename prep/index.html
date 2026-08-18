@@ -3,20 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RCI Tutoring | CCHT / BONENT Prep (beta)</title>
-  <meta name="robots" content="noindex, nofollow" />
+  <title>RCI Tutoring | CCHT / BONENT Prep</title>
+  <meta name="description" content="Practica para el examen CCHT (NNCC) y CHT (BONENT) con un banco de preguntas revisado por un RN: práctica por dominio, examen simulado cronometrado y tarjetas de estudio." />
+  <meta name="robots" content="index, follow" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/shared-styles.css">
+  <!-- Meta Pixel -->
+  <script src="/assets/meta-pixel.js"></script>
+  <!-- Google Ads (gtag.js) -->
+  <script src="/assets/google-ads.js"></script>
   <style>
     .prep-page { padding: 32px 0 64px; min-height: calc(100vh - 72px); }
-    .beta-tag {
-      display: inline-block; padding: 4px 12px; border-radius: 999px;
-      background: rgba(217,119,6,0.12); color: var(--warning);
-      font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em;
-      text-transform: uppercase; margin-bottom: 12px;
-    }
     .prep-card {
       background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
       padding: 24px; box-shadow: var(--shadow-sm); margin-bottom: 20px;
@@ -135,6 +134,7 @@
   </style>
 </head>
 <body>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2232870637567894&amp;ev=PageView&amp;noscript=1" alt="" /></noscript>
   <header class="topbar">
     <div class="wrap">
       <nav class="nav">
@@ -227,7 +227,8 @@
     };
 
     var PASS_SCORE = 70;
-    var STATS_KEY = 'rci_prep_beta_stats';
+    var STATS_KEY = 'rci_prep_stats';
+    var LEGACY_STATS_KEY = 'rci_prep_beta_stats';
     var LETTERS = ['A', 'B', 'C', 'D'];
 
     // ---------- language ----------
@@ -443,7 +444,7 @@
     // ---------- local progress ----------
     function readStats() {
       try {
-        var raw = JSON.parse(localStorage.getItem(STATS_KEY));
+        var raw = JSON.parse(localStorage.getItem(STATS_KEY) || localStorage.getItem(LEGACY_STATS_KEY));
         if (raw && Array.isArray(raw.sessions)) return raw;
       } catch (e) {}
       return { sessions: [] };
@@ -539,7 +540,6 @@
                                           'No data yet. Run a practice session to see your stats.')) + '</p>';
 
       return '' +
-        '<span class="beta-tag">' + esc(L('Prueba interna \u2014 no publicado', 'Internal preview \u2014 not published')) + '</span>' +
         '<h1 style="font-size:1.8rem;font-weight:900;margin-bottom:6px;">CCHT / BONENT Prep</h1>' +
         '<p style="color:var(--muted);margin-bottom:28px;">' +
           esc(L('Banco de preguntas nuevo, revisado y aprobado por un RN. Examen simulado cronometrado, pr\u00e1ctica por dominio o tarjetas de estudio.',
@@ -924,6 +924,7 @@
         byId('reset-stats').addEventListener('click', function () {
           if (!confirm(L('\u00bfBorrar tus estad\u00edsticas de este navegador?', 'Clear your statistics in this browser?'))) return;
           localStorage.removeItem(STATS_KEY);
+          localStorage.removeItem(LEGACY_STATS_KEY);
           render();
         });
       }
