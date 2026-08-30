@@ -185,6 +185,23 @@
     .widget-option:hover .wo-arrow { transform: translateX(4px); color: #fff; }
     .widget-footer { text-align: center; margin-top: 16px; font-size: 0.8rem; color: #64748b; }
 
+    /* LOGO BAND */
+    .logo-band { padding: 8px 0 48px; }
+    .logo-band-inner {
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--radius-lg); padding: 36px 24px;
+      box-shadow: var(--shadow); text-align: center;
+    }
+    .logo-band img {
+      width: 190px; height: auto; object-fit: contain;
+      filter: drop-shadow(0 8px 24px rgba(30,64,175,0.18));
+    }
+    .logo-band-tagline {
+      font-size: 1rem; font-weight: 700; color: var(--muted);
+      letter-spacing: -0.01em; max-width: 560px;
+    }
+
     /* STATS */
     .stats-bar { padding: 0 0 60px; }
     .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
@@ -421,6 +438,9 @@
       .nav-right { gap: 6px; }
       .get-started-widget { padding: 28px 20px; }
       .quote-card { padding: 32px 24px; }
+      .logo-band { padding: 4px 0 32px; }
+      .logo-band-inner { padding: 28px 20px; }
+      .logo-band img { width: 150px; }
     }
     @media (max-width: 480px) {
       .nav { height: 60px; }
@@ -546,6 +566,19 @@
             <span class="lang active" data-lang="es">Sin compromiso &middot; Acceso inmediato</span>
             <span class="lang" data-lang="en">No obligation &middot; Instant access</span>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOGO BAND -->
+  <section class="logo-band">
+    <div class="wrap">
+      <div class="logo-band-inner">
+        <img src="assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" width="190" />
+        <div class="logo-band-tagline">
+          <span class="lang active" data-lang="es">RCI Tutoring &mdash; Educaci&#243;n en hemodi&#225;lisis para profesionales de la salud.</span>
+          <span class="lang" data-lang="en">RCI Tutoring &mdash; Hemodialysis education for healthcare professionals.</span>
         </div>
       </div>
     </div>
