@@ -185,6 +185,15 @@
     .widget-option:hover .wo-arrow { transform: translateX(4px); color: #fff; }
     .widget-footer { text-align: center; margin-top: 16px; font-size: 0.8rem; color: #64748b; }
 
+    /* HERO LOGO */
+    .hero-logo { display: flex; justify-content: center; margin-bottom: 20px; }
+    .hero-logo img {
+      width: 220px; height: auto; object-fit: contain;
+      background: #fff; border: 1px solid var(--line);
+      border-radius: var(--radius-lg); padding: 12px;
+      box-shadow: var(--shadow);
+    }
+
     /* STATS */
     .stats-bar { padding: 0 0 60px; }
     .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
@@ -421,6 +430,7 @@
       .nav-right { gap: 6px; }
       .get-started-widget { padding: 28px 20px; }
       .quote-card { padding: 32px 24px; }
+      .hero-logo img { width: 170px; }
     }
     @media (max-width: 480px) {
       .nav { height: 60px; }
@@ -506,6 +516,12 @@
           </div>
         </div>
 
+        <div>
+        <!-- HERO LOGO -->
+        <div class="hero-logo">
+          <img src="assets/rci-tutoring-logo-premium.png" alt="RCI Tutoring" width="220" />
+        </div>
+
         <!-- GET STARTED WIDGET -->
         <div class="get-started-widget">
           <div class="widget-title">
@@ -546,6 +562,7 @@
             <span class="lang active" data-lang="es">Sin compromiso &middot; Acceso inmediato</span>
             <span class="lang" data-lang="en">No obligation &middot; Instant access</span>
           </div>
+        </div>
         </div>
       </div>
     </div>
