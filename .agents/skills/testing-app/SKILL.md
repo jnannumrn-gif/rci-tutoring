@@ -1,13 +1,28 @@
 ---
 name: testing-app
-description: How to test the RCI Tutoring static Cloudflare Pages site — auth gate, language toggle, cookie consent, registration flow, and Meta Pixel / analytics verification.
+description: How to test the RCI Tutoring static Cloudflare Pages site — auth/account gates, language toggle, cookie consent, registration flow, the /prep-beta exam+flashcards sandbox, narrow-viewport testing, and Meta Pixel / analytics verification.
 ---
 
 # Testing RCI Tutoring
 
-## Auth Gate
+## Account gate (`assets/login-gate.js`) — newer pages
 
-All pages are protected by `assets/auth-gate.js`. It checks `sessionStorage.getItem('rci_auth') === 'ok'`.
+Pages that carry `<html data-require-login>` + `<script src="/assets/login-gate.js">` (e.g. `/prep-beta/`) use a
+**JWT account gate**, not the old password gate:
+- token in `localStorage.rci_token`, user in `localStorage.rci_user`, intended destination in `localStorage.rci_next`;
+- unauthenticated visit → `location.replace('/register.html?next=<path>')` (served as `/register?next=%2F...%2F`);
+- a stored token is re-validated with `GET /api/me` and cleared on 401.
+
+To get an authenticated browser session **without an email inbox** (this box cannot solve Turnstile, so UI signup on a
+real deployment will fail): insert a user row with a known `magic_token` into the D1 the deployment reads, then open
+`/verify-magic.html?token=<magic_token>`. `functions/api/verify-magic.js` consumes the token, sets
+`email_verified = 1`, issues the JWT and redirects to `localStorage.rci_next` (so set the gate first by visiting the
+gated page, which is also the assertion for the redirect test). Log out from `/dashboard.html` → "Cerrar sesión"
+(clears `rci_token`) to re-test the gate.
+
+## Auth Gate (legacy pages)
+
+Older pages are protected by `assets/auth-gate.js`. It checks `sessionStorage.getItem('rci_auth') === 'ok'`.
 
 To bypass for testing, run in the browser console:
 ```js
@@ -137,6 +152,33 @@ The auth gate uses SHA-256 password hashing. The password hash is stored in `aut
   payload by wrapping `window.fbq` before the UI action and logging its arguments.
 - Per-email dedup for the Lead event uses `localStorage.rci_lead_tracked`; clear it explicitly between cases rather than
   relying on profile state.
+
+## `/prep-beta/` exam sandbox (single-file app)
+
+- Everything lives in `prep-beta/index.html`: setup screen (exam type → mode → domain/count), practice, mock exam
+  (150 q / 3 h), and flashcards. State is a JS object + `render()`; no framework, no build.
+- Questions come from D1 via `/api/prep-*`; **a locally seeded D1 has zero questions**, so any question-flow test must
+  run against a Cloudflare Pages preview (prod D1). Find the newest preview for a commit via the PR comments or
+  `GET /repos/<owner>/<repo>/deployments`; the branch alias
+  `https://devin-<branch>.rci-tutoring.pages.dev/prep-beta/` also works once the deploy finishes.
+- Stats are browser-local in `localStorage.rci_prep_beta_stats` (`{sessions:[...]}`, newest first). Sessions are tagged
+  `mode: 'practice' | 'exam' | 'cards'`; card sessions store `known`/`reviewed`, quiz sessions `correct`/`total`/`attempted`
+  (accuracy uses `attempted`, so unanswered questions do not count). Read it in the console for exact assertions:
+  `JSON.parse(localStorage.rci_prep_beta_stats).sessions`. `Borrar mis estadísticas` resets everything.
+- Flashcards: click the card body **or** `Ver respuesta / Show answer` to reveal; `La sabía / No la sabía`
+  (`I knew it / I didn't know it`) record the grade and auto-advance, and grading the last card finishes the review.
+  `Terminar repaso / Finish review` scores only the graded cards. Edge case worth re-checking after changes:
+  finishing with **zero** graded cards still saves a `0/0` card session (bumps `Sesiones`) and shows `0% · Repaso completado`.
+- Language: ES/EN buttons in the header re-render the current view, so you can flip language mid-session to check
+  strings without restarting. Read strings from the DOM dump (not only the screenshot) to catch mojibake (`Ã`, `Â`).
+
+## Narrow-viewport (mobile) testing on this box
+
+Chrome refuses to shrink below ~500 px wide (`xdotool windowsize 406 …` yields 532). To reach a ~390 px CSS viewport
+without DevTools: size the window to ~500 px (`xdotool getactivewindow windowsize 500 950 windowmove 0 0`) and press
+`ctrl+equal` twice (125 % zoom) → `window.innerWidth === 400`. Verify with `window.innerWidth`, state the effective
+width in the report, and reset with `ctrl+0` +
+`wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz`.
 
 ## Deployment
 
