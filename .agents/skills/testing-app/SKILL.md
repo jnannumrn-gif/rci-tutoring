@@ -29,7 +29,11 @@ The auth gate uses SHA-256 password hashing. The password hash is stored in `aut
 
 - `assets/cookie-banner.js` shows a slide-up banner on first visit
 - User choice stored in `localStorage` as `rci_cookie_consent` (values: `'accepted'` or `'rejected'`)
-- To reset for testing: `localStorage.removeItem('rci_cookie_consent')`
+- To reset for testing: `localStorage.removeItem('rci_cookie_consent')` (or delete the key in DevTools →
+  Application → Local storage, which is more demonstrable in a recording)
+- Once a choice is stored the banner never reappears and there is no "manage cookies" UI, so the
+  `rejected → accepted` runtime transition (the `rci-cookie-consent` CustomEvent listened to by
+  `assets/meta-pixel.js`) is not reachable through the UI — clear the key and reload to test the accepted path
 - Banner language switches reactively via `MutationObserver` on `<html lang>`
 - The "More info" link path is derived from the script's own `src` attribute to resolve correctly from any page depth
 
@@ -137,7 +141,21 @@ The auth gate uses SHA-256 password hashing. The password hash is stored in `aut
   payload by wrapping `window.fbq` before the UI action and logging its arguments.
 - Per-email dedup for the Lead event uses `localStorage.rci_lead_tracked`; clear it explicitly between cases rather than
   relying on profile state.
-
+- A healthy load shows three `200`s in the Network panel filtered on `facebook`: `fbevents.js`,
+  `signals/config/<PIXEL_ID>`, and `tr/?id=<PIXEL_ID>&ev=PageView`. To prove a *wrong* ID is absent, type the bad ID
+  into the filter box and confirm `0 / N requests`.
+- Enable **Preserve log** to capture pages that redirect (e.g. `/dashboard` bounces to `/login` when logged out — the
+  dashboard still fires its own PageView before the redirect).
+- Site-wide sweep without a browser:
+  `for p in / /login /register /upgrade /dashboard /tutoring/ ...; do curl -s "$PREVIEW$p" | grep -o "<ID>"; done`
+  (note `.html` URLs 308-redirect to clean URLs, so use `/login` not `/login.html` with `curl`).
+- To tell an extension block from a network problem: `curl -sI https://connect.facebook.net/en_US/fbevents.js` from the
+  shell. If the shell gets `200` but the browser does not, it is uBlock Origin
+  (`--load-extension=/opt/.devin/package/chrome_extensions/adblock`).
+- Every HTML page also has a `<noscript><img src="https://www.facebook.com/tr?id=...&ev=PageView&noscript=1">` fallback,
+  so the pixel ID lives in both `assets/meta-pixel.js` and each page — grep for it everywhere when it changes.
+- Confirming events actually land in Meta Events Manager requires the account owner — agents can only prove the
+  outbound `200` request.
 ## Deployment
 
 - Hosted on Cloudflare Pages
