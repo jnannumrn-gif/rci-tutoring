@@ -48,6 +48,62 @@ The auth gate uses SHA-256 password hashing. The password hash is stored in `aut
 - Registrations insert rows into the users table; use `devin-...+<timestamp>@example.com` addresses and mention created
   rows in the report so they can be cleaned up.
 
+## Getting an authenticated session WITHOUT registering (fastest path for gated-page testing)
+
+Registering through the UI is unreliable from this box (Turnstile Managed challenges never solve here, and there is a
+3-signups-per-IP-per-24h cap). Instead seed a user straight into D1 with a password hash you compute locally, then log
+in through the real `/login.html` UI so the recording shows a genuine login:
+
+1. Generate a hash in the app's PBKDF2 format (`saltHex:hashHex`, 100 000 iterations, SHA-256, 32 bytes — matches
+   `hashPassword()` in `functions/api/_shared/auth.js`):
+   ```
+   node -e "const c=require('crypto');const s=c.randomBytes(16);console.log(s.toString('hex')+':'+c.pbkdf2Sync('DevinTest!2026',s,100000,32,'sha256').toString('hex'))"
+   ```
+2. Insert the user with `email_verified=1` (login returns 403 `needs_verification` otherwise):
+   ```
+   INSERT INTO users (id,nombre,email,pais,idioma,password_hash,trial_start_date,trial_end_date,status,email_verified)
+   VALUES ('devin-test-<slug>','Devin Test','devin-<slug>@example.com','US','es','<hash>',datetime('now'),datetime('now','+30 day'),'trial',1)
+   ```
+3. Log in at `/login.html` (no Turnstile on login). `login.html` stores `rci_token` + `rci_user` in localStorage.
+   For curl-side checks grab the JWT with
+   `curl -s -X POST <base>/api/login -H 'Content-Type: application/json' -d '{"email":"...","password":"..."}'`.
+4. **Always clean up**: `DELETE FROM subscriptions WHERE user_id='...'; DELETE FROM users WHERE id='...';` and verify
+   with a follow-up SELECT. Preview deployments share the **production** D1, so never leave rows behind.
+
+You cannot read `JWT_SECRET` (Cloudflare secrets are write-only), so minting a JWT yourself is not an option — this
+seeded-user + real-login path is the reliable one.
+
+## Human RN booking pages and the $20 deposit gate
+
+- Pages: `/tutoring/{ccht,cna,hha}/human/`. `assets/booking-gate.js` wraps the Cal.com init: no `rci_token` →
+  `location.replace('/login.html')`; `/api/me` 401 → clears `rci_token`/`rci_user` then redirects;
+  `human_session_deposit_paid` false → `$20` CTA (button id `booking-deposit-btn`); true → renders the embed.
+- Flip the gate state with a single row (no Stripe needed):
+  ```
+  INSERT INTO subscriptions (user_id,stripe_subscription_id,tier,start_date,end_date,active)
+  VALUES ('<uid>','pi_devin_test','human_session_deposit',datetime('now'),NULL,0);   -- unlocks
+  DELETE FROM subscriptions WHERE user_id='<uid>';                                    -- re-locks
+  ```
+  Note `active=0` is correct — the webhook writes deposits that way and `/api/me` matches on tier regardless.
+- Assert on **`document.querySelectorAll('#my-cal-inline iframe').length`** and on
+  `performance.getEntriesByType('resource').filter(n=>n.name.includes('cal.com')).length`. A gated page must show
+  **0** for both; an ungated page shows >=1. This is what distinguishes "gate works" from "calendar just failed to load".
+- **`/tutoring/cna/human/` and `/tutoring/hha/human/` show "Error Code: 404. Cal Link seems to be wrong."** even when
+  the gate passes — their `calLink` slugs (`sesion-de-tutoria-cna` / `-hha`) 404 on cal.com; only the ccht slug
+  (`sesion-de-tutoria-en-hemodialisis`) resolves. This is pre-existing and unrelated to gating; verify with
+  `curl -o /dev/null -w '%{http_code}' https://cal.com/<slug>` before reporting it as a regression. The iframe still
+  mounts, so the iframe-count assertion remains valid.
+- **`STRIPE_SECRET_KEY` may be missing on preview Pages deployments**, in which case `/api/create-checkout` returns
+  `500 {"error":"Stripe not configured"}` and any "click the CTA → Stripe" step cannot be completed on a preview URL.
+  Prove the request is otherwise well-formed with a control call using a bogus plan (returns `400 Invalid plan`).
+  Ask for the secret to be added to the preview environment (note: adding it requires **retrying the deployment** so
+  the new binding is picked up — the old deployment keeps returning the error), or verify on production.
+- **Stripe checkout is LIVE mode** (`cs_live_...` session ids). Testing the CTA → checkout hop is safe as long as you
+  stop the moment the page loads: never type card details and never click **Pay**. Creating an unpaid checkout session
+  costs nothing and leaves no DB row (the `subscriptions` row is only written by the webhook after payment).
+  Checkout opens with the browser's geo currency preselected (e.g. €18.00); click the **$20.00** currency button in the
+  "Choose currency" row to make the `$20.00 RCI Tutoring - Human RN Session` line item visible for the screenshot.
+
 ## Local Cloudflare Pages + D1 dev server (needed for anti-bot / register testing)
 
 - `npm install -g wrangler` fails (root-owned `/usr/lib/node_modules`). Use `npx --yes wrangler@3` (3.114.17 works).
